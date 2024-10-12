@@ -7,9 +7,13 @@ use App\Http\Controllers\AuthController; // Pastikan ini ada
 //     return view('welcome');
 // });
 
-Route::get('/', function () {
+Route::get('/login', function () {
     return redirect('/login');
 });
+
+Route::get('/', function () {
+  return view('dasboarpesan');
+})
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
