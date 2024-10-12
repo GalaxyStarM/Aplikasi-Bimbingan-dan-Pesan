@@ -197,7 +197,7 @@
             <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI"> <!-- Mengganti logo UNRI -->
             <span>SITEI</span> <!-- Bacaan SITEI -->
             <div class="nav-feature">
-                <a href="#" class="active" style="margin-left: 50px;">BIMBINGAN</a> <!-- Tambahkan style margin di sini -->
+                <a href="/" class="active" style="margin-left: 50px;">BIMBINGAN</a> <!-- Tambahkan style margin di sini -->
                 <a href="#">PESAN</a>
             </div>            
         </div>

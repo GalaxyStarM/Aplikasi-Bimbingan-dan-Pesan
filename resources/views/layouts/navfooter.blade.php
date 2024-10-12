@@ -102,7 +102,7 @@
                         <a class="nav-link active" href="#">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">PESAN</a>
+                        <a class="nav-link" href="/dashboardpesan">PESAN</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -112,7 +112,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#">Profil</a></li>
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
+                            <li><a class="dropdown-item" href="/login">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
