@@ -11,8 +11,12 @@ Route::get('/login', function () {
     return redirect('/login');
 });
 
-Route::get('/', function () {
+Route::get('/dashboardpesan', function () {
   return view('dasboarpesan');
+});
+
+Route::get('/', function () {
+    return view('bimbingan.usulanbimbingan');
 });
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
