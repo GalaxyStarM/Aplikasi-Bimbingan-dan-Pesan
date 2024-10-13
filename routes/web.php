@@ -12,7 +12,7 @@ Route::get('/login', function () {
 });
 
 Route::get('/isipesan', function () {
-    return view('isipesan'); // Pastikan ini merujuk ke file isipesan.blade.php
+    return view('pesan.isipesan'); // Pastikan ini merujuk ke file isipesan.blade.php
 });
 
 Route::get('/dashboardpesan', function () {
@@ -25,6 +25,10 @@ Route::get('/', function () {
 
 route::get('/aksiInformasi', function(){
   return view('aksiInformasi');
+});
+
+route::get('/pilihjadwal', function(){
+  return view('bimbingan.pilihjadwal');
 });
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
