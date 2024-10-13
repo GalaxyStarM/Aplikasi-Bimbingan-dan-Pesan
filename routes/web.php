@@ -8,7 +8,7 @@ use App\Http\Controllers\AuthController; // Pastikan ini ada
 // });
 
 Route::get('/login', function () {
-    return redirect('/login');
+  return redirect('/login');
 });
 
 Route::get('/dashboardpesan', function () {
@@ -16,7 +16,11 @@ Route::get('/dashboardpesan', function () {
 });
 
 Route::get('/', function () {
-    return view('bimbingan.usulanbimbingan');
+  return view('bimbingan.usulanbimbingan');
+});
+
+route::get('/aksiInformasi', function(){
+  return view('aksiInformasi');
 });
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
