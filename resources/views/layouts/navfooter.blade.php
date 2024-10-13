@@ -7,12 +7,14 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts (Open Sans dan Viga) -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Viga&display=swap" rel="stylesheet">
 
     <style>
+        /* Yang diambil */
         body {
             font-family: 'Open Sans', sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f4f6f9;
         }
         .navbar {
             background-color: #fff;
@@ -20,8 +22,8 @@
         }
         .navbar-brand {
             font-family: "Viga", sans-serif;
-            font-weight: 700;
-            font-size: 24px;
+            font-weight: 600;
+            font-size: 25px;
         }
         .nav-link {
             font-weight: 600;
@@ -33,6 +35,16 @@
         .nav-link:hover {
             color: #36c482;
         }
+        .footer {
+            background-color: #343a40;
+            color: #fff;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Konten */
         .content {
             margin-top: 80px;
         }
@@ -47,14 +59,6 @@
         .table-dark th {
             background-color: #343a40;
             border-color: #454d55;
-        }
-        .footer {
-            background-color: #343a40;
-            color: #fff;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
         }
         .green-text {
             color: #28a745;
@@ -87,10 +91,11 @@
     </style>
 </head>
 <body>
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI" width="30" height="30" class="d-inline-block align-top me-2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI" width="40" height="40" class="d-inline-block align-top me-2">
                 SITEI
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -120,11 +125,11 @@
         </div>
     </nav>
 
+    <!-- Content -->
     <div class="content container">
         <h4 class="sub-title pt-2">Usulan Bimbingan</h4>
         <hr>
         <button class="btn btn-success mb-4">+ Pilih Jadwal Bimbingan</button>
-
         <div class="card">
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs">
@@ -184,6 +189,7 @@
         </div>
     </div>
 
+    <!-- Footer -->
     <footer class="footer mt-5">
         <div class="container text-center">
             <p class="mb-0">
