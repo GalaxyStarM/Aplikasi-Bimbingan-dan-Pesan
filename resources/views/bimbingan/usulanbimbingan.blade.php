@@ -6,25 +6,27 @@
     <title>SITEI - Sistem Informasi Teknik Elektro dan Informatika</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">\
+    <!-- Google Fonts (Open Sans dan Viga) -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Viga&display=swap" rel="stylesheet">
 
     <style>
+        /* Yang diambil */
         body {
             font-family: 'Open Sans', sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f4f6f9;
         }
         .navbar {
             background-color: #fff;
-            box-shadow: 0 1px 2px rgba(0,0,0,.1);
+            box-shadow: 0px 0px 10px 1px #afafaf;
         }
         .navbar-brand {
             font-family: "Viga", sans-serif;
-            font-weight: 700;
-            font-size: 24px;
+            font-weight: 600;
+            font-size: 20px;
         }
         .nav-link {
-            font-weight: 600;
+            color: #192f59;
         }
         .nav-link.active {
             color: #28a745 !important;
@@ -33,6 +35,7 @@
         .nav-link:hover {
             color: #36c482;
         }
+        /* Konten */
         .content {
             margin-top: 80px;
         }
@@ -47,14 +50,6 @@
         .table-dark th {
             background-color: #343a40;
             border-color: #454d55;
-        }
-        .footer {
-            background-color: #343a40;
-            color: #fff;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
         }
         .green-text {
             color: #28a745;
@@ -83,6 +78,17 @@
         }
         .sub-title{
             font-weight: bold;
+        }
+        .atas ul li a {
+            font-size: 14px;
+        }
+        .footer {
+            background-color: #343a40;
+            color: #fff;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
         }
     </style>
 </head>
@@ -254,7 +260,6 @@
             </div>
         </div>
     </div>
-
     <!--Footer-->
     <footer class="footer mt-5">
         <div class="container text-center">
@@ -270,3 +275,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
+
+
+       
+    

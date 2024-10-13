@@ -11,8 +11,12 @@ Route::get('/login', function () {
     return redirect('/login');
 });
 
+Route::get('/isipesan', function () {
+    return view('isipesan'); // Pastikan ini merujuk ke file isipesan.blade.php
+});
+
 Route::get('/dashboardpesan', function () {
-  return view('dasboarpesan');
+    return view('pesan.dasboarpesan');
 });
 
 Route::get('/', function () {
