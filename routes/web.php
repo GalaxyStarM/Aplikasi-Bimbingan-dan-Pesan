@@ -15,6 +15,10 @@ Route::get('/dashboardpesan', function () {
   return view('dasboarpesan');
 });
 
+Route::get('/isipesan', function () {
+    return view('isipesan'); // Pastikan ini merujuk ke file isipesan.blade.php
+}):
+
 Route::get('/', function () {
     return view('bimbingan.usulanbimbingan');
 });
