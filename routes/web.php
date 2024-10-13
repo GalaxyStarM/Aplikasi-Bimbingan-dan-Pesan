@@ -3,22 +3,25 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController; // Pastikan ini ada
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
+// Route ke halaman login
 Route::get('/login', function () {
   return redirect('/login');
 });
 
 Route::get('/isipesan', function () {
-    return view('pesan.isipesan'); // Pastikan ini merujuk ke file isipesan.blade.php
+    return view('pesan.isipesan');
 });
 
+Route::get('/tampilanisipesan', function () {
+    return view('pesan.tampilanisipesan');
+});
+
+// Route ke dashboard pesan (dasboarpesan.blade.php)
 Route::get('/dashboardpesan', function () {
     return view('pesan.dasboarpesan');
 });
 
+// Route ke halaman bimbingan usulan
 Route::get('/', function () {
   return view('bimbingan.usulanbimbingan');
 });
@@ -31,6 +34,7 @@ route::get('/pilihjadwal', function(){
   return view('bimbingan.pilihjadwal');
 });
 
+// Route ke halaman login dengan AuthController
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
