@@ -6,7 +6,7 @@
     <title>SITEI - Sistem Informasi Teknik Elektro dan Informatika</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">\
     <!-- Google Fonts (Open Sans dan Viga) -->
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Viga&display=swap" rel="stylesheet">
 
@@ -35,15 +35,6 @@
         .nav-link:hover {
             color: #36c482;
         }
-        .footer {
-            background-color: #343a40;
-            color: #fff;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
         /* Konten */
         .content {
             margin-top: 80px;
@@ -91,10 +82,17 @@
         .atas ul li a {
             font-size: 14px;
         }
+        .footer {
+            background-color: #343a40;
+            color: #fff;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
@@ -104,13 +102,13 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse atas" id="navbarNav">
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/">BIMBINGAN</a>
+                        <a class="nav-link active" href="#">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboardpesan">PESAN</a>
+                        <a class="nav-link" href="#">PESAN</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -120,64 +118,135 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#">Profil</a></li>
-                            <li><a class="dropdown-item" href="/login">Logout</a></li>
+                            <li><a class="dropdown-item" href="#">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-
-    <!-- Content -->
+    
+    <!--Content-->
     <div class="content container">
         <h4 class="sub-title pt-2">Usulan Bimbingan</h4>
         <hr>
         <button class="btn btn-success mb-4">+ Pilih Jadwal Bimbingan</button>
+
         <div class="card">
             <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs">
+                <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Usulan Bimbingan (0)</a>
+                        <a class="nav-link active" id="usulan-tab" data-bs-toggle="tab" href="#usulan" role="tab">Usulan Bimbingan (0)</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Daftar Jadwal (0)</a>
+                        <a class="nav-link" id="jadwal-tab" data-bs-toggle="tab" href="#jadwal" role="tab">Daftar Jadwal (0)</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Riwayat (0)</a>
+                        <a class="nav-link" id="riwayat-tab" data-bs-toggle="tab" href="#riwayat" role="tab">Riwayat (0)</a>
                     </li>
                 </ul>
             </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        Tampilkan 
-                        <select class="form-select form-select-sm d-inline-block w-auto">
-                            <option>50</option>
-                        </select> 
-                        entri
+
+            <div class="card-body tab-content" id="myTabContent">
+                <!--Konten Usulan Bimbingan-->
+                <div class="tab-pane fade show active" id="usulan" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            Tampilkan 
+                            <select class="form-select form-select-sm d-inline-block w-auto">
+                                <option>50</option>
+                            </select> 
+                            entri
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="table-dark">
+                                    <th>No. <i class="fas fa-sort"></i></th>
+                                    <th>NIM <i class="fas fa-sort"></i></th>
+                                    <th>Nama <i class="fas fa-sort"></i></th>
+                                    <th>Jenis Bimbingan <i class="fas fa-sort"></i></th>
+                                    <th>Tanggal <i class="fas fa-sort"></i></th>
+                                    <th>Waktu <i class="fas fa-sort"></i></th>
+                                    <th>Status <i class="fas fa-sort"></i></th>
+                                    <th>Aksi <i class="fas fa-sort"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="8" class="text-center">Belum ada usulan Bimbingan</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr class="table-dark">
-                                <th>No. <i class="fas fa-sort"></i></th>
-                                <th>NIM <i class="fas fa-sort"></i></th>
-                                <th>Nama <i class="fas fa-sort"></i></th>
-                                <th>Jenis Bimbingan <i class="fas fa-sort"></i></th>
-                                <th>Tanggal <i class="fas fa-sort"></i></th>
-                                <th>Waktu <i class="fas fa-sort"></i></th>
-                                <th>Status <i class="fas fa-sort"></i></th>
-                                <th>Aksi <i class="fas fa-sort"></i></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="8" class="text-center">Belum ada usulan Bimbingan</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+                <!--Konten Daftar Jadwal-->
+                <div class="tab-pane fade" id="jadwal" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            Tampilkan 
+                            <select class="form-select form-select-sm d-inline-block w-auto">
+                                <option>50</option>
+                            </select> 
+                            entri
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="table-dark">
+                                    <th>No. <i class="fas fa-sort"></i></th>
+                                    <th>Kode Dosen <i class="fas fa-sort"></i></th>
+                                    <th>Nama Dosen <i class="fas fa-sort"></i></th>
+                                    <th>Total Bimbingan <i class="fas fa-sort"></i></th>
+                                    <th>Aksi <i class="fas fa-sort"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" class="text-center">Belum ada jadwal</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
+                <!--Konten Riwayat-->
+                <div class="tab-pane fade" id="riwayat" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            Tampilkan 
+                            <select class="form-select form-select-sm d-inline-block w-auto">
+                                <option>50</option>
+                            </select> 
+                            entri
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="table-dark">
+                                    <th>No. <i class="fas fa-sort"></i></th>
+                                    <th>NIM <i class="fas fa-sort"></i></th>
+                                    <th>Nama <i class="fas fa-sort"></i></th>
+                                    <th>Jenis Bimbingan <i class="fas fa-sort"></i></th>
+                                    <th>Tanggal <i class="fas fa-sort"></i></th>
+                                    <th>Waktu <i class="fas fa-sort"></i></th>
+                                    <th>Status <i class="fas fa-sort"></i></th>
+                                    <th>Aksi <i class="fas fa-sort"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="7" class="text-center">Belum ada riwayat Bimbingan</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <p class="mb-0">Menampilkan 1 sampai 1 dari 1 entri</p>
                     <nav aria-label="Page navigation">
@@ -191,8 +260,7 @@
             </div>
         </div>
     </div>
-
-    <!-- Footer -->
+    <!--Footer-->
     <footer class="footer mt-5">
         <div class="container text-center">
             <p class="mb-0">
@@ -207,3 +275,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
+
+
+       
+    

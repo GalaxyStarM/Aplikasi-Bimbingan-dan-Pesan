@@ -5,16 +5,15 @@ use App\Http\Controllers\AuthController; // Pastikan ini ada
 
 // Route ke halaman login
 Route::get('/login', function () {
-    return redirect('/login');
+  return redirect('/login');
 });
 
-// Route untuk menampilkan tampilan isi pesan (menggunakan file tampilanisipesan.blade.php)
 Route::get('/isipesan', function () {
-    return view('pesan.isipesan'); // Mengarahkan ke file tampilanisipesan.blade.php di folder pesan
+    return view('pesan.isipesan');
 });
 
 Route::get('/tampilanisipesan', function () {
-    return view('pesan.tampilanisipesan'); // Mengarahkan ke file tampilanisipesan.blade.php di folder pesan
+    return view('pesan.tampilanisipesan');
 });
 
 // Route ke dashboard pesan (dasboarpesan.blade.php)
@@ -24,7 +23,15 @@ Route::get('/dashboardpesan', function () {
 
 // Route ke halaman bimbingan usulan
 Route::get('/', function () {
-    return view('bimbingan.usulanbimbingan');
+  return view('bimbingan.usulanbimbingan');
+});
+
+route::get('/aksiInformasi', function(){
+  return view('aksiInformasi');
+});
+
+route::get('/pilihjadwal', function(){
+  return view('bimbingan.pilihjadwal');
 });
 
 // Route ke halaman login dengan AuthController
