@@ -8,36 +8,30 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-family: 'Open Sans', sans-serif;
-            background-color: #f8f9fa;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            background-color: #f4f6f9;
         }
-
         .navbar {
             background-color: #fff;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+            box-shadow: 0px 0px 10px 1px #afafaf;
         }
-
         .navbar-brand {
             font-family: "Viga", sans-serif;
-            font-weight: 700;
-            font-size: 24px;
+            font-weight: 600;
+            font-size: 20px;
         }
-
         .nav-link {
+            color: #192f59;
             font-weight: 600;
         }
-
         .nav-link.active {
             color: #28a745 !important;
             font-weight: bold;
         }
-
         .nav-link:hover {
             color: #36c482;
         }
@@ -45,6 +39,9 @@
         .btn-success {
             background-color: #28a745;
             border-color: #28a745;
+        }
+        .content{
+            margin-top: 80px;
         }
 
         .footer {
@@ -115,6 +112,7 @@
         .text-bold {
             font-weight: 600;
         }
+        
     </style>
 </head>
 
@@ -122,12 +120,10 @@
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="https://sitei.ft.unri.web.id/assets/dist/img/unri.png" alt="Logo UNRI" width="30"
-                    height="30" class="d-inline-block align-top me-2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI" width="30" height="30" class="d-inline-block align-top me-2">
                 SITEI
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -136,18 +132,17 @@
                         <a class="nav-link active" href="#">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboardpesan">PESAN</a>
+                        <a class="nav-link" href="#">PESAN</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             AKUN
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#">Profil</a></li>
-                            <li><a class="dropdown-item" href="/login">Logout</a></li>
+                            <li><a class="dropdown-item" href="#">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
