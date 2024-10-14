@@ -38,6 +38,10 @@ route::get('/terimausulanbimbingan', function(){
   return view('dosen.terimausulanbimbingan');
 });
 
+route::get('/editusulan', function(){
+  return view('dosen.editusulan');
+});
+
 // Route ke halaman login dengan AuthController
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
