@@ -27,6 +27,7 @@
         }
         .nav-link {
             color: #192f59;
+            font-weight: bold;
         }
         .nav-link.active {
             color: #28a745 !important;
@@ -108,7 +109,7 @@
                         <a class="nav-link active" href="#">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">PESAN</a>
+                        <a class="nav-link" href="/dashboardpesan">PESAN</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -118,7 +119,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#">Profil</a></li>
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
+                            <li><a class="dropdown-item" href="/login">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -130,7 +131,7 @@
     <div class="content container">
         <h4 class="sub-title pt-2">Usulan Bimbingan</h4>
         <hr>
-        <button class="btn btn-success mb-4">+ Pilih Jadwal Bimbingan</button>
+        <button class="btn btn-success mb-4" onclick="window.location.href='{{ route('pilihjadwal') }}'">+ Pilih Jadwal Bimbingan</button>
 
         <div class="card">
             <div class="card-header">

@@ -198,7 +198,7 @@
             <span>SITEI</span> <!-- Bacaan SITEI -->
             <div class="nav-feature">
                 <a href="/" class="active" style="margin-left: 50px;">BIMBINGAN</a> <!-- Tambahkan style margin di sini -->
-                <a href="#">PESAN</a>
+                <a href="/dashboardpesan">PESAN</a>
             </div>            
         </div>
         <div class="navbar-right">

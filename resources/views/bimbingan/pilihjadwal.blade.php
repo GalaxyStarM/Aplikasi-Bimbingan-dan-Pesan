@@ -57,7 +57,8 @@
             font-weight: bold;
         }
         .btn-kembali:hover, .btn-kirim:hover {
-            background-color: 
+            background-color: #218838;
+            color: white; 
         }
         .content-header h2 {
             font-size: 24px;
@@ -94,10 +95,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">BIMBINGAN</a>
+                        <a class="nav-link active" href="/">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">PESAN</a>
+                        <a class="nav-link" href="/dashboardpesan">PESAN</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -107,7 +108,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#">Profil</a></li>
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
+                            <li><a class="dropdown-item" href="/login">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -123,7 +124,7 @@
             </div>
             <hr>
 
-            <a href="#" class="btn btn-kembali mb-4">
+            <a href="/" class="btn btn-kembali mb-4">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
 

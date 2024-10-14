@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +10,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Google Fonts (Open Sans dan Viga) -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Viga&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Viga&display=swap"
+        rel="stylesheet">
 
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
@@ -19,25 +21,31 @@
             font-family: 'Open Sans', sans-serif;
             background-color: #f4f6f9;
         }
+
         .navbar {
             background-color: #fff;
-            box-shadow: 0 1px 2px rgba(0,0,0,.1);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
         }
+
         .navbar-brand {
             font-family: "Viga", sans-serif;
             font-weight: 600;
             font-size: 25px;
         }
+
         .nav-link {
             font-weight: 600;
         }
+
         .nav-link.active {
             color: #28a745 !important;
             font-weight: bold;
         }
+
         .nav-link:hover {
             color: #36c482;
         }
+
         .footer {
             background-color: #343a40;
             color: #fff;
@@ -46,21 +54,26 @@
             bottom: 0;
             width: 100%;
         }
+
         .main-content {
             padding: 80px 0 100px 0;
         }
+
         .green-text {
             color: #28a745;
         }
+
         .btn-buat-pesan {
             background-color: #28a745;
             color: white;
             font-weight: bold;
             margin-top: 0;
         }
+
         .btn-buat-pesan:hover {
             background-color: #218838;
         }
+
         .sidebar {
             background-color: #fff;
             border-right: 1px solid #dee2e6;
@@ -71,20 +84,25 @@
             padding-top: 20px;
             z-index: 1000;
         }
+
         .sidebar .nav-link {
             color: #333;
             padding: 10px 20px;
         }
+
         .sidebar .nav-link:hover {
             background-color: #f8f9fa;
         }
+
         .sidebar .nav-link i {
             margin-right: 10px;
         }
+
         .content {
             margin-left: 250px;
             padding: 20px;
         }
+
         .priority-tabs {
             background-color: white;
             padding: 10px;
@@ -95,6 +113,7 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             overflow-x: auto;
         }
+
         .priority-tabs .nav-link {
             color: black;
             font-weight: bold;
@@ -103,24 +122,30 @@
             margin-right: 10px;
             white-space: nowrap;
         }
+
         .priority-tabs .nav-link:last-child {
             border-right: none;
             margin-right: 0;
         }
+
         .priority-tabs .nav-link.active {
             color: #28a745 !important;
         }
+
         .row.d-flex {
             align-items: flex-start;
         }
+
         .sidebar .position-sticky {
             top: 100px;
         }
+
         .message-list {
             background-color: white;
             border-radius: 5px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
+
         .message-item {
             border-bottom: 1px solid #dee2e6;
             padding: 15px;
@@ -129,26 +154,32 @@
             transition: background-color 0.3s ease, transform 0.2s ease;
             cursor: pointer;
         }
+
         .message-item-link {
-        text-decoration: none;
-        color: inherit;
+            text-decoration: none;
+            color: inherit;
         }
+
         .message-item-link:hover .message-item {
-        background-color: #f8f9fa;
-        cursor: pointer;
+            background-color: #f8f9fa;
+            cursor: pointer;
         }
+
         .message-item:last-child {
             border-bottom: none;
         }
+
         .message-item:hover {
             background-color: #f8f9fa;
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         .message-item:active {
             transform: translateY(0);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .avatar {
             width: 40px;
             height: 40px;
@@ -156,6 +187,7 @@
             object-fit: cover;
             margin-right: 15px;
         }
+
         .message-content {
             flex-grow: 1;
             display: flex;
@@ -163,27 +195,33 @@
             align-items: center;
             transition: padding 0.3s ease;
         }
+
         .message-item:hover .message-content {
             padding-left: 10px;
         }
+
         .sender-info {
             display: flex;
             flex-direction: column;
             min-width: 150px;
         }
+
         .message-subject {
             flex-grow: 1;
             padding-right: 10px;
             font-weight: bold;
             color: #192F59;
         }
+
         .message-meta {
             display: flex;
             align-items: center;
         }
+
         .message-priority {
             margin-right: 15px;
         }
+
         .message-time {
             min-width: 50px;
             text-align: right;
@@ -198,31 +236,39 @@
                 border-right: none;
                 border-bottom: 1px solid #dee2e6;
             }
+
             .content {
                 margin-left: 0;
                 width: 100%;
                 padding: 15px;
             }
+
             .main-content {
                 padding-top: 60px;
             }
+
             .message-item {
                 flex-direction: column;
                 align-items: flex-start;
             }
+
             .avatar {
                 margin-bottom: 10px;
             }
+
             .message-content {
                 width: 100%;
             }
+
             .sender-info {
                 margin-bottom: 5px;
             }
+
             .message-subject {
                 padding-left: 0;
                 margin-bottom: 5px;
             }
+
             .message-meta {
                 width: 100%;
                 justify-content: space-between;
@@ -234,6 +280,7 @@
                 width: 20%;
                 max-width: 250px;
             }
+
             .content {
                 margin-left: 20%;
                 width: 80%;
@@ -245,6 +292,7 @@
             .sidebar {
                 width: 16.666667%;
             }
+
             .content {
                 margin-left: 16.666667%;
                 width: 83.333333%;
@@ -255,6 +303,7 @@
             .sidebar {
                 width: 14.285714%;
             }
+
             .content {
                 margin-left: 14.285714%;
                 width: 85.714286%;
@@ -262,16 +311,19 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI" width="40" height="40" class="d-inline-block align-top me-2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI"
+                    width="40" height="40" class="d-inline-block align-top me-2">
                 SITEI
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -285,7 +337,8 @@
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             AKUN
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -356,7 +409,7 @@
                                 </div>
                             </div>
                         </a>
-                    </div>                                       
+                    </div>
                 </div>
             </div>
         </div>
@@ -366,7 +419,7 @@
     <footer class="footer mt-5">
         <div class="container text-center">
             <p class="mb-0">
-                Dikembangkan oleh Mahasiswa Prodi Teknik Informatika UNRI 
+                Dikembangkan oleh Mahasiswa Prodi Teknik Informatika UNRI
                 (<span class="green-text">Desi, Murni, dan Syahirah</span>)
             </p>
         </div>
@@ -375,4 +428,5 @@
     <!-- Bootstrap 5.3.3 JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
