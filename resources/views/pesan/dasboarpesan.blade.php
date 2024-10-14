@@ -69,6 +69,7 @@
             top: 56px;
             width: 250px;
             padding-top: 20px;
+            z-index: 1000;
         }
         .sidebar .nav-link {
             color: #333;
@@ -92,6 +93,7 @@
             justify-content: flex-start;
             align-items: center;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
         }
         .priority-tabs .nav-link {
             color: black;
@@ -99,6 +101,7 @@
             padding: 0 15px;
             border-right: 1px solid #dee2e6;
             margin-right: 10px;
+            white-space: nowrap;
         }
         .priority-tabs .nav-link:last-child {
             border-right: none;
@@ -113,7 +116,72 @@
         .sidebar .position-sticky {
             top: 100px;
         }
+        .message-list {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .message-item {
+            border-bottom: 1px solid #dee2e6;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+        .message-item:last-child {
+            border-bottom: none;
+        }
+        .message-item:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .message-item:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .message-content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: padding 0.3s ease;
+        }
+        .message-item:hover .message-content {
+            padding-left: 10px;
+        }
+        .sender-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 150px;
+        }
+        .message-subject {
+            flex-grow: 1;
+            padding-right: 10px;
+            font-weight: bold;
+            color: #192F59;
+        }
+        .message-meta {
+            display: flex;
+            align-items: center;
+        }
+        .message-priority {
+            margin-right: 15px;
+        }
+        .message-time {
+            min-width: 50px;
+            text-align: right;
+        }
 
+        /* Responsive styles */
         @media (max-width: 991.98px) {
             .sidebar {
                 position: static;
@@ -124,15 +192,64 @@
             }
             .content {
                 margin-left: 0;
+                width: 100%;
+                padding: 15px;
             }
             .main-content {
                 padding-top: 60px;
             }
-            .priority-tabs {
-                overflow-x: auto;
+            .message-item {
+                flex-direction: column;
+                align-items: flex-start;
             }
-            .priority-tabs .nav-link {
-                white-space: nowrap;
+            .avatar {
+                margin-bottom: 10px;
+            }
+            .message-content {
+                width: 100%;
+            }
+            .sender-info {
+                margin-bottom: 5px;
+            }
+            .message-subject {
+                padding-left: 0;
+                margin-bottom: 5px;
+            }
+            .message-meta {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .sidebar {
+                width: 20%;
+                max-width: 250px;
+            }
+            .content {
+                margin-left: 20%;
+                width: 80%;
+                max-width: calc(100% - 250px);
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .sidebar {
+                width: 16.666667%;
+            }
+            .content {
+                margin-left: 16.666667%;
+                width: 83.333333%;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .sidebar {
+                width: 14.285714%;
+            }
+            .content {
+                margin-left: 14.285714%;
+                width: 85.714286%;
             }
         }
     </style>
@@ -207,16 +324,29 @@
                 <div class="col-lg-9 col-xl-10 content">
                     <!-- Priority Tabs -->
                     <div class="priority-tabs mb-3">
-                        <a class="nav-link active" href="#">High (0)</a>
+                        <a class="nav-link active" href="#">High (1)</a>
                         <a class="nav-link" href="#">Medium (0)</a>
                         <a class="nav-link" href="#">Low (0)</a>
-                        <a class="nav-link" href="#">Semua (0)</a>
+                        <a class="nav-link" href="#">Semua (1)</a>
                     </div>
 
                     <!-- Message List -->
-                    <div class="message-list text-center py-5">
-                        <p class="text-muted">Tidak Ada Pesan</p>
-                    </div>
+                    <div class="message-list">
+                        <div class="message-item">
+                            <img src="{{ asset('images/fotodesi.jpeg') }}" alt="Avatar" class="avatar">
+                            <div class="message-content">
+                                <div class="sender-info">
+                                    <strong>Desi Maya Sari</strong>
+                                    <small>2107110665</small>
+                                </div>
+                                <div class="message-subject">Bimbingan KRS</div>
+                                <div class="message-meta">
+                                    <span class="message-priority badge bg-danger">High</span>
+                                    <span class="message-time">15:30</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
                 </div>
             </div>
         </div>
