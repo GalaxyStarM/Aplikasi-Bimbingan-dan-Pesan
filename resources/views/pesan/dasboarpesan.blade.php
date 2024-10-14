@@ -332,21 +332,23 @@
 
                     <!-- Message List -->
                     <div class="message-list">
-                        <div class="message-item">
-                            <img src="{{ asset('images/fotodesi.jpeg') }}" alt="Avatar" class="avatar">
-                            <div class="message-content">
-                                <div class="sender-info">
-                                    <strong>Desi Maya Sari</strong>
-                                    <small>2107110665</small>
-                                </div>
-                                <div class="message-subject">Bimbingan KRS</div>
-                                <div class="message-meta">
-                                    <span class="message-priority badge bg-danger">High</span>
-                                    <span class="message-time">15:30</span>
+                        <a href="/tampilanisipesan" class="message-item-link">
+                            <div class="message-item">
+                                <img src="{{ asset('images/fotodesi.jpeg') }}" alt="Avatar" class="avatar">
+                                <div class="message-content">
+                                    <div class="sender-info">
+                                        <strong>Desi Maya Sari</strong>
+                                        <small>2107110665</small>
+                                    </div>
+                                    <div class="message-subject">Bimbingan KRS</div>
+                                    <div class="message-meta">
+                                        <span class="message-priority badge bg-danger">High</span>
+                                        <span class="message-time">15:30</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>                    
+                        </a>
+                    </div>                                       
                 </div>
             </div>
         </div>
