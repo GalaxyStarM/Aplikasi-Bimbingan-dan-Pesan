@@ -340,7 +340,7 @@
 
                     <!-- Message List -->
                     <div class="message-list">
-                        <a href="/tampilanpesan" class="message-item-link">
+                        <a href="/tampilanisipesan" class="message-item-link">
                             <div class="message-item">
                                 <img src="{{ asset('images/fotodesi.jpeg') }}" alt="Avatar" class="avatar">
                                 <div class="message-content">
