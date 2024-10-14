@@ -34,6 +34,10 @@ route::get('/pilihjadwal', function(){
   return view('bimbingan.pilihjadwal');
 });
 
+route::get('/terimausulanbimbingan', function(){
+  return view('dosen.terimausulanbimbingan');
+});
+
 // Route ke halaman login dengan AuthController
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
