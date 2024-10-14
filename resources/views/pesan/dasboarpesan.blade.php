@@ -129,6 +129,14 @@
             transition: background-color 0.3s ease, transform 0.2s ease;
             cursor: pointer;
         }
+        .message-item-link {
+        text-decoration: none;
+        color: inherit;
+        }
+        .message-item-link:hover .message-item {
+        background-color: #f8f9fa;
+        cursor: pointer;
+        }
         .message-item:last-child {
             border-bottom: none;
         }
@@ -332,7 +340,7 @@
 
                     <!-- Message List -->
                     <div class="message-list">
-                        <a href="/tampilanisipesan" class="message-item-link">
+                        <a href="/tampilanpesan" class="message-item-link">
                             <div class="message-item">
                                 <img src="{{ asset('images/fotodesi.jpeg') }}" alt="Avatar" class="avatar">
                                 <div class="message-content">
