@@ -42,7 +42,9 @@ route::get('/editusulan', function(){
   return view('dosen.editusulan');
 });
 
-
+route::get('/masukkanjadwal', function(){
+  return view('dosen.masukkanjadwal');
+});
 
 // Route ke halaman login dengan AuthController
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
