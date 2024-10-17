@@ -19,6 +19,7 @@
             margin: 0;
             padding: 0;
         }
+        
         .navbar {
             background-color: #fff;
             box-shadow: 0px 0px 10px 1px #afafaf;
@@ -51,9 +52,34 @@
         .main-content {
             padding: 80px 0 100px 0;
         }
+
+        .h4, h4 {
+            font-size: 1.5rem;
+        }
+        .mb-4 {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #acb5be;
+            padding-bottom: 10px;
+            font-weight: 600;
+        }
+        .mb-3{
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        
         .green-text {
             color: #28a745;
         }
+        .btn-kembali {
+            background-color: #28a745;
+            color: white;
+            font-size: 14px;
+            border-radius: 5px;
+            width: 100px;
+        }
+        
         .btn-kembali, .btn-kirim {
             background-color: #28a745;
             color: white;
@@ -466,14 +492,13 @@
             <div class="content-header">
                 <h4 class="mb-4">Masukkan Jadwal Bimbingan</h4>
             </div>
-            <hr>
 
             <a href="/" class="btn btn-kembali mb-4">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
 
             <form>
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="pilih Kegiatan" class="form-label">Pilih Kegiatan<span style="color: red;">*</span></label>
                     <select class="form-select" id="pilih Kegiatan" required>
                         <option value="" selected disabled>- Pilih Kegiatan -</option>
@@ -484,7 +509,7 @@
                     </select>
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="pilihKegiatan" class="form-label">Pilih Jadwal<span style="color: red;">*</span></label>
                 </div>
 
