@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SITEI | Masukkan Jadwal</title>
-    
+
     <!-- Required CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Viga&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Viga&display=swap"
+        rel="stylesheet">
+
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.10/index.global.min.js'></script>
 
     <style>
@@ -19,27 +21,31 @@
             margin: 0;
             padding: 0;
         }
-        
         .navbar {
             background-color: #fff;
             box-shadow: 0px 0px 10px 1px #afafaf;
         }
+
         .navbar-brand {
             font-family: "Viga", sans-serif;
             font-weight: 600;
             font-size: 20px;
         }
+
         .nav-link {
             color: #192f59;
             font-weight: bold;
         }
+
         .nav-link.active {
             color: #28a745 !important;
             font-weight: bold;
         }
+
         .nav-link:hover {
             color: #36c482;
         }
+
         .footer {
             background-color: #343a40;
             color: #fff;
@@ -49,10 +55,10 @@
             width: 100%;
             z-index: 1;
         }
+
         .main-content {
             padding: 80px 0 100px 0;
         }
-
         .h4, h4 {
             font-size: 1.5rem;
         }
@@ -67,8 +73,6 @@
             padding-bottom: 10px;
             font-weight: 600;
         }
-        
-        
         .green-text {
             color: #28a745;
         }
@@ -79,19 +83,20 @@
             border-radius: 5px;
             width: 100px;
         }
-        
         .btn-kembali, .btn-kirim {
             background-color: #28a745;
             color: white;
             font-weight: bold;
             transition: all 0.3s ease;
         }
-        .btn-kembali:hover, .btn-kirim:hover {
+
+        .btn-kembali:hover,
+        .btn-kirim:hover {
             background-color: #218838;
             color: white;
             transform: translateY(-2px);
         }
-        
+
         /* Form Styling */
         .form-select {
             border: 2px solid #e9ecef;
@@ -99,7 +104,7 @@
             padding: 10px;
             transition: all 0.3s ease;
         }
-        
+
         .form-select:focus {
             border-color: #28a745;
             box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
@@ -111,12 +116,13 @@
             background-color: white;
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             margin-top: 20px;
         }
 
         /* Restore grid but remove text underlines */
-        .fc td, .fc th {
+        .fc td,
+        .fc th {
             border: 1px solid #e9ecef !important;
         }
 
@@ -263,7 +269,8 @@
             transform: scale(1.02);
         }
 
-        .fc td, .fc th {
+        .fc td,
+        .fc th {
             border: 1px solid #e9ecef;
         }
 
@@ -291,50 +298,52 @@
                 flex-direction: column;
                 gap: 10px;
             }
-            
+
             .fc .fc-toolbar-title {
                 font-size: 1.1em !important;
             }
-            
+
             .fc .fc-button {
                 padding: 5px 10px;
                 font-size: 0.9em;
             }
         }
+
         .mb-4 {
             font-weight: 600;
         }
+
         @media (max-width: 375px) {
             body {
                 font-size: 14px;
             }
-            
+
             .navbar-brand {
                 font-size: 18px;
             }
-            
+
             .nav-link {
                 font-size: 14px;
             }
-            
+
             .fc .fc-toolbar-title {
                 font-size: 0.9em !important;
             }
-            
+
             .fc .fc-daygrid-day-number {
                 font-size: 0.85em;
             }
-            
+
             .fc .fc-button {
                 font-size: 0.8em;
                 padding: 4px 8px;
             }
-            
+
             .fc .fc-event {
                 font-size: 0.75em;
                 padding: 2px 6px;
             }
-            
+
             .mb-4 {
                 font-size: 1.1em;
             }
@@ -345,33 +354,33 @@
             body {
                 font-size: 15px;
             }
-            
+
             .navbar-brand {
                 font-size: 19px;
             }
-            
+
             .nav-link {
                 font-size: 15px;
             }
-            
+
             .fc .fc-toolbar-title {
                 font-size: 1em !important;
             }
-            
+
             .fc .fc-daygrid-day-number {
                 font-size: 0.9em;
             }
-            
+
             .fc .fc-button {
                 font-size: 0.85em;
                 padding: 4px 10px;
             }
-            
+
             .fc .fc-event {
                 font-size: 0.8em;
                 padding: 2px 7px;
             }
-            
+
             .mb-4 {
                 font-size: 1.2em;
             }
@@ -382,31 +391,31 @@
             body {
                 font-size: 16px;
             }
-            
+
             .navbar-brand {
                 font-size: 20px;
             }
-            
+
             .nav-link {
                 font-size: 16px;
             }
-            
+
             .fc .fc-toolbar-title {
                 font-size: 1.1em !important;
             }
-            
+
             .fc .fc-daygrid-day-number {
                 font-size: 0.95em;
             }
-            
+
             .fc .fc-button {
                 font-size: 0.9em;
             }
-            
+
             .fc .fc-event {
                 font-size: 0.85em;
             }
-            
+
             .mb-4 {
                 font-size: 1.3em;
             }
@@ -417,11 +426,11 @@
             body {
                 font-size: 16px;
             }
-            
+
             .fc .fc-toolbar-title {
                 font-size: 1.2em !important;
             }
-            
+
             .fc .fc-event {
                 font-size: 0.9em;
             }
@@ -432,11 +441,11 @@
             body {
                 font-size: 16px;
             }
-            
+
             .fc .fc-toolbar-title {
                 font-size: 1.3em !important;
             }
-            
+
             .fc .fc-event {
                 font-size: 0.95em;
             }
@@ -449,18 +458,113 @@
             text-overflow: ellipsis;
             line-height: 1.3;
         }
-        
-        
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-simpan {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-batal {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-simpan:hover {
+            background-color: #218838;
+        }
+
+        .btn-batal:hover {
+            background-color: #c82333;
+        }
+
+        .modal h2 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 24px;
+        }
+
+        .modal p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+
+        .question-mark {
+            width: 60px;
+            height: 60px;
+            background-color: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+        }
+
+        .question-mark span {
+            color: #17a2b8;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        a {
+            color: white;
+        }
     </style>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI" width="30" height="30" class="d-inline-block align-top me-2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI"
+                    width="30" height="30" class="d-inline-block align-top me-2">
                 SITEI
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -474,7 +578,8 @@
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             AKUN
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -486,7 +591,7 @@
             </div>
         </div>
     </nav>
-    
+
     <div class="main-content">
         <div class="container">
             <div class="content-header">
@@ -497,9 +602,10 @@
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
 
-            <form>
+            <form id="scheduleForm">
                 <div class="mb-3">
-                    <label for="pilih Kegiatan" class="form-label">Pilih Kegiatan<span style="color: red;">*</span></label>
+                    <label for="pilih Kegiatan" class="form-label">Pilih Kegiatan<span
+                            style="color: red;">*</span></label>
                     <select class="form-select" id="pilih Kegiatan" required>
                         <option value="" selected disabled>- Pilih Kegiatan -</option>
                         <option value="krs">Kartu Rencana Studi (KRS)</option>
@@ -515,20 +621,36 @@
 
                 <div id="calendar"></div>
 
+
+
                 <div class="text-end mt-4">
                     <button type="submit" class="btn btn-kirim">
                         {{-- <i class="fas fa-save me-2"></i>Simpan --}}
                         <i></i>Simpan
                     </button>
                 </div>
-            </form>            
+            </form>
+        </div>
+    </div>
+
+    <div id="saveModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="question-mark">
+                <i class="fas fa-question" style="font-size: 40px; color: #00bcd4;"></i>
+            </div>
+            <h2>Simpan Jadwal Bimbingan?</h2>
+            <p>Apakah Anda Yakin</p>
+            <div class="modal-buttons">
+                <button id="confirmSave" class="btn-simpan">Simpan</button>
+                <button id="cancelSave" class="btn-batal">Batal</button>
+            </div>
         </div>
     </div>
 
     <footer class="footer">
         <div class="container text-center">
             <p class="mb-0">
-                Dikembangkan oleh Mahasiswa Prodi Teknik Informatika UNRI 
+                Dikembangkan oleh Mahasiswa Prodi Teknik Informatika UNRI
                 (<span class="green-text">Desi, Murni, dan Syahirah</span>)
             </p>
         </div>
@@ -586,19 +708,53 @@
                     day: 'Hari',
                     list: 'Agenda'
                 },
-                dayHeaderFormat: { weekday: 'long' },
+                dayHeaderFormat: {
+                    weekday: 'long'
+                },
                 eventContent: function(arg) {
                     return {
                         html: '<div class="fc-event-main-frame">' +
-                              '<div class="fc-event-title-container">' +
-                              '<div class="fc-event-title fc-sticky">' + arg.event.title + '</div>' +
-                              '</div>' +
-                              '</div>'
+                            '<div class="fc-event-title-container">' +
+                            '<div class="fc-event-title fc-sticky">' + arg.event.title + '</div>' +
+                            '</div>' +
+                            '</div>'
                     }
                 }
             });
             calendar.render();
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('scheduleForm');
+            const modal = document.getElementById('saveModal');
+            const confirmBtn = document.getElementById('confirmSave');
+            const cancelBtn = document.getElementById('cancelSave');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                modal.style.display = 'flex'; // Menggunakan display flex langsung
+            });
+
+            confirmBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+                // Add your save logic here
+                // alert('Jadwal berhasil disimpan!');
+                window.location.href = '/masukkanjadwal';
+            });
+
+            cancelBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>
