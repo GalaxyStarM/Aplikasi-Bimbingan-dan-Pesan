@@ -21,7 +21,6 @@
             margin: 0;
             padding: 0;
         }
-
         .navbar {
             background-color: #fff;
             box-shadow: 0px 0px 10px 1px #afafaf;
@@ -60,30 +59,23 @@
         .main-content {
             padding: 80px 0 100px 0;
         }
-
-        .h4,
-        h4 {
+        .h4, h4 {
             font-size: 1.5rem;
         }
-
         .mb-4 {
             margin-bottom: 15px;
             border-bottom: 1px solid #acb5be;
             padding-bottom: 10px;
             font-weight: 600;
         }
-
-        .mb-3 {
+        .mb-3{
             margin-bottom: 15px;
             padding-bottom: 10px;
             font-weight: 600;
         }
-
-
         .green-text {
             color: #28a745;
         }
-
         .btn-kembali {
             background-color: #28a745;
             color: white;
@@ -91,9 +83,7 @@
             border-radius: 5px;
             width: 100px;
         }
-
-        .btn-kembali,
-        .btn-kirim {
+        .btn-kembali, .btn-kirim {
             background-color: #28a745;
             color: white;
             font-weight: bold;

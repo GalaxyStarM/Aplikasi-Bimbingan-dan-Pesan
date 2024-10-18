@@ -41,11 +41,6 @@
             color: #36c482;
         }
 
-        .btn-success {
-            background-color: #28a745;
-            border-color: #28a745;
-        }
-
         .content {
             margin-top: 80px;
         }
@@ -65,13 +60,21 @@
             background-color: #28a745;
             color: white;
             font-size: 14px;
-            padding: 5px 10px;
             border-radius: 5px;
             width: 100px;
         }
 
         .btn-kembali i {
             font-size: 12px;
+        }
+
+        .btn-kembali:hover {
+            background-color: #218838;
+            color: white;
+        }
+        .btn-kembali {
+            background-color: #28a745;
+            color: white;
         }
 
         .btn-kembali:hover {

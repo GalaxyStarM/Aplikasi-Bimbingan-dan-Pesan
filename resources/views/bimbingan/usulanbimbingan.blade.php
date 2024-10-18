@@ -174,7 +174,7 @@
                                     <th>Aksi <i class="fas fa-sort"></i></th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="tabelUsulan">
                                 <tr>
                                     <td colspan="8" class="text-center">Belum ada usulan Bimbingan</td>
                                 </tr>
@@ -274,6 +274,36 @@
     <!-- Bootstrap JS and Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script>
+    // Mengambil data dari file JSON
+    fetch('/dataDummy.json')
+    .then(response => response.json())
+    .then(data => {
+        const tableBody = document.getElementById('tabelUsulan');
+        tableBody.innerHTML = ''; // Menghapus baris default
+
+        data.forEach(item => {
+            const row = `
+                <tr>
+                    <td class="text-center">${item.no}</td>
+                    <td class="text-center">${item.nim}</td>
+                    <td class="text-center">${item.nama}</td>
+                    <td class="text-center">${item.jenis_bimbingan}</td>
+                    <td class="text-center">${item.tanggal}</td>
+                    <td class="text-center">${item.waktu}</td>
+                    <td class="text-center">${item.status}</td>
+                    <td class="text-center">
+                        <a href="/aksiInformasi" class="badge btn btn-info p-1 mb-1">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    })
+    .catch(error => console.error('Error:', error));
+    </script>
 </body>
 </html>
 

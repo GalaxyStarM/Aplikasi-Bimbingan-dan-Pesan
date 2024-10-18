@@ -40,6 +40,35 @@
             background-color: #28a745;
             border-color: #28a745;
         }
+
+        .btn-kembali {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-kembali:hover {
+            background-color: #218838;
+            color: white;
+        }
+
+        
+        .btn-kembali {
+            background-color: #28a745;
+            color: white;
+            font-size: 14px;
+            border-radius: 5px;
+            width: 100px;
+        }
+
+        .btn-kembali i {
+            font-size: 12px;
+        }
+
+        .btn-kembali:hover {
+            background-color: #218838;
+            color: white;
+        }
+
         .content{
             margin-top: 80px;
         }
@@ -53,16 +82,6 @@
 
         .green-text {
             color: #28a745;
-        }
-
-        .btn-kembali {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .btn-kembali:hover {
-            background-color: #218838;
-            color: white;
         }
 
         .status-badge {
@@ -83,24 +102,6 @@
         .h4,
         h4 {
             font-size: 1.5rem;
-        }
-
-        .btn-kembali {
-            background-color: #28a745;
-            color: white;
-            font-size: 14px;
-            padding: 5px 10px;
-            border-radius: 5px;
-            width: 100px;
-        }
-
-        .btn-kembali i {
-            font-size: 12px;
-        }
-
-        .btn-kembali:hover {
-            background-color: #218838;
-            color: white;
         }
 
         .status-badge {
