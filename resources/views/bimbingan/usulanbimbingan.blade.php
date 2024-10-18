@@ -38,7 +38,7 @@
         }
         /* Konten */
         .content {
-            margin-top: 80px;
+            margin-top: 55px;
         }
         .card {
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
@@ -51,6 +51,8 @@
         .table-dark th {
             background-color: #343a40;
             border-color: #454d55;
+            text-align: center;
+            vertical-align: middle;
         }
         .green-text {
             color: #28a745;
@@ -75,7 +77,7 @@
             border-bottom: 3px solid #28a745;
         }
         .nav-tabs .nav-link:hover{
-            color: #36c482;
+            color: #218838;
         }
         .sub-title{
             font-weight: bold;
@@ -137,7 +139,7 @@
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="usulan-tab" data-bs-toggle="tab" href="#usulan" role="tab">Usulan Bimbingan (0)</a>
+                        <a class="nav-link active" id="usulan-tab" data-bs-toggle="tab" href="#usulan" role="tab">Usulan Bimbingan (2)</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="jadwal-tab" data-bs-toggle="tab" href="#jadwal" role="tab">Daftar Jadwal (0)</a>

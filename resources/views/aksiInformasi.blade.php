@@ -154,7 +154,7 @@
     <div class="container content">
         <h4 class="mb-4">Detail Mahasiswa</h4>
 
-        <a href="#" class="btn btn-kembali mb-4">
+        <a href="/" class="btn btn-kembali mb-4">
             <i class="fas fa-arrow-left"></i> Kembali
         </a>
 
