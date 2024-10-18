@@ -46,6 +46,10 @@ route::get('/masukkanjadwal', function(){
   return view('dosen.masukkanjadwal');
 });
 
+route::get('/persetujuan', function(){
+  return view('dosen.persetujuan');
+});
+
 // Route ke halaman login dengan AuthController
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -53,4 +57,5 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 //view halaman
 Route::get('/pilihjadwal', function () { return view('bimbingan.pilihjadwal');})->name('pilihjadwal');
+Route::get('/masukkanjadwal', function () { return view('dosen.masukkanjadwal');})->name('masukkanjadwal');
 
