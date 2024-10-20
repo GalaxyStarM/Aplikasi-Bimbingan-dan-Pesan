@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +10,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Google Fonts (Open Sans dan Viga) -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Viga&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Viga&display=swap"
+        rel="stylesheet">
 
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
@@ -19,25 +21,31 @@
             font-family: 'Open Sans', sans-serif;
             background-color: #f4f6f9;
         }
+
         .navbar {
             background-color: #fff;
-            box-shadow: 0 1px 2px rgba(0,0,0,.1);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
         }
+
         .navbar-brand {
             font-family: "Viga", sans-serif;
             font-weight: 600;
             font-size: 25px;
         }
+
         .nav-link {
             font-weight: 600;
         }
+
         .nav-link.active {
             color: #28a745 !important;
             font-weight: bold;
         }
+
         .nav-link:hover {
             color: #36c482;
         }
+
         .footer {
             background-color: #343a40;
             color: #fff;
@@ -52,6 +60,7 @@
         .main-content {
             padding: 80px 0 100px 0;
         }
+
         .green-text {
             color: #28a745;
         }
@@ -61,12 +70,14 @@
             align-items: center;
             margin-bottom: 20px;
         }
+
         .btn-buat-pesan {
             background-color: #28a745;
             color: white;
             font-weight: bold;
             margin-top: 0;
         }
+
         .btn-buat-pesan:hover {
             background-color: #218838;
         }
@@ -75,6 +86,7 @@
             border-radius: 5px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
+
         .message-item {
             display: flex;
             align-items: flex-start;
@@ -82,13 +94,14 @@
             border-bottom: 1px solid #dee2e6;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
+
         .message-item-link {
             text-decoration: none;
             color: inherit;
             display: block;
         }
         .message-item-link:hover .message-item,
-        .message-item-link:focus .message-item {
+        .message-item-link:focus .message-item{
             background-color: #f8f9fa;
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -115,25 +128,30 @@
             align-items: flex-start;
             margin-bottom: 5px;
         }
+
         .sender-info {
             display: flex;
             flex-direction: column;
             min-width: 150px;
         }
+
         .message-subject {
             flex-grow: 1;
             padding: 0 15px;
             font-weight: bold;
             color: #192F59;
         }
+
         .message-meta {
             display: flex;
             justify-content: flex-end;
             align-items: center;
         }
+
         .message-priority {
             margin-right: 10px;
         }
+
         .message-time {
             min-width: 50px;
             text-align: right;
@@ -219,10 +237,12 @@
             .sender-info {
                 margin-bottom: 5px;
             }
+
             .message-subject {
                 padding: 0;
                 margin-bottom: 5px;
             }
+
             .message-meta {
                 justify-content: flex-start;
             }
@@ -239,16 +259,19 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI" width="40" height="40" class="d-inline-block align-top me-2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI"
+                    width="40" height="40" class="d-inline-block align-top me-2">
                 SITEI
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -262,7 +285,8 @@
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             AKUN
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -448,4 +472,5 @@
     });
 </script>
 </body>
+
 </html>

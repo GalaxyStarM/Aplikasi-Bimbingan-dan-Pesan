@@ -237,7 +237,7 @@
                             <div class="name">Desi Maya Sari</div>
                             <div class="id text-muted">2107110665</div>
                         </div>
-                    </div>                                                                           
+                    </div>
                 </div>
                 <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0">
                     <div class="priority text-danger fw-bold">High</div>
@@ -256,7 +256,6 @@
                     <p>Terima kasih, bu.</p>
                     
                     <p>Selamat sore.</p>
-                    
                     <p>Wassalamualaikum.</p>
                 </div>
                 <div class="attachment">
