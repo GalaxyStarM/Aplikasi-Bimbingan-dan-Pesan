@@ -17,17 +17,28 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            position: relative;
         }
         .bg-gradient-bar {
             height: 3px;
             background: linear-gradient(to right, #4ade80, #3b82f6, #8b5cf6);
         }
-        .blob {
+        .blob-container {
             position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; 
+            z-index: -1; 
+        }
+        .blob {
+            position: absolute;
             border-radius: 50%;
             filter: blur(70px);
             mix-blend-mode: multiply;
             animation: blob 7s infinite;
+            pointer-events: none;
         }
         .blob-1 { top: 0; left: 0; width: 300px; height: 300px; background-color: rgba(74, 222, 128, 0.1); }
         .blob-2 { top: 50%; right: 0; width: 350px; height: 350px; background-color: rgba(251, 191, 36, 0.1); animation-delay: 2s;}
@@ -74,6 +85,9 @@
             border: none;
             color: white;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative; 
+            z-index: 1; 
+            cursor: pointer; 
         }
         .btn-gradient:hover {
             transform: translateY(-2px);
@@ -97,9 +111,12 @@
 </head>
 <body class="bg-light">
     <div class="bg-gradient-bar"></div>
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
+    <div class="blob-container">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
 
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
@@ -137,11 +154,12 @@
     </nav>
 
     <div class="container mt-5">
-        <h1 class="mb-4 gradient-text fw-bold">Usulan Bimbingan</h1>
-        <button class="btn btn-gradient mb-4 d-flex align-items-center justify-content-center">
+        <h1 class="mb-2 gradient-text fw-bold">Usulan Bimbingan</h1>
+        <hr></hr>
+        <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center" onclick="window.location.href='{{ route('pilihjadwal') }}'">
             <i class="bi bi-plus-lg me-2"></i> Pilih Jadwal Bimbingan
         </button>
-        
+    
         <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
             <div class="card-header bg-white p-0">
                 <ul class="nav nav-tabs" id="bimbinganTab" role="tablist">
@@ -258,8 +276,8 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <p class="mb-0">Menampilkan 1 sampai 1 dari 1 entri</p>
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-3">
+                        <p class="mb-2">Menampilkan 1 sampai 1 dari 1 entri</p>
                         <nav aria-label="Page navigation">
                             <ul class="pagination mb-0">
                                 <li class="page-item disabled"><a class="page-link" href="#">Sebelumnya</a></li>
