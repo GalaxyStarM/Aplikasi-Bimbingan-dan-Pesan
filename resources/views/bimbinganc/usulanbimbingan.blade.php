@@ -108,7 +108,7 @@
             color: #28a745;
         }
         .container {
-        flex: 1; 
+            flex: 1; 
         }
     </style>
 </head>
@@ -306,33 +306,46 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
     // Mengambil data dari file JSON
-    fetch('/dataDummy.json')
-    .then(response => response.json())
-    .then(data => {
-        const tableBody = document.getElementById('tabelUsulan');
-        tableBody.innerHTML = ''; // Menghapus baris default
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/dataDummy.json')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('tabelUsulan');
+            tableBody.innerHTML = '';
 
-        data.forEach(item => {
-            const row = `
-                <tr>
-                    <td class="text-center">${item.no}</td>
-                    <td class="text-center">${item.nim}</td>
-                    <td class="text-center">${item.nama}</td>
-                    <td class="text-center">${item.jenis_bimbingan}</td>
-                    <td class="text-center">${item.tanggal}</td>
-                    <td class="text-center">${item.waktu}</td>
-                    <td class="text-center">${item.status}</td>
-                    <td class="text-center">
-                        <a href="/aksiInformasi" class="badge btn btn-info p-1 mb-1">
-                            <i class="fas fa-info-circle"></i>
-                        </a>
-                    </td>
-                </tr>
-            `;
-            tableBody.innerHTML += row;
-        });
-    })
-    .catch(error => console.error('Error:', error));
+            data.forEach(item => {
+                let statusClass = '';
+                let statusText = item.status.toUpperCase();
+                
+                if (statusText === 'DISETUJUI') {
+                    statusClass = 'bg-info';
+                } else if (statusText === 'DITOLAK') {
+                    statusClass = 'bg-danger';
+                } else if (statusText === 'USULAN') {
+                    statusClass = 'bg-warning';
+                }
+                
+                const row = `
+                    <tr>
+                        <td class="text-center">${item.no}</td>
+                        <td class="text-center">${item.nim}</td>
+                        <td class="text-center">${item.nama}</td>
+                        <td class="text-center">${item.jenis_bimbingan}</td>
+                        <td class="text-center">${item.tanggal}</td>
+                        <td class="text-center">${item.waktu}</td>
+                        <td class="text-center ${statusClass}">${statusText}</td>
+                        <td class="text-center">
+                            <a href="#" class="badge btn btn-info p-1 mb-1">
+                                <i class="fas fa-info-circle"></i>
+                            </a>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        })
+        .catch(error => console.error('Error:', error));
+    });
     </script>
 </body>
 </html>
