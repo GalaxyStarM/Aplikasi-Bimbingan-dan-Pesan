@@ -26,28 +26,32 @@ Route::get('/', function () {
   return view('bimbingan.usulanbimbingan');
 });
 
-route::get('/aksiInformasi', function(){
+Route::get('/aksiInformasi', function(){
   return view('aksiInformasi');
 });
 
-route::get('/pilihjadwal', function(){
+Route::get('/pilihjadwal', function(){
   return view('bimbingan.pilihjadwal');
 });
 
-route::get('/terimausulanbimbingan', function(){
+Route::get('/terimausulanbimbingan', function(){
   return view('dosen.terimausulanbimbingan');
 });
 
-route::get('/editusulan', function(){
+Route::get('/editusulan', function(){
   return view('dosen.editusulan');
 });
 
-route::get('/masukkanjadwal', function(){
+Route::get('/masukkanjadwal', function(){
   return view('dosen.masukkanjadwal');
 });
 
-route::get('/persetujuan', function(){
+Route::get('/persetujuan', function(){
   return view('dosen.persetujuan');
+});
+
+Route::get('/dashboard', function(){
+  return view('bimbinganc.usulanbimbingan');
 });
 
 // Route ke halaman login dengan AuthController
