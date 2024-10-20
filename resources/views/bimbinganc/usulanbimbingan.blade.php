@@ -49,6 +49,9 @@
             50% { transform: translate(-20px, 20px) scale(0.9); }
             75% { transform: translate(50px, 50px) scale(1.05); }
         }
+        .navbar{
+            box-shadow: 0px 0px 10px 1px #afafaf
+        }
         .navbar-brand {
             font-family: "Viga", sans-serif;
             font-weight: 600;
@@ -118,7 +121,7 @@
     </div>
 
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
         <div class="container">
             <a class="navbar-brand me-4" href="/dashboard">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="SITEI Logo" width="30" height="30" class="d-inline-block align-text-top me-2">
@@ -133,12 +136,12 @@
                         <a class="nav-link active" style="font-weight: bold;" href="/dashboard">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" style="font-weight: bold;" href="#">PESAN</a>
+                        <a class="nav-link" style="font-weight: bold;" href="/dashboardpesan">PESAN</a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center">
                     <div class="dropdown">
-                        <button class="btn text-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn text-dark dropdown-toggle" style="font-weight: bold;" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                             AKUN
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
