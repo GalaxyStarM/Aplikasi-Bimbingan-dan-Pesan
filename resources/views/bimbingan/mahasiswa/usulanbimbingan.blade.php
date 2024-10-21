@@ -92,9 +92,16 @@
             z-index: 1; 
             cursor: pointer; 
         }
+        .btn-gradient a {
+            color: white;
+            text-decoration: none;
+        }
         .btn-gradient:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-gradient:hover a{
+            color: black;
         }
         .footer {
             background-color: #343a40;
@@ -159,8 +166,10 @@
     <div class="container mt-5">
         <h1 class="mb-2 gradient-text fw-bold">Usulan Bimbingan</h1>
         <hr></hr>
-        <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center" onclick="window.location.href='{{ route('pilihjadwal') }}'">
-            <i class="bi bi-plus-lg me-2"></i> Pilih Jadwal Bimbingan
+        <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
+            <a href="/pilihjadwal">
+                <i class="bi bi-plus-lg me-2"></i> Pilih Jadwal Bimbingan
+            </a>
         </button>
     
         <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
@@ -333,7 +342,7 @@
                         <td class="text-center">${item.jenis_bimbingan}</td>
                         <td class="text-center">${item.tanggal}</td>
                         <td class="text-center">${item.waktu}</td>
-                        <td class="text-center ${statusClass}">${statusText}</td>
+                        <td class="text-center ${statusClass}" style="color: white;">${statusText}</td>
                         <td class="text-center">
                             <a href="#" class="badge btn btn-info p-1 mb-1">
                                 <i class="fas fa-info-circle"></i>
