@@ -21,7 +21,6 @@ Route::get('/dashboardpesan', function () {
     return view('pesan.dasboarpesan');
 });
 
-// Route ke halaman bimbingan usulan
 Route::get('/', function () {
   return view('bimbingan.usulanbimbingan');
 });
