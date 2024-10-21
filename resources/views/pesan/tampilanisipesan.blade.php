@@ -33,13 +33,13 @@
         .footer {
             background-color: #343a40;
             color: #fff;
-            padding: 10px 0;
-            position: fixed;
+            padding: 12px 0;
+            position: relative;
             bottom: 0;
             width: 100%;
         }
         .main-content {
-            padding: 20px 0 80px 0;
+            padding: 20px 0 0 0;
         }
         .btn-kembali {
             background-color: #28a745;
@@ -464,7 +464,7 @@
         </div>
     </div>
 
-    <footer class="footer">
+    <footer class="footer mt-5">
         <div class="container text-center">
             <p class="mb-0">
                 Dikembangkan oleh Mahasiswa Prodi Teknik Informatika UNRI 
