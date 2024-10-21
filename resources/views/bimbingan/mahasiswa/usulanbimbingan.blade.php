@@ -61,6 +61,7 @@
             position: relative;
             color: #4b5563;
             transition: color 0.3s ease;
+            font-weight: bold;
         }
         .nav-link:hover, .nav-link.active {
             color: #059669;
@@ -225,7 +226,7 @@
 
                     <!--Daftar Jadwal-->
                     <div class="tab-pane fade" id="jadwal" role="tabpanel" aria-labelledby="jadwal-tab">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
                                 Tampilkan 
                                 <select class="form-select form-select-sm d-inline-block w-auto">
@@ -344,7 +345,7 @@
                         <td class="text-center">${item.waktu}</td>
                         <td class="text-center ${statusClass}" style="color: white;">${statusText}</td>
                         <td class="text-center">
-                            <a href="#" class="badge btn btn-info p-1 mb-1">
+                            <a href="/aksiInformasi" class="badge btn btn-info p-1 mb-1">
                                 <i class="fas fa-info-circle"></i>
                             </a>
                         </td>

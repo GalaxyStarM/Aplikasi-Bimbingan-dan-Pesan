@@ -64,6 +64,7 @@
             position: relative;
             color: #4b5563;
             transition: color 0.3s ease;
+            font-weight: bold;
         }
         .nav-link:hover, .nav-link.active {
             color: #059669;
@@ -180,13 +181,12 @@
     <!--Content-->
     <div class="container mt-5">
         <h1 class="mb-2 gradient-text fw-bold">Pilih Jadwal Bimbingan</h1>
-            <hr></hr>
-            <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
-                <a href="/">
-                    <i class="fas fa-arrow-left me-2"></i> Kembali
-                </a>
-            </button>
-
+        <hr></hr>
+        <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
+            <a href="/">
+                <i class="fas fa-arrow-left me-2"></i> Kembali
+            </a>
+        </button>
 
         <form>
             <div class="mb-3">
