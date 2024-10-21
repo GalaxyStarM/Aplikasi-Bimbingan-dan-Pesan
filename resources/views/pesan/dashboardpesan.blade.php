@@ -383,7 +383,7 @@
                                     </div>
                                 </a>
                                 </a>
-                                <a href="http://127.0.0.1:8000/tampilanisipesan" class="message-item-link">
+                                <a href="http://127.0.0.1:8000/isipesan" class="message-item-link">
                                     <div class="message-item" data-priority="sedang">
                                         <img src="https://via.placeholder.com/40" alt="Avatar" class="avatar">
                                         <div class="message-content">
