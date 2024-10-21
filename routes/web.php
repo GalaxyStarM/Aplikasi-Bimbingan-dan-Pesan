@@ -25,6 +25,10 @@ Route::get('/', function () {
   return view('bimbingan.mahasiswa.usulanbimbingan');
 });
 
+Route::get('/isipesandosen', function () {
+  return view('pesan.dosen.isipesandosen');
+});
+
 Route::get('/aksiInformasi', function(){
   return view('bimbingan.aksiInformasi');
 });
