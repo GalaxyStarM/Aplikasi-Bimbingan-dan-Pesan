@@ -8,49 +8,45 @@ Route::get('/login', function () {
   return redirect('/login');
 });
 
-Route::get('/isipesan', function () {
-    return view('pesan.isipesan');
+Route::get('/buatpesan', function () {
+    return view('pesan.mahasiswa.buatpesan');
 });
 
-Route::get('/tampilanisipesan', function () {
-    return view('pesan.tampilanisipesan');
+Route::get('/isipesan', function () {
+    return view('pesan.mahasiswa.isipesan');
 });
 
 // Route ke dashboard pesan (dasboarpesan.blade.php)
 Route::get('/dashboardpesan', function () {
-    return view('pesan.dasboarpesan');
+    return view('pesan.dosen.dashboardpesan');
 });
 
 Route::get('/', function () {
-  return view('bimbingan.usulanbimbingan');
+  return view('bimbingan.mahasiswa.usulanbimbingan');
 });
 
 Route::get('/aksiInformasi', function(){
-  return view('aksiInformasi');
+  return view('bimbingan.aksiInformasi');
 });
 
 Route::get('/pilihjadwal', function(){
-  return view('bimbingan.pilihjadwal');
+  return view('bimbingan.mahasiswa.pilihjadwal');
 });
 
 Route::get('/terimausulanbimbingan', function(){
-  return view('dosen.terimausulanbimbingan');
+  return view('bimbingan.dosen.terimausulanbimbingan');
 });
 
 Route::get('/editusulan', function(){
-  return view('dosen.editusulan');
+  return view('bimbingan.dosen.editusulan');
 });
 
 Route::get('/masukkanjadwal', function(){
-  return view('dosen.masukkanjadwal');
+  return view('bimbingan.dosen.masukkanjadwal');
 });
 
 Route::get('/persetujuan', function(){
-  return view('dosen.persetujuan');
-});
-
-Route::get('/dashboard', function(){
-  return view('bimbinganc.usulanbimbingan');
+  return view('bimbingan.dosen.persetujuan');
 });
 
 // Route ke halaman login dengan AuthController
@@ -58,7 +54,4 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-//view halaman
-Route::get('/pilihjadwal', function () { return view('bimbingan.pilihjadwal');})->name('pilihjadwal');
-Route::get('/masukkanjadwal', function () { return view('dosen.masukkanjadwal');})->name('masukkanjadwal');
 
