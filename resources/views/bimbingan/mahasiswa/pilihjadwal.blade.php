@@ -144,7 +144,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
         <div class="container">
-            <a class="navbar-brand me-4" href="/dashboard">
+            <a class="navbar-brand me-4" href="/">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="SITEI Logo" width="30" height="30" class="d-inline-block align-text-top me-2">
                 SITEI
             </a>
@@ -154,7 +154,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" style="font-weight: bold;" href="/dashboard">BIMBINGAN</a>
+                        <a class="nav-link active" style="font-weight: bold;" href="/">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" style="font-weight: bold;" href="/dashboardpesan">PESAN</a>
@@ -182,7 +182,7 @@
         <h1 class="mb-2 gradient-text fw-bold">Pilih Jadwal Bimbingan</h1>
             <hr></hr>
             <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
-                <a href="/pilihjadwal">
+                <a href="/">
                     <i class="fas fa-arrow-left me-2"></i> Kembali
                 </a>
             </button>
