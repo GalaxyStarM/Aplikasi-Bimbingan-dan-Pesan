@@ -116,7 +116,7 @@
             </div>
             <hr>
 
-            <a href="#" class="btn btn-kembali mb-3">← Kembali</a>
+            <a href="#" class="btn btn-success mb-3">← Kembali</a>
 
             <form>
                 <div class="mb-3">
@@ -154,7 +154,7 @@
                 </div>
             
                 <div class="text-end">
-                    <button type="submit" class="btn btn-kirim">Kirim</button>
+                    <button type="submit" class="btn btn-success">Kirim</button>
                 </div>
             </form>            
         </div>
