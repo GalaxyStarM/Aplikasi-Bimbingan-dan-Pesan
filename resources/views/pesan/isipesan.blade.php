@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buat Pesan Baru</title>
-
-    <!-- Bootstrap 5.3.3 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Google Fonts (Open Sans dan Viga) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Viga&display=swap" rel="stylesheet">
 
     <style>
@@ -27,6 +25,7 @@
         }
         .nav-link {
             font-weight: 600;
+            color: #192f59;
         }
         .nav-link.active {
             color: #28a745 !important;
@@ -57,7 +56,8 @@
             font-weight: bold;
         }
         .btn-kembali:hover, .btn-kirim:hover {
-            background-color: 
+            background-color: #218838;
+            color: white;
         }
         .content-header h2 {
             font-size: 24px;
@@ -123,7 +123,9 @@
             </div>
             <hr>
 
-            <a href="/dashboardpesan" class="btn btn-kembali btn-success mb-3">← Kembali</a>
+            <a href="/dashboardpesan" class="btn btn-kembali mb-4">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
 
             <form>
                 <div class="mb-3">
