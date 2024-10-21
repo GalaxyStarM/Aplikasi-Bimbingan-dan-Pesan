@@ -247,8 +247,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                     <!--isi contoh-->
                                     <tr>
-                                        <td colspan="8" class="text-center text-muted fst-italic">Belum ada usulan Bimbingan</td>
+                                        <td class="text-center">1</td>
+                                        <td class="text-center">ED</td>
+                                        <td class="text-center">Data Bimbingan Edi Susilo, S.Pd., M.Kom., M.Eng.</td>
+                                        <td class="text-center">2</td>
+                                        <td class="text-center">
+                                            <a href="/detaildaftar" class="badge btn btn-info p-1 mb-1">
+                                                <i class="fas fa-info-circle"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -281,8 +290,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <!--isi contoh-->
                                     <tr>
-                                        <td colspan="8" class="text-center text-muted fst-italic">Belum ada usulan Bimbingan</td>
+                                        <td class="text-center">1</td>
+                                        <td class="text-center">2107110255</td>
+                                        <td class="text-center">Syahirah Tri Meilina</td>
+                                        <td class="text-center">Bimbingan Skripsi</td>
+                                        <td class="text-center">Senin, 30 September 2024</td>
+                                        <td class="text-center">13.30 - 16.00</td>
+                                        <td class="text-center">SELESAI</td>
+                                        <td class="text-center">
+                                            <a href="/aksiInformasi" class="badge btn btn-info p-1 mb-1">
+                                                <i class="fas fa-info-circle"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
