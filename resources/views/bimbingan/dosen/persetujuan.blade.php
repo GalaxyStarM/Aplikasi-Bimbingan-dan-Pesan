@@ -14,7 +14,7 @@
         rel="stylesheet">
 
     <style>
-        body{
+        body {
             font-family: "Open Sans", sans-serif;
             margin: 0;
             padding: 0;
@@ -24,19 +24,22 @@
             min-height: 100vh;
             position: relative;
         }
+
         .bg-gradient-bar {
             height: 3px;
             background: linear-gradient(to right, #4ade80, #3b82f6, #8b5cf6);
         }
+
         .blob-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; 
-            z-index: -1; 
+            pointer-events: none;
+            z-index: -1;
         }
+
         .blob {
             position: absolute;
             border-radius: 50%;
@@ -45,32 +48,75 @@
             animation: blob 7s infinite;
             pointer-events: none;
         }
-        .blob-1 { top: 0; left: 0; width: 300px; height: 300px; background-color: rgba(74, 222, 128, 0.1); }
-        .blob-2 { top: 50%; right: 0; width: 350px; height: 350px; background-color: rgba(251, 191, 36, 0.1); animation-delay: 2s;}
-        .blob-3 { bottom: 0; left: 50%; width: 350px; height: 350px; background-color: rgba(239, 68, 68, 0.1); animation-delay: 4s;}
+
+        .blob-1 {
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 300px;
+            background-color: rgba(74, 222, 128, 0.1);
+        }
+
+        .blob-2 {
+            top: 50%;
+            right: 0;
+            width: 350px;
+            height: 350px;
+            background-color: rgba(251, 191, 36, 0.1);
+            animation-delay: 2s;
+        }
+
+        .blob-3 {
+            bottom: 0;
+            left: 50%;
+            width: 350px;
+            height: 350px;
+            background-color: rgba(239, 68, 68, 0.1);
+            animation-delay: 4s;
+        }
+
         @keyframes blob {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(20px, -50px) scale(1.1); }
-            50% { transform: translate(-20px, 20px) scale(0.9); }
-            75% { transform: translate(50px, 50px) scale(1.05); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            25% {
+                transform: translate(20px, -50px) scale(1.1);
+            }
+
+            50% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+
+            75% {
+                transform: translate(50px, 50px) scale(1.05);
+            }
         }
-        .navbar{
-            box-shadow: 0px 0px 10px 1px #afafaf
+
+        .navbar {
+            box-shadow: 0px 0px 10px 1px #afafaf;
         }
+
         .navbar-brand {
             font-family: "Viga", sans-serif;
             font-weight: 600;
             font-size: 25px;
         }
+
         .nav-link {
             position: relative;
             color: #4b5563;
             transition: color 0.3s ease;
             font-weight: bold;
         }
-        .nav-link:hover, .nav-link.active {
+
+        .nav-link:hover,
+        .nav-link.active {
             color: #059669;
         }
+
         .nav-link::after {
             content: '';
             position: absolute;
@@ -81,34 +127,42 @@
             background-color: #059669;
             transition: width 0.3s ease;
         }
-        .nav-link:hover::after, .nav-link.active::after {
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
             width: 100%;
         }
+
         .gradient-text {
             background: linear-gradient(to right, #059669, #2563eb);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         .btn-gradient {
             background: linear-gradient(to right, #4ade80, #3b82f6);
             border: none;
             color: white;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative; 
-            z-index: 1; 
-            cursor: pointer; 
+            position: relative;
+            z-index: 1;
+            cursor: pointer;
         }
+
         .btn-gradient a {
             color: white;
             text-decoration: none;
         }
+
         .btn-gradient:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .btn-gradient:hover a{
+
+        .btn-gradient:hover a {
             color: black;
         }
+
         .footer {
             background-color: #343a40;
             color: #fff;
@@ -117,49 +171,13 @@
             bottom: 0;
             width: 100%;
         }
+
         .green-text {
             color: #28a745;
         }
+
         .container {
-            flex: 1; 
-        }
-
-        /* Tambahan style untuk action icons */
-        .action-icons {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-        }
-
-        .action-icon {
-            padding: 5px;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 28px;
-            height: 28px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.2s;
-        }
-
-        .action-icon:hover {
-            opacity: 0.8;
-        }
-
-        .info-icon {
-            background-color: #17a2b8;
-            color: white;
-        }
-
-        .approve-icon {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .reject-icon {
-            background-color: #dc3545;
-            color: white;
+            flex: 1;
         }
 
         .action-icons {
@@ -179,7 +197,6 @@
             justify-content: center;
             transition: opacity 0.2s;
             text-decoration: none;
-            /* Menghilangkan garis bawah pada link */
         }
 
         .action-icon:hover {
@@ -189,7 +206,6 @@
         .info-icon {
             background-color: #17a2b8;
             color: white !important;
-            /* Memastikan warna icon tetap putih */
         }
 
         .approve-icon {
@@ -199,7 +215,30 @@
 
         .reject-icon {
             background-color: #dc3545;
+            color: white !important;
+        }
+
+        .action-icon.edit-icon {
+            background-color: #F3B806;
+            color: #FFFFFF !important;
+            padding: 6px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-icon.edit-icon:hover {
+            background-color: #d69e05;
+        }
+
+        .modal-header {
+            background: linear-gradient(to right, #4ade80, #3b82f6);
             color: white;
+        }
+
+        .modal-title {
+            font-weight: bold;
         }
     </style>
 </head>
@@ -212,14 +251,15 @@
         <div class="blob blob-3"></div>
     </div>
 
-
     <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
         <div class="container">
             <a class="navbar-brand me-4" href="/">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="SITEI Logo" width="30" height="30" class="d-inline-block align-text-top me-2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="SITEI Logo"
+                    width="30" height="30" class="d-inline-block align-text-top me-2">
                 SITEI
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -233,13 +273,16 @@
                 </ul>
                 <div class="d-flex align-items-center">
                     <div class="dropdown">
-                        <button class="btn text-dark dropdown-toggle" style="font-weight: bold;" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn text-dark dropdown-toggle" style="font-weight: bold;" type="button"
+                            id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                             AKUN
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <li><a class="dropdown-item" href="#">Profil</a></li>
                             <li><a class="dropdown-item" href="#">Pengaturan</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item" href="/login">Keluar</a></li>
                         </ul>
                     </div>
@@ -248,43 +291,55 @@
         </div>
     </nav>
 
-    <!--Content-->
     <div class="container mt-5">
         <h1 class="mb-2 gradient-text fw-bold">Persetujuan Bimbingan</h1>
-        <hr></hr>
+        <hr>
         <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
             <a href="/masukkanjadwal">
                 <i class="bi bi-plus-lg me-2"></i> Masukkan Jadwal Bimbingan
             </a>
         </button>
+
         <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
             <div class="card-header bg-white p-0">
                 <ul class="nav nav-tabs" id="bimbinganTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active px-4 py-3" id="usulan-tab" data-bs-toggle="tab" data-bs-target="#usulan" type="button" role="tab" aria-controls="usulan" aria-selected="true">Usulan Bimbingan</button>
+                        <button class="nav-link active px-4 py-3" id="usulan-tab" data-bs-toggle="tab"
+                            data-bs-target="#usulan" type="button" role="tab" aria-controls="usulan"
+                            aria-selected="true">
+                            Usulan Bimbingan
+                        </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link px-4 py-3" id="jadwal-tab" data-bs-toggle="tab" data-bs-target="#jadwal" type="button" role="tab" aria-controls="jadwal" aria-selected="false">Daftar Jadwal</button>
+                        <button class="nav-link px-4 py-3" id="jadwal-tab" data-bs-toggle="tab" data-bs-target="#jadwal"
+                            type="button" role="tab" aria-controls="jadwal" aria-selected="false">
+                            Daftar Jadwal
+                        </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link px-4 py-3" id="riwayat-tab" data-bs-toggle="tab" data-bs-target="#riwayat" type="button" role="tab" aria-controls="riwayat" aria-selected="false">Riwayat</button>
+                        <button class="nav-link px-4 py-3" id="riwayat-tab" data-bs-toggle="tab"
+                            data-bs-target="#riwayat" type="button" role="tab" aria-controls="riwayat"
+                            aria-selected="false">
+                            Riwayat
+                        </button>
                     </li>
                 </ul>
             </div>
 
             <div class="card-body p-4">
                 <div class="tab-content" id="bimbinganTabContent">
-                    <!--Usulan-->
-                    <div class="tab-pane fade show active" id="usulan" role="tabpanel" aria-labelledby="usulan-tab">
+                    <div class="tab-pane fade show active" id="usulan" role="tabpanel"
+                        aria-labelledby="usulan-tab">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                Tampilkan 
+                                Tampilkan
                                 <select class="form-select form-select-sm d-inline-block w-auto">
                                     <option>50</option>
-                                </select> 
+                                </select>
                                 entri
                             </div>
                         </div>
+
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered">
                                 <thead>
@@ -302,6 +357,30 @@
                                 <tbody id="tabelUsulan">
                                     <tr>
                                         <td class="text-center">1</td>
+                                        <td class="text-center">2107112735</td>
+                                        <td class="text-center">Tri Murniati</td>
+                                        <td class="text-center">Bimbingan Kerja Praktek</td>
+                                        <td class="text-center">Senin, 4 Oktober 2024</td>
+                                        <td class="text-center">13.30 - 16.00</td>
+                                        <td class="text-center">USULAN</td>
+                                        <td class="text-center">
+                                            <div class="action-icons">
+                                                <a href="/terimausulanbimbingan" class="action-icon info-icon">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </a>
+                                                <a href="#" class="action-icon approve-icon"
+                                                    data-bs-toggle="modal" data-bs-target="#modalTerima">
+                                                    <i class="fas fa-check"></i>
+                                                </a>
+                                                <a href="#" class="action-icon reject-icon"
+                                                    data-bs-toggle="modal" data-bs-target="#modalTolak">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-center">2</td>
                                         <td class="text-center">2107110255</td>
                                         <td class="text-center">Syahirah Tri Meilina</td>
                                         <td class="text-center">Bimbingan Skripsi</td>
@@ -310,15 +389,90 @@
                                         <td class="text-center">USULAN</td>
                                         <td class="text-center">
                                             <div class="action-icons">
-                                                <a href="/terimausulanbimbingan" class="action-icon info-icon">
+                                                <a href="/terimausulanbimbingan" class="action-icon info-icon"
+                                                    title="Lihat Detail">
                                                     <i class="fas fa-info-circle"></i>
                                                 </a>
-                                                <a href="/" class="action-icon approve-icon">
+                                                <a href="#" class="action-icon approve-icon"
+                                                    data-bs-toggle="modal" data-bs-target="#modalTerima"
+                                                    title="Terima Usulan">
                                                     <i class="fas fa-check"></i>
                                                 </a>
-                                                <span class="action-icon reject-icon">
+                                                <a href="#" class="action-icon reject-icon"
+                                                    data-bs-toggle="modal" data-bs-target="#modalTolak"
+                                                    title="Tolak Usulan">
                                                     <i class="fas fa-times"></i>
-                                                </span>
+                                                </a>
+                                            </div>
+
+                                            <!-- Modal Templates -->
+                                            <div class="modal fade" id="modalTerima" tabindex="-1"
+                                                aria-labelledby="modalTerimaLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="modalTerimaLabel">Terima
+                                                                Usulan Bimbingan</h5>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Apakah Anda yakin ingin menerima usulan bimbingan ini?
+                                                            </p>
+                                                            <div class="usulan-detail mt-3">
+                                                                <p><strong>NIM:</strong> <span
+                                                                        class="nim-display"></span></p>
+                                                                <p><strong>Nama:</strong> <span
+                                                                        class="nama-display"></span></p>
+                                                                <p><strong>Jenis Bimbingan:</strong> <span
+                                                                        class="jenis-display"></span></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Batal</button>
+                                                            <button type="button" class="btn btn-success"
+                                                                id="confirmTerima" data-row-id="">Ya, Terima</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="modal fade" id="modalTolak" tabindex="-1"
+                                                aria-labelledby="modalTolakLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="modalTolakLabel">Tolak Usulan
+                                                                Bimbingan</h5>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="usulan-detail mb-3">
+                                                                <p><strong>NIM:</strong> <span
+                                                                        class="nim-display"></span></p>
+                                                                <p><strong>Nama:</strong> <span
+                                                                        class="nama-display"></span></p>
+                                                                <p><strong>Jenis Bimbingan:</strong> <span
+                                                                        class="jenis-display"></span></p>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="alasanPenolakan">Alasan Penolakan:</label>
+                                                                <textarea class="form-control" id="alasanPenolakan" rows="3" required
+                                                                    placeholder="Tuliskan alasan penolakan usulan bimbingan"></textarea>
+                                                                <div class="invalid-feedback">Silakan isi alasan
+                                                                    penolakan</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Batal</button>
+                                                            <button type="button" class="btn btn-danger"
+                                                                id="confirmTolak" data-row-id="">Ya, Tolak</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -326,15 +480,14 @@
                             </table>
                         </div>
                     </div>
-
                     <!--Daftar Jadwal-->
                     <div class="tab-pane fade" id="jadwal" role="tabpanel" aria-labelledby="jadwal-tab">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                Tampilkan 
+                                Tampilkan
                                 <select class="form-select form-select-sm d-inline-block w-auto">
                                     <option>50</option>
-                                </select> 
+                                </select>
                                 entri
                             </div>
                         </div>
@@ -350,8 +503,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <!--isi contoh-->
                                     <tr>
-                                        <td colspan="8" class="text-center text-muted fst-italic">Belum ada usulan Bimbingan</td>
+                                        <td class="text-center">1</td>
+                                        <td class="text-center">ED</td>
+                                        <td class="text-center">Edi Susilo, S.Pd., M.Kom., M.Eng.</td>
+                                        <td class="text-center">2</td>
+                                        <td class="text-center">
+                                            <a href="/detaildaftar" class="badge btn btn-info p-1 mb-1">
+                                                <i class="fas fa-info-circle"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -362,10 +524,10 @@
                     <div class="tab-pane fade" id="riwayat" role="tabpanel" aria-labelledby="riwayat-tab">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                Tampilkan 
+                                Tampilkan
                                 <select class="form-select form-select-sm d-inline-block w-auto">
                                     <option>50</option>
-                                </select> 
+                                </select>
                                 entri
                             </div>
                         </div>
@@ -384,8 +546,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <!--isi contoh-->
                                     <tr>
-                                        <td colspan="8" class="text-center text-muted fst-italic">Belum ada usulan Bimbingan</td>
+                                        <td class="text-center">1</td>
+                                        <td class="text-center">2107110255</td>
+                                        <td class="text-center">Syahirah Tri Meilina</td>
+                                        <td class="text-center">Bimbingan Skripsi</td>
+                                        <td class="text-center">Senin, 30 September 2024</td>
+                                        <td class="text-center">13.30 - 16.00</td>
+                                        <td class="text-center">SELESAI</td>
+                                        <td class="text-center">
+                                            <a href="/riwayatdosen" class="badge btn btn-info p-1 mb-1">
+                                                <i class="fas fa-info-circle"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -396,9 +570,11 @@
                         <p class="mb-2">Menampilkan 1 sampai 1 dari 1 entri</p>
                         <nav aria-label="Page navigation">
                             <ul class="pagination mb-0">
-                                <li class="page-item disabled"><a class="page-link" href="#">Sebelumnya</a></li>
+                                <li class="page-item disabled"><a class="page-link" href="#">Sebelumnya</a>
+                                </li>
                                 <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item disabled"><a class="page-link" href="#">Selanjutnya</a></li>
+                                <li class="page-item disabled"><a class="page-link" href="#">Selanjutnya</a>
+                                </li>
                             </ul>
                         </nav>
                     </div>
@@ -407,7 +583,6 @@
         </div>
     </div>
 
-    <!--Footer-->
     <footer class="footer mt-5">
         <div class="container text-center">
             <p class="mb-0">
@@ -417,9 +592,157 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS and Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-</body>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentRow = null;
+
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            function getRowData(row) {
+                return {
+                    nim: row.querySelector('td:nth-child(2)').textContent,
+                    nama: row.querySelector('td:nth-child(3)').textContent,
+                    jenisBimbingan: row.querySelector('td:nth-child(4)').textContent
+                };
+            }
+
+            function updateModal(modal, rowData) {
+                modal.querySelector('.nim-display').textContent = rowData.nim;
+                modal.querySelector('.nama-display').textContent = rowData.nama;
+                modal.querySelector('.jenis-display').textContent = rowData.jenisBimbingan;
+            }
+
+            // Improved modal cleanup function
+            function cleanupModal() {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    const modalInstance = bootstrap.Modal.getInstance(modal);
+                    if (modalInstance) {
+                        modalInstance.dispose();
+                    }
+                });
+
+                // Remove all modal backdrops
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => backdrop.remove());
+
+                // Clean up body
+                document.body.classList.remove('modal-open');
+                document.body.style.removeProperty('padding-right');
+                document.body.style.overflow = '';
+            }
+
+            document.querySelectorAll('.approve-icon, .reject-icon').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    currentRow = this.closest('tr');
+                    const rowData = getRowData(currentRow);
+                    const modalId = this.classList.contains('approve-icon') ? 'modalTerima' :
+                        'modalTolak';
+                    const modal = document.getElementById(modalId);
+                    updateModal(modal, rowData);
+
+                    const bsModal = new bootstrap.Modal(modal);
+                    bsModal.show();
+                });
+            });
+
+            function updateRowStatus(row, status) {
+                const statusCell = row.querySelector('td:nth-last-child(2)');
+                const actionIcons = row.querySelector('.action-icons');
+
+                statusCell.textContent = status;
+
+                if (status === 'DISETUJUI' || status === 'DITOLAK') {
+                    const approveIcon = actionIcons.querySelector('.approve-icon');
+                    const rejectIcon = actionIcons.querySelector('.reject-icon');
+                    if (approveIcon) approveIcon.remove();
+                    if (rejectIcon) rejectIcon.remove();
+
+                    if (status === 'DISETUJUI' && !actionIcons.querySelector('.edit-icon')) {
+                        const editIcon = document.createElement('a');
+                        editIcon.href = '/editusulan';
+                        editIcon.className = 'action-icon edit-icon';
+                        editIcon.setAttribute('data-bs-toggle', 'tooltip');
+                        editIcon.setAttribute('title', 'Edit Usulan');
+                        editIcon.innerHTML = '<i class="fas fa-pencil-alt"></i>';
+                        actionIcons.appendChild(editIcon);
+
+                        new bootstrap.Tooltip(editIcon);
+                    }
+                }
+            }
+
+            function showNotification(message, type) {
+                const notification = document.createElement('div');
+                notification.className =
+                    `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+                notification.style.zIndex = '1050';
+                notification.innerHTML =
+                    `${message} <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+
+            // Improved modal confirmation handlers
+            document.getElementById('confirmTerima').addEventListener('click', function() {
+                if (currentRow) {
+                    updateRowStatus(currentRow, 'DISETUJUI');
+                    const modal = document.getElementById('modalTerima');
+                    const bsModal = bootstrap.Modal.getInstance(modal);
+                    if (bsModal) {
+                        bsModal.hide();
+                        setTimeout(cleanupModal, 300); // Wait for modal animation
+                    }
+                    // showNotification('Usulan bimbingan telah disetujui', 'success');
+                }
+            });
+
+            document.getElementById('confirmTolak').addEventListener('click', function() {
+                const alasanInput = document.getElementById('alasanPenolakan');
+
+                if (!alasanInput.value.trim()) {
+                    alasanInput.classList.add('is-invalid');
+                    return;
+                }
+
+                if (currentRow) {
+                    updateRowStatus(currentRow, 'DITOLAK');
+                    const modal = document.getElementById('modalTolak');
+                    const bsModal = bootstrap.Modal.getInstance(modal);
+                    if (bsModal) {
+                        bsModal.hide();
+                        setTimeout(cleanupModal, 300); // Wait for modal animation
+                    }
+                    // showNotification('Usulan bimbingan telah ditolak', 'danger');
+                }
+
+                alasanInput.value = '';
+                alasanInput.classList.remove('is-invalid');
+            });
+
+            // Improved modal hidden event handlers
+            ['modalTerima', 'modalTolak'].forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                modal.addEventListener('hidden.bs.modal', function() {
+                    setTimeout(cleanupModal, 300);
+                    if (modalId === 'modalTolak') {
+                        const alasanInput = document.getElementById('alasanPenolakan');
+                        alasanInput.value = '';
+                        alasanInput.classList.remove('is-invalid');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
 </html>
