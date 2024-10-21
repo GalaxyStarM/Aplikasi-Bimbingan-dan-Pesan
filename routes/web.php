@@ -33,6 +33,10 @@ Route::get('/pilihjadwal', function(){
   return view('bimbingan.mahasiswa.pilihjadwal');
 })->name('pilihjadwal');
 
+Route::get('/detaildaftar', function(){
+  return view('bimbingan.mahasiswa.detaildaftar');
+})->name('pilihjadwal');
+
 Route::get('/terimausulanbimbingan', function(){
   return view('bimbingan.dosen.terimausulanbimbingan');
 });
