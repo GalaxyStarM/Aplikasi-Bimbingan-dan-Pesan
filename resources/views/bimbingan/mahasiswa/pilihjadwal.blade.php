@@ -45,20 +45,32 @@
             width: 100%;
         }
         .main-content {
-            padding: 80px 0 100px 0;
+            padding: 55px 0 100px 0;
         }
 
         .green-text {
             color: #28a745;
         }
+        .btn-kembali {
+            background-color: #28a745;
+            color: white;
+            font-size: 14px;
+            border-radius: 5px;
+            width: 100px;
+        }
+
         .btn-kembali, .btn-kirim {
             background-color: #28a745;
             color: white;
             font-weight: bold;
+            transition: all 0.3s ease;
         }
         .btn-kembali:hover, .btn-kirim:hover {
-            background-color: 
+            background-color: #218838;
+            color: white;
+            transform: translateY(-2px);
         }
+        
         .content-header h2 {
             font-size: 24px;
             font-weight: bold;
@@ -76,7 +88,14 @@
             color: #6c757d;
         }
         .mb-4 {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #acb5be;
+            padding-bottom: 10px;
             font-weight: 600;
+        }
+        .h4,
+        h4 {
+            font-size: 1.5rem;
         }
         
     </style>
@@ -94,10 +113,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">BIMBINGAN</a>
+                        <a class="nav-link active" href="/">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">PESAN</a>
+                        <a class="nav-link" href="/dashboardpesan">PESAN</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -107,7 +126,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#">Profil</a></li>
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
+                            <li><a class="dropdown-item" href="/login">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -121,9 +140,8 @@
             <div class="content-header">
                 <h4 class="mb-4">Pilih Jadwal Bimbingan</h4>
             </div>
-            <hr>
 
-            <a href="#" class="btn btn-kembali mb-4">
+            <a href="/" class="btn btn-kembali mb-4">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
 
