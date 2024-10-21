@@ -430,7 +430,7 @@
                             <div class="message-list">
                                 <a href="/tampilanpesan" class="message-item-link">
                                     <div class="message-item" data-priority="tinggi">
-                                        <img src="https://via.placeholder.com/40" alt="Avatar" class="avatar">
+                                        <img src="{{ asset('images/fotosasa.jpg') }}" alt="Avatar" class="avatar">
                                         <div class="message-content">
                                             <div class="message-header">
                                                 <div class="sender-info">
@@ -449,7 +449,7 @@
                                 </a>
                                 <a href="http://127.0.0.1:8000/isipesan" class="message-item-link">
                                     <div class="message-item" data-priority="sedang">
-                                        <img src="https://via.placeholder.com/40" alt="Avatar" class="avatar">
+                                        <img src="{{ asset('images/fotodesi.jpeg') }}" alt="Avatar" class="avatar">
                                         <div class="message-content">
                                             <div class="message-header">
                                                 <div class="sender-info">
@@ -467,7 +467,7 @@
                                 </a>
                                 <a href="/tampilanpesan" class="message-item-link">
                                     <div class="message-item" data-priority="rendah">
-                                        <img src="https://via.placeholder.com/40" alt="Avatar" class="avatar">
+                                        <img src="{{ asset('images/fotomurni.jpg') }}" alt="Avatar" class="avatar">
                                         <div class="message-content">
                                             <div class="message-header">
                                                 <div class="sender-info">
