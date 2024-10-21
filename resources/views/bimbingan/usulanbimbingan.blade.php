@@ -27,6 +27,7 @@
         }
         .nav-link {
             color: #192f59;
+            font-weight: bold;
         }
         .nav-link.active {
             color: #28a745 !important;
@@ -37,7 +38,7 @@
         }
         /* Konten */
         .content {
-            margin-top: 80px;
+            margin-top: 55px;
         }
         .card {
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
@@ -50,6 +51,8 @@
         .table-dark th {
             background-color: #343a40;
             border-color: #454d55;
+            text-align: center;
+            vertical-align: middle;
         }
         .green-text {
             color: #28a745;
@@ -74,7 +77,7 @@
             border-bottom: 3px solid #28a745;
         }
         .nav-tabs .nav-link:hover{
-            color: #36c482;
+            color: #218838;
         }
         .sub-title{
             font-weight: bold;
@@ -108,7 +111,7 @@
                         <a class="nav-link active" href="#">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">PESAN</a>
+                        <a class="nav-link" href="/dashboardpesan">PESAN</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -118,7 +121,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#">Profil</a></li>
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
+                            <li><a class="dropdown-item" href="/login">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -130,13 +133,13 @@
     <div class="content container">
         <h4 class="sub-title pt-2">Usulan Bimbingan</h4>
         <hr>
-        <button class="btn btn-success mb-4">+ Pilih Jadwal Bimbingan</button>
+        <button class="btn btn-success mb-4" onclick="window.location.href='{{ route('pilihjadwal') }}'">+ Pilih Jadwal Bimbingan</button>
 
         <div class="card">
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="usulan-tab" data-bs-toggle="tab" href="#usulan" role="tab">Usulan Bimbingan (0)</a>
+                        <a class="nav-link active" id="usulan-tab" data-bs-toggle="tab" href="#usulan" role="tab">Usulan Bimbingan (2)</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="jadwal-tab" data-bs-toggle="tab" href="#jadwal" role="tab">Daftar Jadwal (0)</a>
@@ -173,7 +176,7 @@
                                     <th>Aksi <i class="fas fa-sort"></i></th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="tabelUsulan">
                                 <tr>
                                     <td colspan="8" class="text-center">Belum ada usulan Bimbingan</td>
                                 </tr>
@@ -273,6 +276,36 @@
     <!-- Bootstrap JS and Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script>
+    // Mengambil data dari file JSON
+    fetch('/dataDummy.json')
+    .then(response => response.json())
+    .then(data => {
+        const tableBody = document.getElementById('tabelUsulan');
+        tableBody.innerHTML = ''; // Menghapus baris default
+
+        data.forEach(item => {
+            const row = `
+                <tr>
+                    <td class="text-center">${item.no}</td>
+                    <td class="text-center">${item.nim}</td>
+                    <td class="text-center">${item.nama}</td>
+                    <td class="text-center">${item.jenis_bimbingan}</td>
+                    <td class="text-center">${item.tanggal}</td>
+                    <td class="text-center">${item.waktu}</td>
+                    <td class="text-center">${item.status}</td>
+                    <td class="text-center">
+                        <a href="/aksiInformasi" class="badge btn btn-info p-1 mb-1">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    })
+    .catch(error => console.error('Error:', error));
+    </script>
 </body>
 </html>
 

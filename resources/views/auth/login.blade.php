@@ -249,13 +249,13 @@
                     <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="{{ asset('images/slidejte.jpg') }}" class="d-block" alt="">
+                                <img src="{{ asset('images/1.png') }}" class="d-block" alt="">
                             </div>
                             <div class="carousel-item">
-                                <img src="{{ asset('images/slidejte.jpg') }}" class="d-block" alt="">
+                                <img src="{{ asset('images/2.png') }}" class="d-block" alt="">
                             </div>
                             <div class="carousel-item">
-                                <img src="{{ asset('images/slidejte.jpg') }}" class="d-block" alt="">
+                                <img src="{{ asset('images/3.png') }}" class="d-block" alt="">
                             </div>
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
@@ -309,8 +309,12 @@
                                         </span>
                                     </div>
                                 </div>
+                                {{-- <button class="w-100 btn btn-lg btn-success btn-login mt-4 rounded-1"
+                                    type="submit">Masuk</button> --}}
                                 <button class="w-100 btn btn-lg btn-success btn-login mt-4 rounded-1"
-                                    type="submit">Masuk</button>
+                                    onclick="window.location.href='/dashboard'">Masuk</button>
+                            
+                            
                             </form>
                             <small class="d-block text-center mt-3" style="font-size: 13px ">
                                 Belum Punya Akun atau Lupa Password? <br> (Hubungi Admin Prodi)
