@@ -49,11 +49,6 @@
         .green-text {
             color: #28a745;
         }
-        .btn-kembali, .btn-kirim {
-            background-color: #28a745;
-            color: white;
-            font-weight: bold;
-        }
         .content-header h2 {
             font-size: 24px;
             font-weight: bold;
