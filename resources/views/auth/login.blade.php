@@ -114,7 +114,6 @@
                             </div>
                         </div>
 
-                        <!-- [Rest of the login form remains exactly the same] -->
                         <div class="col-lg-4">
                             <div class="card-body p-4">
                                 <!-- [Previous form content remains exactly the same] -->
