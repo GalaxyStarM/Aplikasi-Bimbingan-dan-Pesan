@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tampilan Pesan Bimbingan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Viga&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Viga&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         body{
@@ -60,7 +60,6 @@
             position: relative;
             color: #4b5563;
             transition: color 0.3s ease;
-            font-weight: bold;
         }
         .nav-link:hover, .nav-link.active {
             color: #059669;
@@ -376,7 +375,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
         <div class="container">
-            <a class="navbar-brand me-4" href="/dashboard">
+            <a class="navbar-brand me-4" href="/">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="SITEI Logo" width="30" height="30" class="d-inline-block align-text-top me-2">
                 SITEI
             </a>
@@ -420,7 +419,7 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="student-card">
-                    <img src="https://i.pravatar.cc/300" alt="Foto Mahasiswa" class="student-photo mx-auto d-block">
+                    <img src="{{ asset('images/fotodesi.jpeg') }}" alt="Foto Mahasiswa" class="student-photo mx-auto d-block">
                     <div class="student-info">
                         <h3 class="student-name">Desi Maya Sari</h3>
                         <p class="student-id">2107110665</p>
@@ -431,6 +430,10 @@
                         <tr>
                             <th>Subjek</th>
                             <td>Bimbingan KRS</td>
+                        </tr>
+                        <tr>
+                            <th>Tujuan</th>
+                            <td>Edi Susilo, S.Pd., M.Kom., M.Eng.</td>
                         </tr>
                         <tr>
                             <th>Prioritas</th>
@@ -445,7 +448,6 @@
                             <td class="status-ended">Pesan telah berakhir</td>
                         </tr>
                     </table>
-                    <button class="btn btn-primary btn-action"><i class="fas fa-user"></i> Lihat Profil</button>
                     <button class="btn btn-danger btn-action" id="endChatBtn"><i class="fas fa-times-circle"></i> Akhiri Pesan</button>
                 </div>
             </div>
@@ -461,10 +463,10 @@
                                 </div>
                             </div>
                             <div class="message-body">
-                                <p>Assalamualaikum ibu,</p>
+                                <p>Assalamualaikum Pak,</p>
                                 <p>Selamat sore.</p>
-                                <p>Saya Desi Maya Sari dari Prodi Teknik Informatika ingin melakukan bimbingan KRS. Karena itu, apakah ibu ada di kampus?</p>
-                                <p>Terima kasih, bu.</p>
+                                <p>Saya Desi Maya Sari dari Prodi Teknik Informatika ingin melakukan bimbingan KRS. Karena itu, apakah Bapak ada di kampus?</p>
+                                <p>Terima kasih, Pak.</p>
                                 <p>Wassalamualaikum.</p>
                             </div>
                             <div class="attachment">
@@ -472,22 +474,19 @@
                                 <a href="#" target="_blank"><i class="fas fa-file-pdf"></i> KHS_Desi_Maya_Sari.pdf</a>
                             </div>
                         </div>
-    
                         <div class="message-card teacher">
                             <div class="message-header">
-                                <span class="name teacher"><i class="fas fa-user-tie"></i> Dr. Ibu Dosen</span>
+                                <span class="name teacher"><i class="fas fa-user-tie"></i> Edi Susilo, S.Pd., M.Kom., M.Eng.</span>
                                 <div>
                                     <small class="text-muted"><i class="far fa-clock"></i> 16:45, 26 September 2024</small>
                                 </div>
                             </div>
                             <div class="message-body">
-                                <p>Waalaikumsalam Desi,</p>
-                                <p>Terima kasih atas pesannya. Saya akan ada di kampus besok dari pukul 10.00 sampai 15.00. Silakan datang ke ruangan saya untuk bimbingan KRS.</p>
+                                <p>Waalaikumsalam</p>
+                                <p>Saya ada di kampus besok dari pukul 10.00 sampai 15.00. Silakan datang ke ruangan saya untuk bimbingan KRS.</p>
                                 <p>Jangan lupa untuk membawa dokumen yang diperlukan.</p>
-                                <p>Wassalamualaikum.</p>
                             </div>
                         </div>
-    
                         <div class="message-card student">
                             <div class="message-header">
                                 <span class="name student"><i class="fas fa-user-circle"></i> Desi Maya Sari</span>
@@ -496,9 +495,7 @@
                                 </div>
                             </div>
                             <div class="message-body">
-                                <p>Waalaikumsalam ibu,</p>
-                                <p>Terima kasih atas informasinya. Saya akan datang besok pukul 11.00 ke ruangan ibu.</p>
-                                <p>Wassalamualaikum.</p>
+                                <p>Baik Pak, Terima kasih atas informasinya.</p>
                             </div>
                         </div>
                     </div>
