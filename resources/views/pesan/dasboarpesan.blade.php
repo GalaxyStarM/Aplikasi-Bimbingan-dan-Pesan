@@ -302,7 +302,6 @@
     <!-- Konten Utama -->
     <div class="main-content">
         <div class="container">
-            <h1 class="mb-4 text-center">Dashboard Pesan</h1>
             
             <!-- Ringkasan Dashboard -->
             <div class="dashboard-summary row">
