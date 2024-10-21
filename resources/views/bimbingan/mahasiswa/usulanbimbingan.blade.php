@@ -251,7 +251,7 @@
                                     <tr>
                                         <td class="text-center">1</td>
                                         <td class="text-center">ED</td>
-                                        <td class="text-center">Data Bimbingan Edi Susilo, S.Pd., M.Kom., M.Eng.</td>
+                                        <td class="text-center">Edi Susilo, S.Pd., M.Kom., M.Eng.</td>
                                         <td class="text-center">2</td>
                                         <td class="text-center">
                                             <a href="/detaildaftar" class="badge btn btn-info p-1 mb-1">
