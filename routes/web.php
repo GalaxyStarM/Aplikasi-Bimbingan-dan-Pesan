@@ -18,7 +18,7 @@ Route::get('/isipesan', function () {
 
 // Route ke dashboard pesan (dasboarpesan.blade.php)
 Route::get('/dashboardpesan', function () {
-    return view('pesan.dosen.dashboardpesan');
+    return view('pesan.dashboardpesan');
 });
 
 Route::get('/', function () {
