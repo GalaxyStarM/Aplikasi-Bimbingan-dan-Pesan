@@ -17,52 +17,114 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        body {
-            font-family: 'Open Sans', sans-serif;
-            background-color: #f4f6f9;
+        body{
+            font-family: "Open Sans", sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
         }
-
-        .navbar {
-            background-color: #fff;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+        .bg-gradient-bar {
+            height: 3px;
+            background: linear-gradient(to right, #4ade80, #3b82f6, #8b5cf6);
         }
-
+        .blob-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; 
+            z-index: -1; 
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            mix-blend-mode: multiply;
+            animation: blob 7s infinite;
+            pointer-events: none;
+        }
+        .blob-1 { top: 0; left: 0; width: 300px; height: 300px; background-color: rgba(74, 222, 128, 0.1); }
+        .blob-2 { top: 50%; right: 0; width: 350px; height: 350px; background-color: rgba(251, 191, 36, 0.1); animation-delay: 2s;}
+        .blob-3 { bottom: 0; left: 50%; width: 350px; height: 350px; background-color: rgba(239, 68, 68, 0.1); animation-delay: 4s;}
+        @keyframes blob {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(20px, -50px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.9); }
+            75% { transform: translate(50px, 50px) scale(1.05); }
+        }
+        .navbar{
+            box-shadow: 0px 0px 10px 1px #afafaf
+        }
         .navbar-brand {
             font-family: "Viga", sans-serif;
             font-weight: 600;
             font-size: 25px;
         }
-
         .nav-link {
-            font-weight: 600;
-        }
-
-        .nav-link.active {
-            color: #28a745 !important;
+            position: relative;
+            color: #4b5563;
+            transition: color 0.3s ease;
             font-weight: bold;
         }
-
-        .nav-link:hover {
-            color: #36c482;
+        .nav-link:hover, .nav-link.active {
+            color: #059669;
         }
-
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #059669;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #059669, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-gradient {
+            background: linear-gradient(to right, #4ade80, #3b82f6);
+            border: none;
+            color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative; 
+            z-index: 1; 
+            cursor: pointer; 
+        }
+        .btn-gradient a {
+            color: white;
+            text-decoration: none;
+        }
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-gradient:hover a{
+            color: black;
+        }
         .footer {
             background-color: #343a40;
             color: #fff;
-            padding: 10px 0;
-            position: fixed; /* Menggunakan fixed agar footer tetap di bawah */
-            bottom: 0; /* Menempel di bawah */
-            left: 0;
-            width: 100%; /* Memastikan lebar footer 100% */
-            z-index: 1000; /* Mengatur z-index agar footer di atas konten */
+            padding: 12px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
         }
-
-        .main-content {
-            padding: 80px 0 100px 0;
-        }
-
         .green-text {
             color: #28a745;
+        }
+        .container {
+            flex: 1; 
         }
         .message-header {
             display: flex;
@@ -260,85 +322,87 @@
     </style>
 </head>
 
-<body>
+<body class="bg-light">
+    <div class="bg-gradient-bar"></div>
+    <div class="blob-container">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="/">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI"
-                    width="40" height="40" class="d-inline-block align-top me-2">
+            <a class="navbar-brand me-4" href="/dashboard">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="SITEI Logo" width="30" height="30" class="d-inline-block align-text-top me-2">
                 SITEI
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">BIMBINGAN</a>
+                        <a class="nav-link" style="font-weight: bold;" href="/dashboard">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/dashboardpesan">PESAN</a>
+                        <a class="nav-link active" style="font-weight: bold;" href="/dashboardpesan">PESAN</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <button class="btn text-dark dropdown-toggle" style="font-weight: bold;" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                             AKUN
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <li><a class="dropdown-item" href="#">Profil</a></li>
+                            <li><a class="dropdown-item" href="#">Pengaturan</a></li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="/login">Keluar</a></li>
                         </ul>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
 
     <!-- Konten Utama -->
-    <div class="main-content">
-        <div class="container">
-            
-            <!-- Ringkasan Dashboard -->
-            <div class="dashboard-summary row">
-                <div class="col-md-4 col-sm-6 summary-item">
-                    <i class="bi bi-envelope summary-icon"></i>
-                    <h3 class="summary-title">Total Pesan</h3>
-                    <p class="summary-value">25</p>
-                </div>
-                <div class="col-md-4 col-sm-6 summary-item">
-                    <i class="bi bi-envelope-open summary-icon"></i>
-                    <h3 class="summary-title">Pesan Terbaca</h3>
-                    <p class="summary-value">18</p>
-                </div>
-                <div class="col-md-4 col-sm-6 summary-item">
-                    <i class="bi bi-envelope-exclamation summary-icon"></i>
-                    <h3 class="summary-title">Pesan Belum Dibaca</h3>
-                    <p class="summary-value">7</p>
-                </div>
+    <div class="container mt-5">        
+        <!-- Ringkasan Dashboard -->
+        <div class="dashboard-summary row">
+            <div class="col-md-4 col-sm-6 summary-item">
+                <i class="bi bi-envelope summary-icon"></i>
+                <h3 class="summary-title">Total Pesan</h3>
+                <p class="summary-value">25</p>
             </div>
+            <div class="col-md-4 col-sm-6 summary-item">
+                <i class="bi bi-envelope-open summary-icon"></i>
+                <h3 class="summary-title">Pesan Terbaca</h3>
+                <p class="summary-value">18</p>
+            </div>
+            <div class="col-md-4 col-sm-6 summary-item">
+                <i class="bi bi-envelope-exclamation summary-icon"></i>
+                <h3 class="summary-title">Pesan Belum Dibaca</h3>
+                <p class="summary-value">7</p>
+            </div>
+        </div>
 
-            <div class="row">
-                <!-- Sidebar -->
-                <div class="col-md-3 mb-4">
-                    <div class="sidebar">
-                        <button class="btn btn-buat-pesan w-100 mb-3" onclick="window.location.href='http://127.0.0.1:8000/isipesan';">
-                            <i class="bi bi-plus-circle"></i> Buat Pesan Baru
-                        </button>                        
-                        <div class="nav flex-column nav-pill" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                            <button class="btn nav-link" id="v-pills-active-tab" data-bs-toggle="pill" data-bs-target="#v-pills-active" type="button" role="tab">
-                                Pesan Aktif <span class="message-count">3</span>
-                            </button>
-                            <button class="btn nav-link" id="v-pills-history-tab" data-bs-toggle="pill" data-bs-target="#v-pills-history" type="button" role="tab">
-                                Riwayat Pesan <span class="message-count">5</span>
-                            </button>
-                        </div>
+        <div class="row">
+        <!-- Sidebar -->
+            <div class="col-md-3 mb-4">
+                <div class="sidebar">
+                    <button class="btn btn-buat-pesan w-100 mb-3" onclick="window.location.href='http://127.0.0.1:8000/buatpesan';">
+                        <i class="bi bi-plus-circle"></i> Buat Pesan Baru
+                    </button>                        
+                    <div class="nav flex-column nav-pill" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        <button class="btn nav-link" id="v-pills-active-tab" data-bs-toggle="pill" data-bs-target="#v-pills-active" type="button" role="tab">
+                            Pesan Aktif <span class="message-count">3</span>
+                        </button>
+                        <button class="btn nav-link" id="v-pills-history-tab" data-bs-toggle="pill" data-bs-target="#v-pills-history" type="button" role="tab">
+                            Riwayat Pesan <span class="message-count">5</span>
+                        </button>
                     </div>
                 </div>
+            </div>
 
                <!-- Main Content -->
                <div class="col-md-9">
@@ -428,7 +492,6 @@
                 </div>
             </div>
         </div>
-    </div>
 </div>
 
 <!-- Footer -->

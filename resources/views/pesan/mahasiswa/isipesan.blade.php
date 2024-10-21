@@ -5,30 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tampilan Pesan Bimbingan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Viga&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Viga&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f0f2f5;
-            padding-top: 56px;
+        body{
+            font-family: "Open Sans", sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
         }
-        .navbar {
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        .bg-gradient-bar {
+            height: 3px;
+            background: linear-gradient(to right, #4ade80, #3b82f6, #8b5cf6);
+        }
+        .blob-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; 
+            z-index: -1; 
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            mix-blend-mode: multiply;
+            animation: blob 7s infinite;
+            pointer-events: none;
+        }
+        .blob-1 { top: 0; left: 0; width: 300px; height: 300px; background-color: rgba(74, 222, 128, 0.1); }
+        .blob-2 { top: 50%; right: 0; width: 350px; height: 350px; background-color: rgba(251, 191, 36, 0.1); animation-delay: 2s;}
+        .blob-3 { bottom: 0; left: 50%; width: 350px; height: 350px; background-color: rgba(239, 68, 68, 0.1); animation-delay: 4s;}
+        @keyframes blob {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(20px, -50px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.9); }
+            75% { transform: translate(50px, 50px) scale(1.05); }
+        }
+        .navbar{
+            box-shadow: 0px 0px 10px 1px #afafaf
         }
         .navbar-brand {
             font-family: "Viga", sans-serif;
             font-weight: 600;
             font-size: 25px;
-            color: #000000;
         }
         .nav-link {
-            font-weight: 600;
-            color: #333;
+            position: relative;
+            color: #4b5563;
+            transition: color 0.3s ease;
+            font-weight: bold;
         }
-        .nav-link.active {
-            color: #28a745 !important;
+        .nav-link:hover, .nav-link.active {
+            color: #059669;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #059669;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #059669, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-gradient {
+            background: linear-gradient(to right, #4ade80, #3b82f6);
+            border: none;
+            color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative; 
+            z-index: 1; 
+            cursor: pointer; 
+        }
+        .btn-gradient a {
+            color: white;
+            text-decoration: none;
+        }
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-gradient:hover a{
+            color: black;
         }
         .footer {
             background-color: #343a40;
@@ -38,20 +111,11 @@
             bottom: 0;
             width: 100%;
         }
-        .main-content {
-            padding: 20px 0 0 0;
+        .green-text {
+            color: #28a745;
         }
-        .btn-kembali {
-            background-color: #28a745;
-            color: white;
-            font-weight: bold;
-            border: none;
-            transition: all 0.3s ease;
-        }
-        .btn-kembali:hover {
-            background-color: #218838;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0,0,0,.1);
+        .container {
+            flex: 1; 
         }
         .message-card {
             background-color: white;
@@ -302,11 +366,18 @@
         }
     </style>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+<body class="bg-light">
+    <div class="bg-gradient-bar"></div>
+    <div class="blob-container">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="/">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI" width="40" height="40" class="d-inline-block align-top me-2">
+            <a class="navbar-brand me-4" href="/dashboard">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="SITEI Logo" width="30" height="30" class="d-inline-block align-text-top me-2">
                 SITEI
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -315,151 +386,150 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">BIMBINGAN</a>
+                        <a class="nav-link" style="font-weight: bold;" href="/dashboard">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/dashboardpesan">PESAN</a>
+                        <a class="nav-link active" style="font-weight: bold;" href="/dashboardpesan">PESAN</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <button class="btn text-dark dropdown-toggle" style="font-weight: bold;" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                             AKUN
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <li><a class="dropdown-item" href="#">Profil</a></li>
-                            <li><a class="dropdown-item" href="/login">Logout</a></li>
+                            <li><a class="dropdown-item" href="#">Pengaturan</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/login">Keluar</a></li>
                         </ul>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="main-content">
-        <div class="container">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2 class="d-inline-block me-3">Pesan Bimbingan</h2>
-                    <hr></hr>
-                    <div class="mt-3">
-                        <a href="/dashboardpesan" class="btn btn-kembali"><i class="fas fa-arrow-left"></i> Kembali</a>
+    <div class="container mt-5">
+        <h1 class="mb-2 gradient-text fw-bold">Pesan Bimbingan</h1>
+        <hr></hr>
+        <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
+            <a href="/dashboardpesan">
+                <i class="fas fa-arrow-left me-2"></i> Kembali
+            </a>
+        </button>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="student-card">
+                    <img src="https://i.pravatar.cc/300" alt="Foto Mahasiswa" class="student-photo mx-auto d-block">
+                    <div class="student-info">
+                        <h3 class="student-name">Desi Maya Sari</h3>
+                        <p class="student-id">2107110665</p>
+                        <p><i class="fas fa-graduation-cap"></i> Teknik Informatika</p>
+                        <p><i class="fas fa-calendar-alt"></i> Semester 5</p>
+                    </div>
+                    <table class="info-table">
+                        <tr>
+                            <th>Subjek</th>
+                            <td>Bimbingan KRS</td>
+                        </tr>
+                        <tr>
+                            <th>Prioritas</th>
+                            <td><span class="priority-badge priority-high">Prioritas Tinggi</span></td>
+                        </tr>
+                        <tr>
+                            <th>Dikirim</th>
+                            <td>15:30, 26 September 2024</td>
+                        </tr>
+                        <tr id="statusRow" style="display: none;">
+                            <th>Status</th>
+                            <td class="status-ended">Pesan telah berakhir</td>
+                        </tr>
+                    </table>
+                    <button class="btn btn-primary btn-action"><i class="fas fa-user"></i> Lihat Profil</button>
+                    <button class="btn btn-danger btn-action" id="endChatBtn"><i class="fas fa-times-circle"></i> Akhiri Pesan</button>
+                </div>
+            </div>
+                
+            <div class="col-md-8">
+                <div class="chat-wrapper">
+                    <div class="chat-container">
+                        <div class="message-card student">
+                            <div class="message-header">
+                                <span class="name student"><i class="fas fa-user-circle"></i> Desi Maya Sari</span>
+                                <div>
+                                    <small class="text-muted"><i class="far fa-clock"></i> 15:30, 26 September 2024</small>
+                                </div>
+                            </div>
+                            <div class="message-body">
+                                <p>Assalamualaikum ibu,</p>
+                                <p>Selamat sore.</p>
+                                <p>Saya Desi Maya Sari dari Prodi Teknik Informatika ingin melakukan bimbingan KRS. Karena itu, apakah ibu ada di kampus?</p>
+                                <p>Terima kasih, bu.</p>
+                                <p>Wassalamualaikum.</p>
+                            </div>
+                            <div class="attachment">
+                                <p><i class="fas fa-paperclip"></i> Lampiran:</p>
+                                <a href="#" target="_blank"><i class="fas fa-file-pdf"></i> KHS_Desi_Maya_Sari.pdf</a>
+                            </div>
+                        </div>
+    
+                        <div class="message-card teacher">
+                            <div class="message-header">
+                                <span class="name teacher"><i class="fas fa-user-tie"></i> Dr. Ibu Dosen</span>
+                                <div>
+                                    <small class="text-muted"><i class="far fa-clock"></i> 16:45, 26 September 2024</small>
+                                </div>
+                            </div>
+                            <div class="message-body">
+                                <p>Waalaikumsalam Desi,</p>
+                                <p>Terima kasih atas pesannya. Saya akan ada di kampus besok dari pukul 10.00 sampai 15.00. Silakan datang ke ruangan saya untuk bimbingan KRS.</p>
+                                <p>Jangan lupa untuk membawa dokumen yang diperlukan.</p>
+                                <p>Wassalamualaikum.</p>
+                            </div>
+                        </div>
+    
+                        <div class="message-card student">
+                            <div class="message-header">
+                                <span class="name student"><i class="fas fa-user-circle"></i> Desi Maya Sari</span>
+                                <div>
+                                    <small class="text-muted"><i class="far fa-clock"></i> 17:20, 26 September 2024</small>
+                                </div>
+                            </div>
+                            <div class="message-body">
+                                <p>Waalaikumsalam ibu,</p>
+                                <p>Terima kasih atas informasinya. Saya akan datang besok pukul 11.00 ke ruangan ibu.</p>
+                                <p>Wassalamualaikum.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="reply-form" id="replyForm">
+                        <h4><i class="fas fa-reply"></i> Balas Pesan</h4>
+                        <form>
+                            <div class="mb-3">
+                                <textarea class="form-control" rows="4" placeholder="Tulis pesan Anda di sini..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Kirim Pesan</button>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="student-card">
-                        <img src="https://i.pravatar.cc/300" alt="Foto Mahasiswa" class="student-photo mx-auto d-block">
-                        <div class="student-info">
-                            <h3 class="student-name">Desi Maya Sari</h3>
-                            <p class="student-id">2107110665</p>
-                            <p><i class="fas fa-graduation-cap"></i> Teknik Informatika</p>
-                            <p><i class="fas fa-calendar-alt"></i> Semester 5</p>
-                        </div>
-                        <table class="info-table">
-                            <tr>
-                                <th>Subjek</th>
-                                <td>Bimbingan KRS</td>
-                            </tr>
-                            <tr>
-                                <th>Prioritas</th>
-                                <td><span class="priority-badge priority-high">Prioritas Tinggi</span></td>
-                            </tr>
-                            <tr>
-                                <th>Dikirim</th>
-                                <td>15:30, 26 September 2024</td>
-                            </tr>
-                            <tr id="statusRow" style="display: none;">
-                                <th>Status</th>
-                                <td class="status-ended">Pesan telah berakhir</td>
-                            </tr>
-                        </table>
-                        <button class="btn btn-primary btn-action"><i class="fas fa-user"></i> Lihat Profil</button>
-                        <button class="btn btn-danger btn-action" id="endChatBtn"><i class="fas fa-times-circle"></i> Akhiri Pesan</button>
-                    </div>
-                </div>
-                
-                <div class="col-md-8">
-                    <div class="chat-wrapper">
-                        <div class="chat-container">
-                            <div class="message-card student">
-                                <div class="message-header">
-                                    <span class="name student"><i class="fas fa-user-circle"></i> Desi Maya Sari</span>
-                                    <div>
-                                        <small class="text-muted"><i class="far fa-clock"></i> 15:30, 26 September 2024</small>
-                                    </div>
-                                </div>
-                                <div class="message-body">
-                                    <p>Assalamualaikum ibu,</p>
-                                    <p>Selamat sore.</p>
-                                    <p>Saya Desi Maya Sari dari Prodi Teknik Informatika ingin melakukan bimbingan KRS. Karena itu, apakah ibu ada di kampus?</p>
-                                    <p>Terima kasih, bu.</p>
-                                    <p>Wassalamualaikum.</p>
-                                </div>
-                                <div class="attachment">
-                                    <p><i class="fas fa-paperclip"></i> Lampiran:</p>
-                                    <a href="#" target="_blank"><i class="fas fa-file-pdf"></i> KHS_Desi_Maya_Sari.pdf</a>
-                                </div>
-                            </div>
-    
-                            <div class="message-card teacher">
-                                <div class="message-header">
-                                    <span class="name teacher"><i class="fas fa-user-tie"></i> Dr. Ibu Dosen</span>
-                                    <div>
-                                        <small class="text-muted"><i class="far fa-clock"></i> 16:45, 26 September 2024</small>
-                                    </div>
-                                </div>
-                                <div class="message-body">
-                                    <p>Waalaikumsalam Desi,</p>
-                                    <p>Terima kasih atas pesannya. Saya akan ada di kampus besok dari pukul 10.00 sampai 15.00. Silakan datang ke ruangan saya untuk bimbingan KRS.</p>
-                                    <p>Jangan lupa untuk membawa dokumen yang diperlukan.</p>
-                                    <p>Wassalamualaikum.</p>
-                                </div>
-                            </div>
-    
-                            <div class="message-card student">
-                                <div class="message-header">
-                                    <span class="name student"><i class="fas fa-user-circle"></i> Desi Maya Sari</span>
-                                    <div>
-                                        <small class="text-muted"><i class="far fa-clock"></i> 17:20, 26 September 2024</small>
-                                    </div>
-                                </div>
-                                <div class="message-body">
-                                    <p>Waalaikumsalam ibu,</p>
-                                    <p>Terima kasih atas informasinya. Saya akan datang besok pukul 11.00 ke ruangan ibu.</p>
-                                    <p>Wassalamualaikum.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="reply-form" id="replyForm">
-                            <h4><i class="fas fa-reply"></i> Balas Pesan</h4>
-                            <form>
-                                <div class="mb-3">
-                                    <textarea class="form-control" rows="4" placeholder="Tulis pesan Anda di sini..."></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Kirim Pesan</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="confirmModalLabel">Konfirmasi Akhiri Pesan</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                Apakah Anda yakin ingin mengakhiri pesan ini?
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                <button type="button" class="btn btn-danger" id="confirmEndChat">Ya, Akhiri Pesan</button>
-                            </div>
+            <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmModalLabel">Konfirmasi Akhiri Pesan</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Apakah Anda yakin ingin mengakhiri pesan ini?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="button" class="btn btn-danger" id="confirmEndChat">Ya, Akhiri Pesan</button>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
     </div>
