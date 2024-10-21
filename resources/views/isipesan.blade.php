@@ -4,60 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buat Pesan Baru</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Bootstrap 5.3.3 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts (Open Sans dan Viga) -->
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Viga&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-family: 'Open Sans', sans-serif;
-            background-color: #f4f6f9;
         }
         .navbar {
-            background-color: #fff;
-            box-shadow: 0 1px 2px rgba(0,0,0,.1);
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
         }
         .navbar-brand {
-            font-family: "Viga", sans-serif;
-            font-weight: 600;
+            font-family: 'Viga', sans-serif;
             font-size: 25px;
         }
-        .nav-link {
-            font-weight: 600;
-            color: #192f59;
-        }
-        .nav-link.active {
-            color: #28a745 !important;
+        .navbar-nav .nav-link {
             font-weight: bold;
+            color: black;
         }
-        .nav-link:hover {
-            color: #36c482;
+        .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+            color: #28a745;
+        }
+        .main-content {
+            padding: 80px 0 100px 0;
         }
         .footer {
-            background-color: #343a40;
-            color: #fff;
+            background-color: #4f5458;
+            color: white;
             padding: 10px 0;
             position: fixed;
             bottom: 0;
             width: 100%;
+            z-index: 1000;
         }
-
-        .main-content {
-            padding: 80px 0 100px 0;
-        }
-
         .green-text {
             color: #28a745;
-        }
-        .btn-kembali, .btn-kirim {
-            background-color: #28a745;
-            color: white;
-            font-weight: bold;
-        }
-        .btn-kembali:hover, .btn-kirim:hover {
-            background-color: #218838;
-            color: white;
         }
         .content-header h2 {
             font-size: 24px;
@@ -82,10 +72,10 @@
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            <a class="navbar-brand" href="/">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI" width="40" height="40" class="d-inline-block align-top me-2">
+            <a class="navbar-brand" href="#">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI" width="40" height="40" style="margin-right: 10px;">
                 SITEI
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,10 +84,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">BIMBINGAN</a>
+                        <a class="nav-link" href="#" id="bimbingan-link">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/dashboardpesan">PESAN</a>
+                        <a class="nav-link active" href="#" id="pesan-link">PESAN</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -105,9 +95,7 @@
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             AKUN
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Profil</a></li>
-                            <li><a class="dropdown-item" href="/login">Logout</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         </ul>
                     </li>
                 </ul>
@@ -123,29 +111,23 @@
             </div>
             <hr>
 
-<<<<<<< HEAD:resources/views/isipesan.blade.php
             <a href="#" class="btn btn-success mb-3">← Kembali</a>
-=======
-            <a href="/dashboardpesan" class="btn btn-kembali mb-4">
-                <i class="fas fa-arrow-left"></i> Kembali
-            </a>
->>>>>>> main:resources/views/pesan/isipesan.blade.php
 
             <form>
                 <div class="mb-3">
-                    <label for="subject" class="form-label">Subjek<span style="color: red;">*</span></label>
+                    <label for="subject" class="form-label">Subjek*</label>
                     <!-- Tambahkan placeholder "Isi subjek" -->
                     <input type="text" class="form-control" id="subject" placeholder="Isi subjek" required>
                 </div>
             
                 <div class="mb-3">
-                    <label for="recipient" class="form-label">Penerima<span style="color: red;">*</span></label>
+                    <label for="recipient" class="form-label">Penerima*</label>
                     <!-- Tambahkan placeholder "Isi penerima" -->
                     <input type="text" class="form-control" id="recipient" placeholder="Isi penerima" required>
                 </div>
             
                 <div class="mb-3">
-                    <label for="priority" class="form-label">Prioritas<span style="color: red;">*</span></label>
+                    <label for="priority" class="form-label">Prioritas*</label>
                     <select class="form-select" id="priority" required>
                         <option value="" selected disabled>Pilih Prioritas</option>
                         <option value="high">High</option>
@@ -161,35 +143,42 @@
                 </div>
             
                 <div class="mb-3">
-                    <label for="message" class="form-label">Pesan<span style="color: red;">*</span></label>
+                    <label for="message" class="form-label">Pesan*</label>
                     <!-- Tambahkan placeholder "Isi pesan" -->
                     <textarea class="form-control" id="message" rows="5" placeholder="Isi pesan" required></textarea>
                 </div>
             
                 <div class="text-end">
-<<<<<<< HEAD:resources/views/isipesan.blade.php
                     <button type="submit" class="btn btn-success">Kirim</button>
-=======
-                    <button type="submit" class="btn btn-kirim btn-success">Kirim</button>
->>>>>>> main:resources/views/pesan/isipesan.blade.php
                 </div>
             </form>            
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="footer mt-5">
+    <footer class="footer">
         <div class="container text-center">
-            <p class="mb-0">
-                Dikembangkan oleh Mahasiswa Prodi Teknik Informatika UNRI 
-                (<span class="green-text">Desi, Murni, dan Syahirah</span>)
-            </p>
+            Dikembangkan oleh Mahasiswa Prodi Teknik Informatika UNRI 
+            (<span class="green-text" style="font-weight: bold; font-family: 'Open Sans', sans-serif;">Desi, Murni, dan Syahirah</span>)
         </div>
     </footer>
 
     <!-- Bootstrap 5.3.3 JS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Mengatur klik pada navbar
+        const bimbinganLink = document.getElementById('bimbingan-link');
+        const pesanLink = document.getElementById('pesan-link');
+
+        bimbinganLink.addEventListener('click', function() {
+            pesanLink.classList.remove('active');
+            bimbinganLink.classList.add('active');
+        });
+
+        pesanLink.addEventListener('click', function() {
+            bimbinganLink.classList.remove('active');
+            pesanLink.classList.add('active');
+        });
 
         // Mengubah warna teks "Pilih Prioritas" saat ini menggunakan JavaScript
         const prioritySelect = document.getElementById('priority');
