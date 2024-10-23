@@ -655,13 +655,12 @@
 
             <div id="calendar"></div>
 
-
-
             <div class="text-end mt-4">
-                <button type="submit" class="btn btn-success">
-                    {{-- <i class="fas fa-save me-2"></i>Simpan --}}
-                    <i></i>Simpan
-                    </button>
+                <button type="submit" class="btn btn-gradient mb-4 mt-2">
+                    <a href="/">
+                        <i class=""></i>Simpan
+                    </a>
+                </button>
             </div>
         </form>
     </div>

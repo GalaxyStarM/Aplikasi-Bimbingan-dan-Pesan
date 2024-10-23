@@ -223,7 +223,11 @@
             </div>
             
             <div class="text-end">
-                <button type="submit" class="btn btn-kirim btn-success">Kirim</button>
+                <button type="submit" class="btn btn-gradient mb-4 mt-2">
+                    <a href="/">
+                        <i class=""></i>Kirim
+                    </a>
+                </button>
             </div>
         </form>            
     </div>
