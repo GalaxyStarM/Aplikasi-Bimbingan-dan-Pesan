@@ -655,9 +655,10 @@
 
             <div id="calendar"></div>
 
-            <div class="text-end mt-4">
+
+            <div class="text-end">
                 <button type="submit" class="btn btn-gradient mb-4 mt-2">
-                    <a href="/">
+                    <a href="#">
                         <i class=""></i>Simpan
                     </a>
                 </button>
