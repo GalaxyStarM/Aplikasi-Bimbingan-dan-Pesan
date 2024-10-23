@@ -211,6 +211,7 @@
                                         <th class="text-center">Jenis Bimbingan</th>
                                         <th class="text-center">Tanggal</th>
                                         <th class="text-center">Waktu</th>
+                                        <th class="text-center">Lokasi</th>
                                         <th class="text-center">Status</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
@@ -285,6 +286,7 @@
                                         <th class="text-center">Jenis Bimbingan</th>
                                         <th class="text-center">Tanggal</th>
                                         <th class="text-center">Waktu</th>
+                                        <th class="text-center">Lokasi</th>
                                         <th class="text-center">Status</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
@@ -297,6 +299,7 @@
                                         <td class="text-center">Syahirah Tri Meilina</td>
                                         <td class="text-center">Bimbingan Skripsi</td>
                                         <td class="text-center">Senin, 30 September 2024</td>
+                                        <td class="text-center">Lab. Jaringan</td>
                                         <td class="text-center">13.30 - 16.00</td>
                                         <td class="text-center">SELESAI</td>
                                         <td class="text-center">
@@ -364,6 +367,7 @@
                         <td class="text-center">${item.jenis_bimbingan}</td>
                         <td class="text-center">${item.tanggal}</td>
                         <td class="text-center">${item.waktu}</td>
+                        <td class="text-center">${item.lokasi}</td>
                         <td class="text-center ${statusClass}" style="color: white;">${statusText}</td>
                         <td class="text-center">
                             <a href="/aksiInformasi" class="badge btn btn-info p-1 mb-1">

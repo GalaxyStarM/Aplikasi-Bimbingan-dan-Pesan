@@ -350,6 +350,7 @@
                                         <th class="text-center">Jenis Bimbingan</th>
                                         <th class="text-center">Tanggal</th>
                                         <th class="text-center">Waktu</th>
+                                        <th class="text-center">Lokasi</th>
                                         <th class="text-center">Status</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
@@ -362,6 +363,7 @@
                                         <td class="text-center">Bimbingan Kerja Praktek</td>
                                         <td class="text-center">Senin, 4 Oktober 2024</td>
                                         <td class="text-center">13.30 - 16.00</td>
+                                        <td class="text-center"></td>
                                         <td class="text-center">USULAN</td>
                                         <td class="text-center">
                                             <div class="action-icons">
@@ -386,6 +388,7 @@
                                         <td class="text-center">Bimbingan Skripsi</td>
                                         <td class="text-center">Senin, 30 September 2024</td>
                                         <td class="text-center">13.30 - 16.00</td>
+                                        <td class="text-center"></td>
                                         <td class="text-center">USULAN</td>
                                         <td class="text-center">
                                             <div class="action-icons">
@@ -427,12 +430,20 @@
                                                                 <p><strong>Jenis Bimbingan:</strong> <span
                                                                         class="jenis-display"></span></p>
                                                             </div>
+                                                            <div class="form-group mt-3">
+                                                                <label for="lokasiBimbingan">Lokasi Bimbingan:</label>
+                                                                <input type="text" class="form-control"
+                                                                    id="lokasiBimbingan" required
+                                                                    placeholder="Masukkan lokasi bimbingan">
+                                                                <div class="invalid-feedback">Silakan isi lokasi
+                                                                    bimbingan</div>
+                                                            </div>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
                                                                 data-bs-dismiss="modal">Batal</button>
                                                             <button type="button" class="btn btn-success"
-                                                                id="confirmTerima" data-row-id="">Ya, Terima</button>
+                                                                id="confirmTerima">Ya, Terima</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -541,6 +552,7 @@
                                         <th class="text-center">Jenis Bimbingan</th>
                                         <th class="text-center">Tanggal</th>
                                         <th class="text-center">Waktu</th>
+                                        <th class="text-center">Lokasi</th>
                                         <th class="text-center">Status</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
@@ -554,6 +566,7 @@
                                         <td class="text-center">Bimbingan Skripsi</td>
                                         <td class="text-center">Senin, 30 September 2024</td>
                                         <td class="text-center">13.30 - 16.00</td>
+                                        <td class="text-center"></td>
                                         <td class="text-center">SELESAI</td>
                                         <td class="text-center">
                                             <a href="/riwayatdosen" class="badge btn btn-info p-1 mb-1">
@@ -695,18 +708,45 @@
 
             // Improved modal confirmation handlers
             document.getElementById('confirmTerima').addEventListener('click', function() {
+                const lokasiInput = document.getElementById('lokasiBimbingan');
+
+                if (!lokasiInput.value.trim()) {
+                    lokasiInput.classList.add('is-invalid');
+                    return;
+                }
+
                 if (currentRow) {
+                    // Update status
                     updateRowStatus(currentRow, 'DISETUJUI');
+
+                    // Update lokasi in table
+                    const lokasiCell = currentRow.querySelector(
+                    'td:nth-child(7)'); // Adjust index if needed
+                    lokasiCell.textContent = lokasiInput.value.trim();
+
+                    // Close modal
                     const modal = document.getElementById('modalTerima');
                     const bsModal = bootstrap.Modal.getInstance(modal);
                     if (bsModal) {
                         bsModal.hide();
-                        setTimeout(cleanupModal, 300); // Wait for modal animation
+                        setTimeout(cleanupModal, 300);
                     }
-                    // showNotification('Usulan bimbingan telah disetujui', 'success');
+
+                    // Optional: Show success notification
+                    showNotification('Usulan bimbingan telah disetujui', 'success');
                 }
+
+                // Reset form
+                lokasiInput.value = '';
+                lokasiInput.classList.remove('is-invalid');
             });
 
+            // Add modal hidden event handler to reset location input
+            document.getElementById('modalTerima').addEventListener('hidden.bs.modal', function() {
+                const lokasiInput = document.getElementById('lokasiBimbingan');
+                lokasiInput.value = '';
+                lokasiInput.classList.remove('is-invalid');
+            });
             document.getElementById('confirmTolak').addEventListener('click', function() {
                 const alasanInput = document.getElementById('alasanPenolakan');
 
@@ -745,4 +785,5 @@
         });
     </script>
 </body>
+
 </html>
