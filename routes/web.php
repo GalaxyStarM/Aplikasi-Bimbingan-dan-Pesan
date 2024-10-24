@@ -37,6 +37,14 @@ Route::get('/aksiInformasi', function(){
   return view('bimbingan.aksiInformasi');
 });
 
+Route::get('/riwayatmahasiswa', function(){
+  return view('bimbingan.riwayatmahasiswa');
+});
+
+Route::get('/riwayatdosen', function(){
+  return view('bimbingan.riwayatdosen');
+});
+
 Route::get('/pilihjadwal', function(){
   return view('bimbingan.mahasiswa.pilihjadwal');
 })->name('pilihjadwal');

@@ -184,7 +184,7 @@
         <hr></hr>
         <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
             <a href="/">
-                <i class="fas fa-arrow-left me-2"></i> Kembali
+                <i class="fas fa-arrow-left me-2"></i>Kembali
             </a>
         </button>
 
@@ -267,7 +267,11 @@
             </div>
             
             <div class="text-end">
-                <button type="submit" class="btn btn-kirim btn-success">Kirim</button>
+                <button type="submit" class="btn btn-gradient mb-4 mt-2">
+                    <a href="/">
+                        <i class=""></i>Kirim
+                    </a>
+                </button>
             </div>
         </form>            
     </div>
