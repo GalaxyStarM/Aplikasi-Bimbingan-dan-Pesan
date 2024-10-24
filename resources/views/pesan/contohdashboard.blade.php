@@ -274,7 +274,7 @@
                         <a class="nav-link" style="font-weight: bold;" href="/">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" style="font-weight: bold;" href="/dashboardpesan">KONSULTASI</a>
+                        <a class="nav-link active" style="font-weight: bold;" href="/dashboardpesan">PESAN</a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center">
@@ -373,7 +373,7 @@
                 <!-- Tickets List -->
                 <div class="tickets-container" id="active-tickets">
                     <!-- Urgent Priority Ticket -->
-                    <div class="ticket-card" data-priority="mendesak"  onclick="window.location.href='http://127.0.0.1:8000/isipesan'">
+                    <div class="ticket-card" data-priority="mendesak">
                         <div class="d-flex align-items-center mb-3">
                             <img src="{{ asset('images/fotodesi.jpeg') }}" alt="Avatar" class="avatar me-3">
                             <div class="flex-grow-1">
@@ -425,7 +425,7 @@
                         <h5 class="mb-2">Bimbingan KRS</h5>
                         <div class="d-flex align-items-center text-muted">
                             <i class="far fa-clock me-2"></i>
-                            <small>10:00 - Kemarin</small>
+                            <small>10:00 - Besok</small>
                         </div>
                     </div>
 

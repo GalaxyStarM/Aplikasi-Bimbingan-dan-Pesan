@@ -172,7 +172,7 @@
             border-radius: 50%;
             object-fit: cover;
             margin-bottom: 15px;
-            border: 4px solid #28a745;
+            border: 4px solid #007bff;
         }
         .student-info {
             text-align: center;
@@ -182,7 +182,7 @@
             font-weight: bold;
             font-size: 20px;
             margin-bottom: 5px;
-            color: #28a745;
+            color: #007bff;
         }
         .student-id {
             color: #6c757d;
@@ -388,7 +388,7 @@
                         <a class="nav-link" style="font-weight: bold;" href="/dashboard">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" style="font-weight: bold;" href="/dashboardpesan">PESAN</a>
+                        <a class="nav-link active" style="font-weight: bold;" href="/dashboardpesan">KONSULTASI</a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center">
@@ -409,7 +409,7 @@
     </nav>
 
     <div class="container mt-5">
-        <h1 class="mb-2 gradient-text fw-bold">Pesan Bimbingan</h1>
+        <h1 class="mb-2 gradient-text fw-bold">Isi Konsultasi</h1>
         <hr></hr>
         <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
             <a href="/dashboardpesan">
@@ -419,25 +419,24 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="student-card">
-                    <img src="{{ asset('images/fotodesi.jpeg') }}" alt="Foto Mahasiswa" class="student-photo mx-auto d-block">
+                    <img src="{{ asset('images/fotopakedi.png') }}" alt="Foto Mahasiswa" class="student-photo mx-auto d-block">
                     <div class="student-info">
-                        <h3 class="student-name">Desi Maya Sari</h3>
-                        <p class="student-id">2107110665</p>
-                        <p><i class="fas fa-graduation-cap"></i> Teknik Informatika</p>
-                        <p><i class="fas fa-calendar-alt"></i> Semester 5</p>
+                        <h3 class="student-name">Edi Susilo, Spd., M,Kom.,M.Eng </h3>
+                        <p class="student-id">NIP. 1991 1029 201903 010 </p>
+                        <p><i class="fas fa-chalkboard-teacher"></i> Dosen Teknik Informatika</p>
                     </div>
                     <table class="info-table">
                         <tr>
                             <th>Subjek</th>
-                            <td>Bimbingan KRS</td>
+                            <td>Bimbingan Skripsi</td>
                         </tr>
                         <tr>
-                            <th>Tujuan</th>
+                            <th>Penerima</th>
                             <td>Edi Susilo, S.Pd., M.Kom., M.Eng.</td>
                         </tr>
                         <tr>
                             <th>Prioritas</th>
-                            <td><span class="priority-badge priority-high">Prioritas Tinggi</span></td>
+                            <td><span class="priority-badge priority-high">Mendesak</span></td>
                         </tr>
                         <tr>
                             <th>Dikirim</th>
@@ -465,13 +464,13 @@
                             <div class="message-body">
                                 <p>Assalamualaikum Pak,</p>
                                 <p>Selamat sore.</p>
-                                <p>Saya Desi Maya Sari dari Prodi Teknik Informatika ingin melakukan bimbingan KRS. Karena itu, apakah Bapak ada di kampus?</p>
+                                <p>Saya Desi Maya Sari dari Prodi Teknik Informatika ingin melakukan bimbingan Skripsi. Karena itu, apakah Bapak ada di kampus?</p>
                                 <p>Terima kasih, Pak.</p>
                                 <p>Wassalamualaikum.</p>
                             </div>
                             <div class="attachment">
                                 <p><i class="fas fa-paperclip"></i> Lampiran:</p>
-                                <a href="#" target="_blank"><i class="fas fa-file-pdf"></i> KHS_Desi_Maya_Sari.pdf</a>
+                                <a href="#" target="_blank"><i class="fas fa-file-pdf"></i> Skripsi_Desi_Maya_Sari.pdf</a>
                             </div>
                         </div>
                         <div class="message-card teacher">
@@ -483,8 +482,7 @@
                             </div>
                             <div class="message-body">
                                 <p>Waalaikumsalam</p>
-                                <p>Saya ada di kampus besok dari pukul 10.00 sampai 15.00. Silakan datang ke ruangan saya untuk bimbingan KRS.</p>
-                                <p>Jangan lupa untuk membawa dokumen yang diperlukan.</p>
+                                <p>Saya ada di kampus besok dari pukul 10.00 sampai 15.00. Silakan datang ke ruangan saya untuk bimbingan Skripsi.</p>
                             </div>
                         </div>
                         <div class="message-card student">
@@ -516,7 +514,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="confirmModalLabel">Konfirmasi Akhiri Pesan</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                         </div>
                         <div class="modal-body">
                             Apakah Anda yakin ingin mengakhiri pesan ini?
@@ -528,6 +526,7 @@
                     </div>
                 </div>
             </div>
+            
         </div>
     </div>
 

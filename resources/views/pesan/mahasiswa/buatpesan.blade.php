@@ -157,7 +157,7 @@
                         <a class="nav-link" style="font-weight: bold;" href="/dashboard">BIMBINGAN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" style="font-weight: bold;" href="/dashboardpesan">PESAN</a>
+                        <a class="nav-link active" style="font-weight: bold;" href="/dashboardpesan">KONSULTASI</a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center">
@@ -196,7 +196,6 @@
             
             <div class="mb-3">
                 <label for="recipient" class="form-label">Penerima<span style="color: red;">*</span></label>
-                <!-- Tambahkan placeholder "Isi penerima" -->
                 <input type="text" class="form-control" id="recipient" placeholder="Isi penerima" required>
             </div>
             
@@ -204,9 +203,8 @@
                 <label for="priority" class="form-label">Prioritas<span style="color: red;">*</span></label>
                 <select class="form-select" id="priority" required>
                     <option value="" selected disabled>Pilih Prioritas</option>
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
+                    <option value="high">Medesak</option>
+                    <option value="medium">Umum</option>
                 </select>
             </div>
             
@@ -223,11 +221,7 @@
             </div>
             
             <div class="text-end">
-                <button type="submit" class="btn btn-gradient mb-4 mt-2">
-                    <a href="/">
-                        <i class=""></i>Kirim
-                    </a>
-                </button>
+                <button type="submit" class="btn btn-gradient">Kirim</button>
             </div>
         </form>            
     </div>
@@ -240,26 +234,55 @@
                 (<span class="green-text">Desi, Murni, dan Syahirah</span>)
             </p>
         </div>
-    </footer>
-
-    <!-- Bootstrap 5.3.3 JS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-
-        // Mengubah warna teks "Pilih Prioritas" saat ini menggunakan JavaScript
-        const prioritySelect = document.getElementById('priority');
-        prioritySelect.addEventListener('change', function() {
-            if (this.value === "") {
-                this.style.color = "#6c757d";  // Warna abu-abu
-            } else {
-                this.style.color = "black";  // Warna normal
+        <footer>
+            <!-- Footer content -->
+        </footer>
+        
+        <!-- Bootstrap 5.3.3 JS CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- jQuery UI CDN -->
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+        
+        <script>
+            // Mengubah warna teks "Pilih Prioritas" saat ini menggunakan JavaScript
+            const prioritySelect = document.getElementById('priority');
+            prioritySelect.addEventListener('change', function() {
+                if (this.value === "") {
+                    this.style.color = "#6c757d";  // Warna abu-abu
+                } else {
+                    this.style.color = "black";  // Warna normal
+                }
+            });
+        
+            // Mengatur warna awal ketika halaman dimuat
+            if (prioritySelect.value === "") {
+                prioritySelect.style.color = "#6c757d";  // Warna abu-abu
             }
-        });
-
-        // Mengatur warna awal ketika halaman dimuat
-        if (prioritySelect.value === "") {
-            prioritySelect.style.color = "#6c757d";  // Warna abu-abu
-        }
-    </script>
-</body>
-</html>
+        
+            // Menginisialisasi autocomplete untuk input penerima
+            $(document).ready(function() {
+                var dosenList = [
+                    "Dr. Feri Candra, S.T., M.T.",
+                    "Dr. Dahliyusmanto S.Kom., M.Sc.",
+                    "Dr. Irsan Taufik Ali, S.T., M.T.",
+                    "Noveri Lysbetti Marpaung, S.T., M.Sc.",
+                    "Rahyul Amri, S.T., M.T.",
+                    "Linna Oktaviana Sari, S.T., M.T.",
+                    "Salhazan Nasution, S.Kom., MIT.",
+                    "T. Yudi Hadiwandra, S.Kom., M.Kom.",
+                    "Rahmat Rizal Andhi, S.T., M.T.",
+                    "Edi Susilo, Spd., M,Kom.,M.Eng",
+                    "Dian Ramadhani, S.T., M.T.",
+                ];
+        
+                $("#recipient").autocomplete({
+                    source: dosenList,
+                    minLength: 1 // Menampilkan saran setelah 1 karakter diketik
+                });
+            });
+        </script>
+        
+        </body>
+        </html>        
