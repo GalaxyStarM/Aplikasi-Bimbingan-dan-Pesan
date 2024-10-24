@@ -25,6 +25,10 @@ Route::get('/', function () {
   return view('bimbingan.mahasiswa.usulanbimbingan');
 });
 
+Route::get('/buatpesandosen', function () {
+  return view('pesan.dosen.buatpesandosen');
+});
+
 Route::get('/isipesandosen', function () {
   return view('pesan.dosen.isipesandosen');
 });
@@ -55,6 +59,10 @@ Route::get('/masukkanjadwal', function(){
 
 Route::get('/persetujuan', function(){
   return view('bimbingan.dosen.persetujuan');
+});
+
+Route::get('/contohdashboard', function(){
+  return view('pesan.contohdashboard');
 });
 
 

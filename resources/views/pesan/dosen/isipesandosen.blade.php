@@ -11,25 +11,66 @@
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f0f2f5;
-            padding-top: 56px;
+            padding-top: 76px;
         }
         .navbar {
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
+
         .navbar-brand {
             font-family: "Viga", sans-serif;
             font-weight: 600;
             font-size: 25px;
-            color: #000000;
         }
         .nav-link {
-            font-weight: 600;
-            color: #333;
+            position: relative;
+            color: #4b5563;
+            transition: color 0.3s ease;
+            font-weight: bold;
         }
-        .nav-link.active {
-            color: #28a745 !important;
+        .nav-link:hover, .nav-link.active {
+            color: #059669;
         }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #059669;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        .gradient-text { 
+            background: linear-gradient(to right, #059669, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+
+        .btn-gradient a {
+            color: white;
+            text-decoration: none;
+        }
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-gradient:hover a{
+            color: black;
+        }
+
         .footer {
             background-color: #343a40;
             color: #fff;
@@ -38,11 +79,15 @@
             bottom: 0;
             width: 100%;
         }
+        .green-text {
+            color: #28a745;
+        }
+
         .main-content {
             padding: 20px 0 0 0;
         }
         .btn-kembali {
-            background-color: #28a745;
+            background: linear-gradient(to right, #4ade80, #3b82f6);
             color: white;
             font-weight: bold;
             border: none;
@@ -100,13 +145,30 @@
             padding: 20px;
             margin-bottom: 20px;
             position: sticky;
-            top: 76px;
+            top: 90px;
         }
-        .teacher-card h3 {
-            font-size: 1.2rem; /* Ukuran font diperkecil */
-            text-align: center;
+        .teacher-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
             margin-bottom: 15px;
-            color: #000000; 
+            border: 4px solid #28a745;
+        }
+        .teacher-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .teacher-name {
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: #28a745;
+        }
+        .teacher-id {
+            color: #6c757d;
+            margin-bottom: 10px;
+            font-size: 16px;
         }
         .info-table {
             width: 100%;
@@ -129,6 +191,20 @@
         }
         .info-table tr:last-child td {
             border-bottom: none;
+        }
+        .info-details {
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .info-details p {
+            margin-bottom: 8px;  /* Mengatur jarak antar baris */
+            font-size: 14px;     /* Menyesuaikan ukuran font */
+        }
+
+        .info-details i {
+            width: 20px;         /* Memberi lebar tetap untuk ikon */
+            margin-right: 8px;   /* Jarak antara ikon dan teks */
         }
         .btn-action {
             width: 100%;
@@ -178,14 +254,8 @@
             border-color: #007bff;
             box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
         }
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-            border-radius: 20px;
-            padding: 10px 20px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
+       
+        
         .btn-primary:hover {
             background-color: #0056b3;
             transform: translateY(-2px);
@@ -211,47 +281,66 @@
             background-color: #28a745;
             color: white;
         }
+        .btn-kirim {
+            background: linear-gradient(to right, #4ade80, #3b82f6);
+            color: white;
+            font-weight: bold;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-kirim:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,.1);
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="Logo UNRI" width="40" height="40" class="d-inline-block align-top me-2">
-                SITEI
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">BIMBINGAN</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/dashboardpesan">PESAN</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            AKUN
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Profil</a></li>
-                            <li><a class="dropdown-item" href="/login">Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
+   <!-- Navbar -->
+   <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <div class="container">
+        <a class="navbar-brand me-4" href="/dashboard">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/LOGO-UNRI.png" alt="SITEI Logo" width="30" height="30" class="d-inline-block align-text-top me-2">
+            SITEI
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" style="font-weight: bold;" href="/">BIMBINGAN</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" style="font-weight: bold;" href="/dashboardpesan">KONSULTASI</a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center">
+                <div class="dropdown">
+                    <button class="btn text-dark dropdown-toggle" style="font-weight: bold;" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        AKUN
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="#">Profil</a></li>
+                        <li><a class="dropdown-item" href="#">Pengaturan</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/login">Keluar</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
+
 
     <div class="main-content">
         <div class="container">
             <div class="row mb-4">
                 <div class="col-12">
-                    <h2 class="d-inline-block me-3">Pesan Bimbingan</h2>
+                    <h2 class="d-inline-block me-3 gradient-text">Isi Konsultasi</h2>
                     <hr>
                     <div class="mt-3">
                         <a href="/dashboardpesan" class="btn btn-kembali"><i class="fas fa-arrow-left"></i> Kembali</a>
@@ -261,10 +350,18 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="teacher-card">
-                        <h3 class="text-center mb-4">Informasi Pesan</h3>
+                        <img src="{{ asset('images/fotodesi.jpeg') }}" alt="Foto Dosen" class="teacher-photo mx-auto d-block">
+                        <div class="teacher-info">
+                            <h3 class="teacher-name">Desi Maya Sari</h3>
+                            <p class="student-id">2107110665</p>
+                            <div class="info-details">
+                                <p class="mb-1"><i class="fas fa-graduation-cap me-2"></i> Teknik Informatika</p>
+                                <p class="mb-1"><i class="fas fa-calendar-alt me-2"></i> Semester 5</p>    
+                            </div>
+                        </div>
                         <table class="info-table">
                             <tr>
-                                <th>Mahasiswa</th>
+                                <th>Pengirim</th>
                                 <td>Desi Maya Sari</td>
                             </tr>
                             <tr>
@@ -273,18 +370,17 @@
                             </tr>
                             <tr>
                                 <th>Subjek</th>
-                                <td>Bimbingan KRS</td>
+                                <td>Bimbingan Skripsi</td>
                             </tr>
                             <tr>
                                 <th>Prioritas</th>
-                                <td><span class="priority-badge priority-high">Prioritas Tinggi</span></td>
+                                <td><span class="priority-badge priority-high">Mendesak</span></td>
                             </tr>
                             <tr>
                                 <th>Dikirim</th>
                                 <td>15:30, 26 September 2024</td>
                             </tr>
                         </table>
-                       
                     </div>
                 </div>
                 
@@ -299,10 +395,10 @@
                                     </div>
                                 </div>
                                 <div class="message-body">
-                                    <p>Assalamualaikum Pak,</p>
+                                    <p>Assalamualaikum pak,</p>
                                     <p>Selamat sore.</p>
-                                    <p>Saya Desi Maya Sari dari Prodi Teknik Informatika ingin melakukan bimbingan KRS. Karena itu, apakah Bapak ada di kampus?</p>
-                                    <p>Terima kasih, Pak.</p>
+                                    <p>Saya Desi Maya Sari dari Prodi Teknik Informatika ingin melakukan bimbingan Skripsi. Karena itu, apakah pak ada di kampus?</p>
+                                    <p>Terima kasih, bu.</p>
                                     <p>Wassalamualaikum.</p>
                                 </div>
                                 <div class="attachment">
@@ -313,16 +409,14 @@
     
                             <div class="message-card teacher">
                                 <div class="message-header">
-                                    <span class="name teacher"><i class="fas fa-user-tie"></i> Edi Susilo, S.Pd., M.Kom., M.Eng.</span>
+                                    <span class="name teacher"><i class="fas fa-user-tie"></i> Edi Susilo, Spd., M,Kom.,M.Eng</span>
                                     <div>
                                         <small class="text-muted"><i class="far fa-clock"></i> 16:45, 26 September 2024</small>
                                     </div>
                                 </div>
                                 <div class="message-body">
-                                    <p>Waalaikumsalam Desi,</p>
-                                    <p>Terima kasih atas pesannya. Saya akan ada di kampus besok dari pukul 10.00 sampai 15.00. Silakan datang ke ruangan saya untuk bimbingan KRS.</p>
-                                    <p>Jangan lupa untuk membawa dokumen yang diperlukan.</p>
-                                    <p>Wassalamualaikum.</p>
+                                    <p>Waalaikumsalam</p>
+                                    <p>Terima kasih atas pesannya. Saya akan ada di kampus besok dari pukul 10.00 sampai 15.00. Silakan datang ke ruangan saya untuk bimbingan Skripsi.</p>
                                 </div>
                             </div>
                             <div class="message-card student">
@@ -333,8 +427,8 @@
                                     </div>
                                 </div>
                                 <div class="message-body">
-                                    <p>Waalaikumsalam Pak,</p>
-                                    <p>Terima kasih atas informasinya. Saya akan datang besok pukul 11.00 ke ruangan Pak.</p>
+                                    <p>Waalaikumsalam Bapak,</p>
+                                    <p>Terima kasih atas informasinya. Saya akan datang besok pukul 11.00 ke ruangan saya.</p>
                                     <p>Wassalamualaikum.</p>
                                 </div>
                             </div>
@@ -345,7 +439,9 @@
                                 <div class="mb-3">
                                     <textarea class="form-control" rows="4" placeholder="Tulis pesan Anda di sini..."></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Kirim Pesan</button>
+                                <button type="submit" class="btn btn-kirim">
+                                    <i class="fas fa-paper-plane"></i> Kirim Pesan
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -354,15 +450,16 @@
         </div>
     </div>
 
+    <!-- Footer -->
     <footer class="footer mt-5">
         <div class="container text-center">
             <p class="mb-0">
                 Dikembangkan oleh Mahasiswa Prodi Teknik Informatika UNRI 
-                (<span style="color: #28a745;">Desi, Murni dan Syahirah</span>)
+                (<span class="green-text">Desi, Murni, dan Syahirah</span>)
             </p>
         </div>
     </footer>
 
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
 </html>
