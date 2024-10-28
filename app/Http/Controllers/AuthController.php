@@ -9,32 +9,42 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    // Menampilkan form login
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // Proses login
     public function login(Request $request)
     {
         // Validasi input
-        $credentials = $request->validate([
-            'identifier' => ['required'],
-            'password' => ['required'],
+        $request->validate([
+            'identifier' => 'required',
+            'password' => 'required',
         ]);
 
         $identifier = $credentials['identifier'];
         $password = $credentials['password'];
 
-        // Cek apakah user ada berdasarkan NIM atau NIP
-        $user = User::where('nim', $identifier)->orWhere('nip', $identifier)->first();
+        // Cek mahasiswa
+        $user = Mahasiswa::where('nim', $identifier)->first();
+        $role = 'mahasiswa';
 
         if (!$user) {
-            // Jika NIM/NIP tidak ditemukan
-            return back()->withErrors([
-                'identifier' => 'NIP/NIM tidak ditemukan.',
-            ]);
+            // Jika tidak ditemukan di tabel mahasiswa, cek tabel dosen
+            $user = Dosen::where('nip', $identifier)->first();
+            $role = 'dosen';
+        }
+
+        // Verifikasi user dan password
+        if(!$user && Hash::check($password, $user->password)) {
+            Auth::login($user);
+            session(['role' => $role]);
+
+            if($role == 'mahasiswa') {
+                return redirect()->intended(route('mahasiswa.usulan_bimbingan'));
+            } else {
+                return redirect()->intended(route('dosen.persetujuan_bimbingan'));
+            }
         }
 
         // Cek apakah password benar
@@ -44,24 +54,12 @@ class AuthController extends Controller
                 'password' => 'Password salah.',
             ]);
         }
-
-        // Jika kredensial benar, lakukan login
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        // Redirect sesuai role
-        if ($user->isDosen()) {
-            return redirect()->route('dosen.persetujuan_bimbingan');
-        } else {
-            return redirect()->route('mahasiswa.usulan_bimbingan');
-        }
+        return back()->withErrors(['identifier' => 'NIM/NIP atau password salah.']);
     }
 
     public function logout(Request $request)
     {
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/');
+        return redirect('auth.login');
     }
 }
