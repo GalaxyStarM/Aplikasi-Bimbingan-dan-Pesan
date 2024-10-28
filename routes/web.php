@@ -73,6 +73,10 @@ Route::get('/contohdashboard', function(){
   return view('pesan.contohdashboard');
 });
 
+Route::get('/datausulanbimbingan', function(){
+  return view('bimbingan.admin.datausulanbimbingan');
+});
+
 
 // Route ke halaman login dengan AuthController
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
