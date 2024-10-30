@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController; // Pastikan ini ada
+use App\Http\Controllers\JadwalController;
 
 // Route ke halaman login
 Route::get('/login', function () {
@@ -45,9 +46,8 @@ Route::get('/riwayatdosen', function(){
   return view('bimbingan.riwayatdosen');
 });
 
-Route::get('/pilihjadwal', function(){
-  return view('bimbingan.mahasiswa.pilihjadwal');
-})->name('pilihjadwal');
+Route::get('/pilihjadwal', [JadwalController::class, 'create'])->name('jadwal.create');
+Route::post('/pilihjadwal', [JadwalController::class, 'store'])->name('jadwal.store');
 
 Route::get('/detaildaftar', function(){
   return view('bimbingan.mahasiswa.detaildaftar');
@@ -71,6 +71,10 @@ Route::get('/persetujuan', function(){
 
 Route::get('/contohdashboard', function(){
   return view('pesan.contohdashboard');
+});
+
+Route::get('/datausulanbimbingan', function(){
+  return view('bimbingan.admin.datausulanbimbingan');
 });
 
 
