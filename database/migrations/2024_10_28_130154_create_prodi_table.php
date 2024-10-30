@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('prodi', function (Blueprint $table) {
             $table->id('id');
-            $table->string('role_akses');
+            $table->string('nama_prodi');
             $table->datetime('created_at');
             $table->datetime('updated_at');
         });

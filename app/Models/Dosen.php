@@ -9,9 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Dosen extends Authenticatable
 {
     use HasFactory, Notifiable;
-    protected $table = 'dosen';
     protected $primaryKey = 'nip';
-    public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [

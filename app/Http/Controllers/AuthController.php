@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use App\Models\Mahasiswa;
+use App\Models\Dosen;
 
 class AuthController extends Controller
 {
@@ -18,48 +20,48 @@ class AuthController extends Controller
     {
         // Validasi input
         $request->validate([
-            'identifier' => 'required',
+            'username' => 'required',
             'password' => 'required',
         ]);
 
-        $identifier = $credentials['identifier'];
-        $password = $credentials['password'];
+        $identifier = $request->username;
+        $password = $request->password;
 
         // Cek mahasiswa
-        $user = Mahasiswa::where('nim', $identifier)->first();
-        $role = 'mahasiswa';
-
-        if (!$user) {
-            // Jika tidak ditemukan di tabel mahasiswa, cek tabel dosen
-            $user = Dosen::where('nip', $identifier)->first();
-            $role = 'dosen';
+        $mahasiswa = Mahasiswa::where('nim', $identifier)->first();
+        if ($mahasiswa && Hash::check($password, $mahasiswa->password)) {
+            Auth::guard('mahasiswa')->login($mahasiswa);
+            session(['role' => 'mahasiswa']);
+            Log::info('Login berhasil untuk mahasiswa: ' . $mahasiswa->nim);
+            return view('bimbingan.mahasiswa.usulanbimbingan');
         }
 
-        // Verifikasi user dan password
-        if(!$user && Hash::check($password, $user->password)) {
-            Auth::login($user);
-            session(['role' => $role]);
-
-            if($role == 'mahasiswa') {
-                return redirect()->intended(route('mahasiswa.usulan_bimbingan'));
-            } else {
-                return redirect()->intended(route('dosen.persetujuan_bimbingan'));
-            }
+        // Cek dosen
+        $dosen = Dosen::where('nip', $identifier)->first();
+        if ($dosen && Hash::check($password, $dosen->password)) {
+            Auth::guard('dosen')->login($dosen);
+            session(['role' => 'dosen']);
+            Log::info('Login berhasil untuk dosen: ' . $dosen->nip);
+            return view('bimbingan.dosen.persetujuan');
         }
 
-        // Cek apakah password benar
-        if (!Hash::check($password, $user->password)) {
-            // Jika password salah
-            return back()->withErrors([
-                'password' => 'Password salah.',
+        // Jika login gagal
+        Log::warning('Login gagal untuk: ' . $identifier);
+        return back()
+            ->withInput($request->only('username'))
+            ->withErrors([
+                'login' => 'NIP/NIM atau password salah.'
             ]);
-        }
-        return back()->withErrors(['identifier' => 'NIM/NIP atau password salah.']);
     }
 
     public function logout(Request $request)
     {
-        Auth::logout();
-        return redirect('auth.login');
+        if (Auth::guard('mahasiswa')->check()) {
+            Auth::guard('mahasiswa')->logout();
+        } else if (Auth::guard('dosen')->check()) {
+            Auth::guard('dosen')->logout();
+        }
+        
+        return redirect()->route('login');
     }
 }

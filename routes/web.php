@@ -75,10 +75,39 @@ Route::get('/contohdashboard', function(){
 
 
 // Route ke halaman login dengan AuthController
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+// Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+// Route::post('/login', [AuthController::class, 'login']);
+// Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Route untuk guest (belum login)
+Route::middleware(['guest'])->group(function () {
+  Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
+  Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+});
+
+// Route untuk yang sudah login
+Route::middleware(['auth'])->group(function () {
+  // Route logout
+  Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+  // Route untuk mahasiswa
+  Route::middleware(['checkRole:mahasiswa'])->group(function () {
+      Route::get('/mahasiswa/usulanbimbingan', function () {
+          return view('bimbingan.mahasiswa.usulanbimbingan');
+      })->name('mahasiswa.usulanbimbingan');
+  });
+
+  // Route untuk dosen
+  Route::middleware(['checkRole:dosen'])->group(function () {
+      Route::get('/dosen/persetujuan', function () {
+          return view('dosen.persetujuan');
+      })->name('dosen.persetujuan');
+  });
+});
+
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 //view halaman
 Route::get('/masukkanjadwal', function () { return view('bimbingan.dosen.masukkanjadwal');})->name('masukkanjadwal');
+
 

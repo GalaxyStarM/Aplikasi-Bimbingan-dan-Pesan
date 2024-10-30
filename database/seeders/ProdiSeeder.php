@@ -6,31 +6,25 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class RoleSeeder extends Seeder
+class ProdiSeeder extends Seeder
 {
     public function run()
     {
-        $roles = [
+        $prodis = [
             [
                 'id' => 1,
-                'role_akses' => 'admin',
+                'nama_prodi' => 'Teknik Elektro',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ],
             [
                 'id' => 2,
-                'role_akses' => 'dosen',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ],
-            [
-                'id' => 3,
-                'role_akses' => 'mahasiswa',
+                'nama_prodi' => 'Teknik Informatika',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ]
         ];
 
-        DB::table('role')->insert($roles);
+        DB::table('prodi')->insert($prodis);
     }
 }

@@ -8,6 +8,6 @@ class MahasiswaController extends Controller
 {
     public function usulanBimbingan()
     {
-        return view('mahasiswa.usulan_bimbingan');
+        return view('bimbingan.mahasiswa.usulanbimbingan');
     }
 }

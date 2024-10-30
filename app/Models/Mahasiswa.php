@@ -9,9 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Mahasiswa extends Authenticatable
 {
     use HasFactory, Notifiable;
-    protected $tabel = 'mahasiswa';
     protected $primaryKey = 'nim';
-    public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [

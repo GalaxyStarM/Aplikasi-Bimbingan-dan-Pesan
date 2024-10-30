@@ -12,7 +12,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = [
+        $mahasiswa = [
             [
                 'name' => 'Mahasiswa 1',
                 'nim' => '2021012345', // NIM untuk mahasiswa
@@ -20,9 +20,11 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password123'), // Password yang di-hash
             ]
         ];
+
+        Mahasiswa::truncate();
         
-        foreach ($users as $mahasiswa) {
-            Mahasiswa::create($user);
+        foreach ($mahasiswa as $mahasiswa) {
+            Mahasiswa::create($mahasiswa);
         }
     }
 }
