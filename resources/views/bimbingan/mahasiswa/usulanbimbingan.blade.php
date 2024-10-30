@@ -104,6 +104,16 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const hash = window.location.hash;
+    if (hash) {
+        const tabId = hash.replace('#', '');
+        const tabEl = document.querySelector(`#bimbinganTab button[data-bs-target="#${tabId}"]`);
+        if (tabEl) {
+            const tab = new bootstrap.Tab(tabEl);
+            tab.show();
+        }
+    }
+
     fetch('/dataDummy.json')
         .then(response => response.json())
         .then(data => {
@@ -145,6 +155,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         })
         .catch(error => console.error('Error:', error));
-});
+    });
 </script>
 @endpush
