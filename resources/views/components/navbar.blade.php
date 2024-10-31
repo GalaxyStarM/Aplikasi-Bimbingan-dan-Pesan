@@ -11,10 +11,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link {{ Request::is('/usulanbimbingan') || 
-                                            Request::is('/pilihjadwal') || 
-                                            Request::is('/detaildaftar') || 
-                                            Request::is('/riwayatmahasiswa') ? 'active' : '' }}" style="font-weight: bold;" href="{{ url('/usulanbimbingan') }}">BIMBINGAN</a>
+                    <a class="nav-link {{ Request::is('usulanbimbingan') || 
+                                            Request::is('pilihjadwal') || 
+                                            Request::is('detaildaftar') || 
+                                            Request::is('riwayatmahasiswa') ? 'active' : '' }}" style="font-weight: bold;" href="{{ url('/usulanbimbingan') }}">BIMBINGAN</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('dashboardpesan') ? 'active' : '' }}" style="font-weight: bold;" href="{{ url('/dashboardpesan') }}">PESAN</a>

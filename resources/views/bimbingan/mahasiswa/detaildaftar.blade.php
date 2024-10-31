@@ -25,7 +25,7 @@
         <h1 class="mb-2 gradient-text fw-bold">Detail Daftar Bimbingan</h1>
         <hr></hr>
         <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
-            <a href="/#jadwal">
+            <a href="/usulanbimbingan#jadwal">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
         </button>
