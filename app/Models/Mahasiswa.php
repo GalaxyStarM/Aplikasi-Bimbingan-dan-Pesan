@@ -30,7 +30,7 @@ class Mahasiswa extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class,'role_id','id');
     }
 
     public function prodi()
@@ -45,6 +45,6 @@ class Mahasiswa extends Authenticatable
 
     public function hasRole($roleName)
     {
-        return $this->role->name === $roleName;
+        return $this->role && $this->role->role_akses === $roleName;
     }
 }

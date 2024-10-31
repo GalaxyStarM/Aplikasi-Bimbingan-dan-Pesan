@@ -33,7 +33,7 @@ class AuthController extends Controller
             Auth::guard('mahasiswa')->login($mahasiswa);
             session(['role' => 'mahasiswa']);
             Log::info('Login berhasil untuk mahasiswa: ' . $mahasiswa->nim);
-            return view('bimbingan.mahasiswa.usulanbimbingan');
+            return redirect('/usulanbimbingan');
         }
 
         // Cek dosen
@@ -42,7 +42,7 @@ class AuthController extends Controller
             Auth::guard('dosen')->login($dosen);
             session(['role' => 'dosen']);
             Log::info('Login berhasil untuk dosen: ' . $dosen->nip);
-            return view('bimbingan.dosen.persetujuan');
+            return redirect('/persetujuan');
         }
 
         // Jika login gagal
