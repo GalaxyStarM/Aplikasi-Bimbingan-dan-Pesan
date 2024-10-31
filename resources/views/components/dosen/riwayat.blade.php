@@ -1,13 +1,13 @@
-<!-- File: resources/views/components/tabs/riwayat.blade.php -->
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        Tampilkan 
+        Tampilkan
         <select class="form-select form-select-sm d-inline-block w-auto">
             <option>50</option>
-        </select> 
+        </select>
         entri
     </div>
 </div>
+
 <div class="table-responsive">
     <table class="table table-striped table-bordered">
         <thead>
@@ -31,10 +31,10 @@
                 <td class="text-center">Bimbingan Skripsi</td>
                 <td class="text-center">Senin, 30 September 2024</td>
                 <td class="text-center">13.30 - 16.00</td>
-                <td class="text-center">Lab. Jaringan</td>
+                <td class="text-center"></td>
                 <td class="text-center">SELESAI</td>
                 <td class="text-center">
-                    <a href="/riwayatmahasiswa" class="badge btn btn-info p-1 mb-1">
+                    <a href="{{ url('/riwayatdosen') }}" class="badge btn btn-info p-1 mb-1">
                         <i class="fas fa-info-circle"></i>
                     </a>
                 </td>

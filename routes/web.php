@@ -12,10 +12,6 @@ use App\Http\Controllers\JadwalController;
 //     return view('pesan.mahasiswa.isipesan');
 // });
 
-// Route::get('/usulanbimbingan', function () {
-//   return view('bimbingan.mahasiswa.usulanbimbingan');
-// });
-
 // // Route ke dashboard pesan (dasboarpesan.blade.php)
 // Route::get('/dashboardpesan', function () {
 //     return view('pesan.dashboardpesan');
@@ -27,37 +23,6 @@ use App\Http\Controllers\JadwalController;
 
 // Route::get('/isipesandosen', function () {
 //   return view('pesan.dosen.isipesandosen');
-// });
-
-// Route::get('/aksiInformasi', function(){
-//   return view('bimbingan.aksiInformasi');
-// });
-
-// Route::get('/riwayatmahasiswa', function(){
-//   return view('bimbingan.riwayatmahasiswa');
-// });
-
-// Route::get('/riwayatdosen', function(){
-//   return view('bimbingan.riwayatdosen');
-// });
-
-// Route::get('/pilihjadwal', [JadwalController::class, 'create'])->name('jadwal.create');
-// Route::post('/pilihjadwal', [JadwalController::class, 'store'])->name('jadwal.store');
-
-// Route::get('/detaildaftar', function(){
-//   return view('bimbingan.mahasiswa.detaildaftar');
-// })->name('pilihjadwal');
-
-// Route::get('/terimausulanbimbingan', function(){
-//   return view('bimbingan.dosen.terimausulanbimbingan');
-// });
-
-// Route::get('/editusulan', function(){
-//   return view('bimbingan.dosen.editusulan');
-// });
-
-// Route::get('/masukkanjadwal', function(){
-//   return view('bimbingan.dosen.masukkanjadwal');
 // });
 
 // Route::get('/contohdashboard', function(){
@@ -74,21 +39,53 @@ Route::middleware(['guest'])->group(function () {
   Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 });
 
-// Perbaikan penulisan route group
+
 Route::middleware(['auth:mahasiswa', 'checkRole:mahasiswa'])->group(function () {
   Route::get('/usulanbimbingan', function() {
       return view('bimbingan.mahasiswa.usulanbimbingan');
   })->name('mahasiswa.usulanbimbingan');
+
+  Route::get('/aksiInformasi', function(){
+    return view('bimbingan.aksiInformasi');
+  });
+
+  Route::get('/detaildaftar', function(){
+    return view('bimbingan.mahasiswa.detaildaftar');
+  })->name('detaildaftar');
+
+  Route::get('/pilihjadwal', [JadwalController::class, 'create'])->name('jadwal.create');
+  Route::post('/pilihjadwal', [JadwalController::class, 'store'])->name('jadwal.store');
+
+  Route::get('/riwayatmahasiswa', function(){
+    return view('bimbingan.riwayatmahasiswa');
+  });
+
 });
 
 Route::middleware(['auth:dosen', 'checkRole:dosen'])->group(function () {
+  
   Route::get('/persetujuan', function() {
       return view('bimbingan.dosen.persetujuan');
   })->name('dosen.persetujuan');
+
+  Route::get('/riwayatdosen', function(){
+    return view('bimbingan.riwayatdosen');
+  });
+  
+  Route::get('/terimausulanbimbingan', function(){
+    return view('bimbingan.dosen.terimausulanbimbingan');
+  });
+  
+  Route::get('/editusulan', function(){
+    return view('bimbingan.dosen.editusulan');
+  });
+
+  Route::get('/masukkanjadwal', function(){
+    return view('bimbingan.dosen.masukkanjadwal');
+  });
+
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-// Route::get('/masukkanjadwal', function () { return view('bimbingan.dosen.masukkanjadwal');})->name('masukkanjadwal');
 
 
