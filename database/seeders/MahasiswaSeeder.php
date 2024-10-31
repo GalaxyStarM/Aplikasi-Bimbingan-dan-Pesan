@@ -23,7 +23,31 @@ class MahasiswaSeeder extends Seeder
                 'role_id' => 3,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
-            ]
+            ],
+            [
+                'nim' => '2107110665',
+                'nama' => 'Desi Maya Sari',
+                'angkatan' => 2021,
+                'email' => 'desi.maya0665@students.unri.ac.id',
+                'password' => Hash::make('2107110665'),
+                'prodi_id' => 2,
+                'konsentrasi_id' => 1, 
+                'role_id' => 3,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'nim' => '2107110255',
+                'nama' => 'Syahirah Tri Meilina',
+                'angkatan' => 2021,
+                'email' => 'syahirah.tri0255@students.unri.ac.id',
+                'password' => Hash::make('2107110255'),
+                'prodi_id' => 2,
+                'konsentrasi_id' => 1, 
+                'role_id' => 3,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
         ];
 
         DB::table('mahasiswas')->insert($mahasiswa);
