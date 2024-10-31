@@ -2,35 +2,37 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
+     *
+     * @return void
      */
-    public function run(): void
+    public function run()
     {
-        // Menghapus semua data sebelumnya (jika diperlukan)
-        User::truncate();
+        // Nonaktifkan foreign key checks sementara
+        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        
+        // Truncate semua table untuk memastikan data bersih
+        \DB::table('mahasiswas')->truncate();
+        \DB::table('dosens')->truncate();
+        \DB::table('konsentrasi')->truncate();
+        \DB::table('prodi')->truncate();
+        \DB::table('role')->truncate();
 
-        // Menambahkan data pengguna
-        User::factory()->create([
-            'name' => 'Mahasiswa 1',
-            'nim' => '2021012345', // NIM untuk mahasiswa
-            'email' => 'mahasiswa1@example.com',
-            'password' => Hash::make('password123'), // Password yang di-hash
-            'role' => 'mahasiswa', // Role mahasiswa
-        ]);
+        // Aktifkan kembali foreign key checks
+        \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        User::factory()->create([
-            'name' => 'Dosen 1',
-            'nip' => '123456789012345678', // NIP untuk dosen
-            'email' => 'dosen1@example.com',
-            'password' => Hash::make('password123'), // Password yang di-hash
-            'role' => 'dosen', // Role dosen
+        // Jalankan seeders dalam urutan yang benar
+        $this->call([
+            RoleSeeder::class,      // Jalankan pertama karena dibutuhkan oleh user
+            ProdiSeeder::class,     // Jalankan kedua karena dibutuhkan oleh user
+            KonsentrasiSeeder::class, // Jalankan ketiga karena dibutuhkan oleh mahasiswa
+            DosenSeeder::class,     // Opsional: Jika ingin menambahkan data dosen default
+            MahasiswaSeeder::class  // Opsional: Jika ingin menambahkan data mahasiswa default
         ]);
     }
 }

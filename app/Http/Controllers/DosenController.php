@@ -8,6 +8,6 @@ class DosenController extends Controller
 {
     public function persetujuanBimbingan()
     {
-        return view('dosen.persetujuan_bimbingan');
+        return view('bimbingan.dosen.persetujuan');
     }
 }

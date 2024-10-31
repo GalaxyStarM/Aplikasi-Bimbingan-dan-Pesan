@@ -4,85 +4,91 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController; // Pastikan ini ada
 use App\Http\Controllers\JadwalController;
 
-// Route ke halaman login
-Route::get('/login', function () {
-  return redirect('/login');
+// Route::get('/buatpesan', function () {
+//     return view('pesan.mahasiswa.buatpesan');
+// });
+
+// Route::get('/isipesan', function () {
+//     return view('pesan.mahasiswa.isipesan');
+// });
+
+// Route::get('/usulanbimbingan', function () {
+//   return view('bimbingan.mahasiswa.usulanbimbingan');
+// });
+
+// // Route ke dashboard pesan (dasboarpesan.blade.php)
+// Route::get('/dashboardpesan', function () {
+//     return view('pesan.dashboardpesan');
+// });
+
+// Route::get('/buatpesandosen', function () {
+//   return view('pesan.dosen.buatpesandosen');
+// });
+
+// Route::get('/isipesandosen', function () {
+//   return view('pesan.dosen.isipesandosen');
+// });
+
+// Route::get('/aksiInformasi', function(){
+//   return view('bimbingan.aksiInformasi');
+// });
+
+// Route::get('/riwayatmahasiswa', function(){
+//   return view('bimbingan.riwayatmahasiswa');
+// });
+
+// Route::get('/riwayatdosen', function(){
+//   return view('bimbingan.riwayatdosen');
+// });
+
+// Route::get('/pilihjadwal', [JadwalController::class, 'create'])->name('jadwal.create');
+// Route::post('/pilihjadwal', [JadwalController::class, 'store'])->name('jadwal.store');
+
+// Route::get('/detaildaftar', function(){
+//   return view('bimbingan.mahasiswa.detaildaftar');
+// })->name('pilihjadwal');
+
+// Route::get('/terimausulanbimbingan', function(){
+//   return view('bimbingan.dosen.terimausulanbimbingan');
+// });
+
+// Route::get('/editusulan', function(){
+//   return view('bimbingan.dosen.editusulan');
+// });
+
+// Route::get('/masukkanjadwal', function(){
+//   return view('bimbingan.dosen.masukkanjadwal');
+// });
+
+// Route::get('/contohdashboard', function(){
+//   return view('pesan.contohdashboard');
+// });
+
+// Route::get('/datausulanbimbingan', function(){
+//   return view('bimbingan.admin.datausulanbimbingan');
+// });
+
+// Route untuk guest (belum login)
+Route::middleware(['guest'])->group(function () {
+  Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
+  Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 });
 
-Route::get('/buatpesan', function () {
-    return view('pesan.mahasiswa.buatpesan');
+// Perbaikan penulisan route group
+Route::middleware(['auth:mahasiswa', 'checkRole:mahasiswa'])->group(function () {
+  Route::get('/usulanbimbingan', function() {
+      return view('bimbingan.mahasiswa.usulanbimbingan');
+  })->name('mahasiswa.usulanbimbingan');
 });
 
-Route::get('/isipesan', function () {
-    return view('pesan.mahasiswa.isipesan');
+Route::middleware(['auth:dosen', 'checkRole:dosen'])->group(function () {
+  Route::get('/persetujuan', function() {
+      return view('bimbingan.dosen.persetujuan');
+  })->name('dosen.persetujuan');
 });
 
-// Route ke dashboard pesan (dasboarpesan.blade.php)
-Route::get('/dashboardpesan', function () {
-    return view('pesan.dashboardpesan');
-});
-
-Route::get('/', function () {
-  return view('bimbingan.mahasiswa.usulanbimbingan');
-});
-
-Route::get('/buatpesandosen', function () {
-  return view('pesan.dosen.buatpesandosen');
-});
-
-Route::get('/isipesandosen', function () {
-  return view('pesan.dosen.isipesandosen');
-});
-
-Route::get('/aksiInformasi', function(){
-  return view('bimbingan.aksiInformasi');
-});
-
-Route::get('/riwayatmahasiswa', function(){
-  return view('bimbingan.riwayatmahasiswa');
-});
-
-Route::get('/riwayatdosen', function(){
-  return view('bimbingan.riwayatdosen');
-});
-
-Route::get('/pilihjadwal', [JadwalController::class, 'create'])->name('jadwal.create');
-Route::post('/pilihjadwal', [JadwalController::class, 'store'])->name('jadwal.store');
-
-Route::get('/detaildaftar', function(){
-  return view('bimbingan.mahasiswa.detaildaftar');
-})->name('pilihjadwal');
-
-Route::get('/terimausulanbimbingan', function(){
-  return view('bimbingan.dosen.terimausulanbimbingan');
-});
-
-Route::get('/editusulan', function(){
-  return view('bimbingan.dosen.editusulan');
-});
-
-Route::get('/masukkanjadwal', function(){
-  return view('bimbingan.dosen.masukkanjadwal');
-});
-
-Route::get('/persetujuan', function(){
-  return view('bimbingan.dosen.persetujuan');
-});
-
-Route::get('/contohdashboard', function(){
-  return view('pesan.contohdashboard');
-});
-
-Route::get('/datausulanbimbingan', function(){
-  return view('bimbingan.admin.datausulanbimbingan');
-});
-
-
-// Route ke halaman login dengan AuthController
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-//view halaman
-Route::get('/masukkanjadwal', function () { return view('bimbingan.dosen.masukkanjadwal');})->name('masukkanjadwal');
+// Route::get('/masukkanjadwal', function () { return view('bimbingan.dosen.masukkanjadwal');})->name('masukkanjadwal');
+
 

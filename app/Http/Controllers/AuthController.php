@@ -5,63 +5,63 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use App\Models\Mahasiswa;
+use App\Models\Dosen;
 
 class AuthController extends Controller
 {
-    // Menampilkan form login
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // Proses login
     public function login(Request $request)
     {
         // Validasi input
-        $credentials = $request->validate([
-            'identifier' => ['required'],
-            'password' => ['required'],
+        $request->validate([
+            'username' => 'required',
+            'password' => 'required',
         ]);
 
-        $identifier = $credentials['identifier'];
-        $password = $credentials['password'];
+        $identifier = $request->username;
+        $password = $request->password;
 
-        // Cek apakah user ada berdasarkan NIM atau NIP
-        $user = User::where('nim', $identifier)->orWhere('nip', $identifier)->first();
+        // Cek mahasiswa
+        $mahasiswa = Mahasiswa::where('nim', $identifier)->first();
+        if ($mahasiswa && Hash::check($password, $mahasiswa->password)) {
+            Auth::guard('mahasiswa')->login($mahasiswa);
+            session(['role' => 'mahasiswa']);
+            Log::info('Login berhasil untuk mahasiswa: ' . $mahasiswa->nim);
+            return redirect('/usulanbimbingan');
+        }
 
-        if (!$user) {
-            // Jika NIM/NIP tidak ditemukan
-            return back()->withErrors([
-                'identifier' => 'NIP/NIM tidak ditemukan.',
+        // Cek dosen
+        $dosen = Dosen::where('nip', $identifier)->first();
+        if ($dosen && Hash::check($password, $dosen->password)) {
+            Auth::guard('dosen')->login($dosen);
+            session(['role' => 'dosen']);
+            Log::info('Login berhasil untuk dosen: ' . $dosen->nip);
+            return redirect('/persetujuan');
+        }
+
+        // Jika login gagal
+        Log::warning('Login gagal untuk: ' . $identifier);
+        return back()
+            ->withInput($request->only('username'))
+            ->withErrors([
+                'login' => 'NIP/NIM atau password salah.'
             ]);
-        }
-
-        // Cek apakah password benar
-        if (!Hash::check($password, $user->password)) {
-            // Jika password salah
-            return back()->withErrors([
-                'password' => 'Password salah.',
-            ]);
-        }
-
-        // Jika kredensial benar, lakukan login
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        // Redirect sesuai role
-        if ($user->isDosen()) {
-            return redirect()->route('dosen.persetujuan_bimbingan');
-        } else {
-            return redirect()->route('mahasiswa.usulan_bimbingan');
-        }
     }
 
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/');
+        if (Auth::guard('mahasiswa')->check()) {
+            Auth::guard('mahasiswa')->logout();
+        } else if (Auth::guard('dosen')->check()) {
+            Auth::guard('dosen')->logout();
+        }
+        
+        return redirect()->route('login');
     }
 }
