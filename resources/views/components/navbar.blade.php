@@ -16,7 +16,7 @@
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     @if(Auth::guard('dosen')->check())
-                        <a class="nav-link {{ Request::is('persetujuan') || Request::is('detaildaftar') || Request::is('riwayatdosen') || Request::is('editusulan') || Request::is('terimausulanbimbingan') ? 'active' : '' }}" 
+                        <a class="nav-link {{ Request::is('persetujuan') || Request::is('masukkanjadwal') || Request::is('riwayatdosen') || Request::is('editusulan') || Request::is('terimausulanbimbingan') ? 'active' : '' }}" 
                            style="font-weight: bold;" 
                            href="{{ url('/persetujuan') }}">BIMBINGAN</a>
                     @else

@@ -120,7 +120,14 @@
 
 @section('content')
 <div class="container mt-5">
-    <h1 class="mb-4">Masukkan Jadwal Bimbingan</h1>
+    <div class="container mt-5">
+    <h1 class="mb-2 gradient-text fw-bold">Masukkan Jadwal Bimbingan</h1>
+    <hr>
+    <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
+        <a href="{{ url('/persetujuan') }}">
+            <i class="fas fa-arrow-left me-2"></i> Kembali
+        </a>
+    </button>
     
     <!-- Cek apakah sudah pernah terhubung ke Google Calendar -->
     @if(!Auth::guard('dosen')->user()->googleToken)
