@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController; // Pastikan ini ada
-use App\Http\Controllers\JadwalController;
+use App\Http\Controllers\BimbinganController;
+use App\Http\Controllers\DosenController;
 
 // Route::get('/buatpesan', function () {
 //     return view('pesan.mahasiswa.buatpesan');
@@ -53,12 +54,15 @@ Route::middleware(['auth:mahasiswa', 'checkRole:mahasiswa'])->group(function () 
     return view('bimbingan.mahasiswa.detaildaftar');
   })->name('detaildaftar');
 
-  Route::get('/pilihjadwal', [JadwalController::class, 'create'])->name('jadwal.create');
-  Route::post('/pilihjadwal', [JadwalController::class, 'store'])->name('jadwal.store');
+  Route::get('/pilihjadwal', [BimbinganController::class, 'create'])->name('jadwal.create');
+  Route::post('/pilihjadwal', [BimbinganController::class, 'store'])->name('jadwal.store');
 
   Route::get('/riwayatmahasiswa', function(){
     return view('bimbingan.riwayatmahasiswa');
   });
+
+  Route::get('/bimbingan/create', [BimbinganController::class, 'create'])->name('bimbingan.create');
+    Route::post('/bimbingan', [BimbinganController::class, 'store'])->name('bimbingan.store');
 
 });
 
@@ -80,9 +84,17 @@ Route::middleware(['auth:dosen', 'checkRole:dosen'])->group(function () {
     return view('bimbingan.dosen.editusulan');
   });
 
-  Route::get('/masukkanjadwal', function(){
-    return view('bimbingan.dosen.masukkanjadwal');
-  });
+  // Halaman utama masukkan jadwal
+  Route::get('/masukkanjadwal', [DosenController::class, 'index'])
+  ->name('dosen.jadwal.index');
+
+  // Google Calendar auth routes
+  Route::get('/jadwal', [DosenController::class, 'index'])->name('dosen.jadwal.index');
+  Route::get('/google/connect', [DosenController::class, 'connect'])->name('dosen.google.connect');
+  Route::get('/dosen/google/callback', [DosenController::class, 'callback'])->name('dosen.google.callback');
+  Route::get('/events', [DosenController::class, 'getEvents'])->name('dosen.jadwal.events');
+  Route::post('/jadwal', [DosenController::class, 'store'])->name('dosen.jadwal.store');
+  Route::delete('/jadwal/{eventId}', [DosenController::class, 'destroy'])->name('dosen.jadwal.destroy');
 
 });
 
