@@ -32,6 +32,14 @@ Route::get('/isipesandosen', function () {
     return view('pesan.dosen.isipesandosen');
 });
 
+Route::get('/profilmahasiswa', function(){
+    return view('bimbingan.mahasiswa.profilmahasiswa');
+  });
+
+  Route::get('/gantipassword', function(){
+    return view('bimbingan.mahasiswa.gantipassword');
+  });
+
 Route::get('/contohdashboard', function(){
     return view('pesan.contohdashboard');
 });

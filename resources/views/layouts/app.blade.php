@@ -17,6 +17,9 @@
     <!-- Custom Global CSS -->
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
 
+    {{-- custom logo website --}}
+    <link rel="icon" href="{{ asset('images/logounri.png') }}" type="image/png">
+
     <!-- Page Specific Styles -->
 
     @stack('styles')
