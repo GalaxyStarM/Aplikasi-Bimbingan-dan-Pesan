@@ -8,6 +8,7 @@ use Google_Service_Calendar;
 use Google_Service_Calendar_Event;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\JadwalBimbingan;
 use App\Models\Dosen;
 use App\Models\DosenGoogleToken;
 use Illuminate\Support\Facades\Auth;
@@ -154,7 +155,7 @@ class DosenController extends Controller
             $this->service = new Google_Service_Calendar($this->client);
             $dosen = Auth::guard('dosen')->user();
             
-            $calendarId = 'primary';
+            $calendarId = 'primary'; // Menggunakan kalender utama pengguna
             $optParams = [
                 'maxResults' => 100,
                 'orderBy' => 'startTime',
@@ -167,17 +168,43 @@ class DosenController extends Controller
             $events = [];
 
             foreach ($results->getItems() as $event) {
-                $events[] = [
+                // Skip events yang tidak memiliki waktu mulai/selesai (all day events)
+                if (!$event->start->dateTime || !$event->end->dateTime) {
+                    continue;
+                }
+
+                // Format event untuk FullCalendar
+                $eventData = [
                     'id' => $event->id,
-                    'title' => $event->getSummary(),
-                    'start' => $event->start->dateTime,
-                    'end' => $event->end->dateTime,
+                    'title' => $event->getSummary() ?: 'No Title',
+                    'start' => Carbon::parse($event->start->dateTime)->toIso8601String(),
+                    'end' => Carbon::parse($event->end->dateTime)->toIso8601String(),
                     'description' => $event->getDescription(),
+                    'editable' => false, // Events dari Google Calendar tidak bisa diedit langsung
                 ];
+
+                // Cek apakah ini event bimbingan
+                if (strpos(strtolower($event->getSummary()), 'bimbingan') !== false) {
+                    $eventData['color'] = '#4285f4'; // Warna untuk event bimbingan
+                    $eventData['editable'] = true; // Event bimbingan bisa diedit
+                } else {
+                    $eventData['color'] = '#9e9e9e'; // Warna default untuk event lain
+                    $eventData['className'] = 'external-event'; // Class khusus untuk event external
+                }
+
+                // Tambahkan status jika ada di description
+                if ($event->getDescription()) {
+                    if (preg_match('/Status:\s*(.*?)(?:\n|$)/', $event->getDescription(), $matches)) {
+                        $eventData['status'] = trim($matches[1]);
+                    }
+                }
+
+                $events[] = $eventData;
             }
 
             return response()->json($events);
         } catch (\Exception $e) {
+            Log::error('Error getting events: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -192,29 +219,66 @@ class DosenController extends Controller
                 return response()->json(['error' => 'Not authenticated'], 401);
             }
 
-            $dosen = Auth::guard('dosen')->user();
+            // Log request data
+            Log::info('Incoming request data:', $request->all());
 
-            $request->validate([
-                'kegiatan' => 'required|string|in:krs,kp,mbkm,skripsi',
+            // Validate request
+            $validated = $request->validate([
                 'start' => 'required|date',
                 'end' => 'required|date|after:start',
                 'description' => 'nullable|string',
+                'capacity' => 'required|integer|min:1|max:10'
             ]);
 
+            // Parse dates with explicit timezone
+            $start = Carbon::parse($request->start)->setTimezone('Asia/Jakarta');
+            $end = Carbon::parse($request->end)->setTimezone('Asia/Jakarta');
+
+            // Log parsed dates
+            Log::info('Parsed dates:', [
+                'start' => $start->toDateTimeString(),
+                'end' => $end->toDateTimeString(),
+            ]);
+
+            // Validate work hours (08:00 - 18:00)
+            $startHour = $start->format('H');
+            if ($startHour < 8 || $startHour >= 18) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Jadwal harus dalam jam kerja (08:00 - 18:00)'
+                ], 422);
+            }
+
+            // Calculate duration
+            $durasi = $end->diffInMinutes($start, false);
+            Log::info('Duration in minutes: ' . $durasi);
+
+            if (abs($durasi) < 30) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Durasi minimum bimbingan adalah 30 menit'
+                ], 422);
+            }
+
+            $dosen = Auth::guard('dosen')->user();
             $this->service = new Google_Service_Calendar($this->client);
 
+            $description = "Status: Tersedia\n" .
+                      "Dosen: {$dosen->nama}\n" .
+                      "NIP: {$dosen->nip}\n" .
+                      "Email: {$dosen->email}\n" .
+                      "Kapasitas: {$request->capacity} Mahasiswa\n\n" .
+                      ($request->description ? "Catatan: {$request->description}" : "");
+
             $event = new Google_Service_Calendar_Event([
-                'summary' => 'Available: Bimbingan ' . strtoupper($request->kegiatan),
-                'description' => ($request->description ?? '') . "\n\nStatus: Available" .
-                               "\nDosen: " . $dosen->nama .
-                               "\nNIP: " . $dosen->nip .
-                               "\nEmail: " . $dosen->email,
+                'summary' => 'Jadwal Bimbingan',
+                'description' => $description,
                 'start' => [
-                    'dateTime' => Carbon::parse($request->start)->toRfc3339String(),
+                    'dateTime' => $start->toRfc3339String(),
                     'timeZone' => 'Asia/Jakarta',
                 ],
                 'end' => [
-                    'dateTime' => Carbon::parse($request->end)->toRfc3339String(),
+                    'dateTime' => $end->toRfc3339String(),
                     'timeZone' => 'Asia/Jakarta',
                 ],
                 'reminders' => [
@@ -226,15 +290,35 @@ class DosenController extends Controller
                 ],
             ]);
 
-            $event = $this->service->events->insert('primary', $event);
+            $createdEvent = $this->service->events->insert('primary', $event);
+            
+            $jadwal = JadwalBimbingan::create([
+                'event_id' => $createdEvent->id,
+                'nip' => $dosen->nip,
+                'waktu_mulai' => $start,
+                'waktu_selesai' => $end,
+                'catatan' => $request->description,
+                'status' => 'tersedia',
+                'kapasitas' => $request->capacity,
+                'sisa_kapasitas' => $request->capacity
+            ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Jadwal berhasil ditambahkan!',
-                'event' => $event,
+                'data' => [
+                    'id' => $event->id,
+                    'title' => 'Jadwal Bimbingan',
+                    'start' => $start->toIso8601String(),
+                    'end' => $end->toIso8601String(),
+                    'description' => $request->description,
+                    'status' => 'Tersedia',
+                    'capacity' => $request->capacity
+                ]
             ]);
 
         } catch (\Exception $e) {
+            Log::error('Error adding event: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menambahkan jadwal: ' . $e->getMessage()
@@ -252,14 +336,22 @@ class DosenController extends Controller
                 return response()->json(['error' => 'Not authenticated'], 401);
             }
 
+            // Delete from Google Calendar
             $this->service = new Google_Service_Calendar($this->client);
             $this->service->events->delete('primary', $eventId);
 
+            // Delete from database
+            $jadwal = JadwalBimbingan::where('event_id', $eventId)->first();
+            if ($jadwal) {
+                $jadwal->delete();
+            }
+
             return response()->json([
                 'success' => true,
-                'message' => 'Jadwal berhasil dihapus!'
+                'message' => 'Jadwal berhasil dihapus dari sistem dan Google Calendar!'
             ]);
         } catch (\Exception $e) {
+            Log::error('Error deleting schedule: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menghapus jadwal: ' . $e->getMessage()
