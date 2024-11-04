@@ -60,6 +60,14 @@ Route::middleware(['auth:mahasiswa', 'checkRole:mahasiswa'])->group(function () 
     return view('bimbingan.riwayatmahasiswa');
   });
 
+  Route::get('/profilmahasiswa', function(){
+    return view('bimbingan.mahasiswa.profilmahasiswa');
+  });
+
+  Route::get('/gantipassword', function(){
+    return view('bimbingan.mahasiswa.gantipassword');
+  });
+
 });
 
 Route::middleware(['auth:dosen', 'checkRole:dosen'])->group(function () {
