@@ -37,6 +37,11 @@ class Dosen extends Authenticatable
         return $this->belongsTo(Prodi::class);
     }
 
+    public function googleToken()
+    {
+        return $this->hasOne(DosenGoogleToken::class, 'nip', 'nip');
+    }
+
     public function hasRole($roleName)
     {
         return $this->role->name === $roleName;
