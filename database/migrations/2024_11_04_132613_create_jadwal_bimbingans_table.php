@@ -1,5 +1,4 @@
 <?php
-// database/migrations/2024_11_04_create_jadwal_bimbingans_table.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -11,16 +10,26 @@ return new class extends Migration
     {
         Schema::create('jadwal_bimbingans', function (Blueprint $table) {
             $table->id();
-            $table->string('event_id')->unique(); // ID event dari Google Calendar
+            $table->string('event_id')->unique(); 
             $table->string('nip');
-            $table->foreign('nip')->references('nip')->on('dosens')->onDelete('cascade');
             $table->dateTime('waktu_mulai');
             $table->dateTime('waktu_selesai');
             $table->text('catatan')->nullable();
-            $table->string('status')->default('tersedia');
+            $table->enum('status', ['tersedia', 'tidak_tersedia', 'penuh'])->default('tersedia');
             $table->integer('kapasitas')->default(1);
             $table->integer('sisa_kapasitas')->default(1);
+            $table->string('lokasi')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
+            // Indexes
+            $table->index('nip');
+            $table->index('status');
+            $table->index(['waktu_mulai', 'waktu_selesai']);
+            $table->index('event_id'); // Tambahkan index untuk event_id
+            
+            // Foreign keys
+            $table->foreign('nip')->references('nip')->on('dosens')->onDelete('cascade');
         });
     }
 

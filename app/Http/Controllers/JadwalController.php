@@ -3,72 +3,250 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class JadwalController extends Controller
 {
-    private $dosenList = [
-        'Yusnita Rahayu, ST, M.Eng, Ph.D',
-        'Feri Candra, S.T., M.T., Ph.D',
-        'Rahmat Rizal Andhi, S.T., M.Τ.',
-        'Edi Susilo, S.Pd., M.Kom., M.Eng.',
-        'Dahliyusmanto S.Kom., MSc., Ph.D',
-        'Dr. Irsan Taufik Ali, S.T., Μ.Τ.',
-        'Rahyul Amri, S.T., M.T.',
-        'T. Yudi Hadiwandra, S.Kom., M.Kom.',
-        'Salhazan Nasution, S.Kom., MIT.',
-        'Noveri Lysbetti Marpaung, ST., M.Sc.',
-        'Linna Oktaviana Sari, ST., MT',
-        'Dian Ramadhani, S.T., M.T.',
-        'Prof. Azriyenni, S.T., M.Eng., Ph.D',
-        'Iswadi HR, S.T., M.T., Ph.D.',
-        'Dr. Febrizal, S.T., M.T.',
-        'Dr. Ir. Antonius Rajagukguk, M.T.',
-        'Indra Yasri, S.T., M.T., Ph.D',
-        'Suwitno, S.T., Μ.Τ.',
-        'Nurhalim S.T., M.T.',
-        'Dian Yayan Sukma, S.T., M.Τ.',
-        'Ery Safrianti, S.T., M.T.',
-        'Feranita, S.T., M.T.',
-        'R.A Rizka Qori Yuliani Putri S.ST., MT.',
-        'Dr. Fri Murdiya, S.T., M.T.',
-        'Ir. Edy Ervianto, M.T.',
-        'Eddy Hamdani, S.T., M.T.',
-        'Budhi Anto, S.T., MT.',
-        'Anhar, S.T., M.T., Ph.D.',
-        'Amir Hamzah, ST., MT',
-        'Dr. Dewi Nasien., M.Sc',
-        'Dr. Esa Prakasa, MT',
-        'Assoc. Prof. Ping Jack Soh, PhD',
-        'Yudi Yulius Maulana, ST., MT',
-        'Yussi Perdana Saputra S.T., M.T., IPM., Asean-Eng',
-        'Teguh Praludi, M.T',
-        'Arbiansyah Ali',
-        'Prof. Dr. Ing. Mudrik Alaydrus',
-        'Dr Eng Teguh Firmansyah, ST., MT., IPM',
-        'Dr. HUANYU LARRY CHENG',
-        'Prof. Chia Hao Ku Ph.D'
-    ];
-
-    public function create()
+    public function index()
     {
-        return view('bimbingan.mahasiswa.pilihjadwal', [
-            'dosenList' => $this->dosenList
-        ]);
+        $dosenList = DB::table('dosens')
+            ->select('nip', 'nama')
+            ->get()
+            ->map(function($dosen) {
+                return [
+                    'nip' => $dosen->nip,
+                    'nama' => $dosen->nama
+                ];
+            })
+            ->toArray();
+
+        return view('bimbingan.mahasiswa.pilihjadwal', compact('dosenList'));
+    }
+
+    // Tambahkan method untuk cek ketersediaan
+    public function checkAvailability(Request $request)
+    {
+        try {
+            $request->validate([
+                'jadwal_id' => 'required|exists:jadwal_bimbingans,id',
+                'jenis_bimbingan' => 'required|in:skripsi,kp,akademik,konsultasi'
+            ]);
+
+            // Cek apakah mahasiswa sudah pernah mengajukan untuk jadwal yang sama
+            $existingBimbingan = DB::table('bimbingans')
+                ->where('nim', auth()->user()->nim)
+                ->where('event_id', function($query) use ($request) {
+                    $query->select('event_id')
+                        ->from('jadwal_bimbingans')
+                        ->where('id', $request->jadwal_id);
+                })
+                ->where('status', '!=', 'DITOLAK')
+                ->exists();
+
+            if ($existingBimbingan) {
+                return response()->json([
+                    'available' => false,
+                    'message' => 'Anda sudah pernah mengajukan bimbingan untuk jadwal ini'
+                ]);
+            }
+
+            // Cek apakah mahasiswa memiliki bimbingan yang masih dalam proses untuk jenis yang sama
+            $pendingBimbingan = DB::table('bimbingans')
+                ->where('nim', auth()->user()->nim)
+                ->where('jenis_bimbingan', $request->jenis_bimbingan)
+                ->whereIn('status', ['USULAN', 'DITERIMA'])
+                ->exists();
+
+            if ($pendingBimbingan) {
+                return response()->json([
+                    'available' => false,
+                    'message' => 'Anda masih memiliki pengajuan bimbingan yang dalam proses'
+                ]);
+            }
+
+            return response()->json([
+                'available' => true
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'available' => false,
+                'message' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    public function getAvailableJadwal(Request $request)
+    {
+        try {
+            $request->validate([
+                'nip' => 'required|exists:dosens,nip',
+                'jenis_bimbingan' => 'required|in:skripsi,kp,akademik,konsultasi'
+            ]);
+
+            // Get jadwal yang tersedia
+            $jadwal = DB::table('jadwal_bimbingans as jb')
+                ->join('dosens as d', 'jb.nip', '=', 'd.nip')
+                ->where('jb.nip', $request->nip)
+                ->where('jb.status', 'tersedia')
+                ->where('jb.sisa_kapasitas', '>', 0)
+                ->where('jb.waktu_mulai', '>', now())
+                ->select(
+                    'jb.id',
+                    'jb.event_id',
+                    'jb.waktu_mulai',
+                    'jb.waktu_selesai',
+                    'jb.sisa_kapasitas',
+                    'jb.catatan',
+                    'jb.lokasi',
+                    'd.nama as dosen_nama'
+                )
+                ->get()
+                ->map(function ($item) {
+                    $waktuMulai = Carbon::parse($item->waktu_mulai);
+                    $waktuSelesai = Carbon::parse($item->waktu_selesai);
+                    
+                    // Cek apakah mahasiswa sudah memilih jadwal ini
+                    $isSelected = DB::table('bimbingans')
+                        ->where('nim', auth()->user()->nim)
+                        ->where('event_id', $item->event_id)
+                        ->where('status', '!=', 'DITOLAK')
+                        ->exists();
+                    
+                    return [
+                        'id' => $item->id,
+                        'event_id' => $item->event_id,
+                        'tanggal' => $waktuMulai->isoFormat('dddd, D MMMM Y'),
+                        'waktu' => $waktuMulai->format('H:i') . ' - ' . $waktuSelesai->format('H:i'),
+                        'sisa_kapasitas' => $item->sisa_kapasitas,
+                        'lokasi' => $item->lokasi,
+                        'catatan' => $item->catatan,
+                        'dosen_nama' => $item->dosen_nama,
+                        'is_selected' => $isSelected
+                    ];
+                })
+                ->sortBy('waktu_mulai')
+                ->values();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $jadwal
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 400);
+        }
     }
 
     public function store(Request $request)
     {
-        // Validasi input
-        $request->validate([
-            'pilihDosen' => 'required',
-            'jenisBimbingan' => 'required',
-            'pilihTanggal' => 'required',
-            'pilihJadwal' => 'required',
-            'deskripsi' => 'required'
-        ]);
+        try {
+            $request->validate([
+                'nip' => 'required|exists:dosens,nip',
+                'jenis_bimbingan' => 'required|in:skripsi,kp,akademik,konsultasi',
+                'jadwal_id' => 'required|exists:jadwal_bimbingans,id',
+                'deskripsi' => 'nullable|string' // Ubah menjadi nullable
+            ]);
 
-        // Logika penyimpanan data akan ditambahkan di sini
+            DB::beginTransaction();
 
-        return redirect('/')->with('success', 'Jadwal bimbingan berhasil diajukan');
+            // Cek ketersediaan jadwal dan ambil info dosen
+            $jadwal = DB::table('jadwal_bimbingans as jb')
+                ->join('dosens as d', 'jb.nip', '=', 'd.nip')
+                ->where('jb.id', $request->jadwal_id)
+                ->where('jb.status', 'tersedia')
+                ->where('jb.sisa_kapasitas', '>', 0)
+                ->where('jb.waktu_mulai', '>', now())
+                ->select('jb.*', 'd.nama as dosen_nama')
+                ->first();
+
+            if (!$jadwal) {
+                throw new \Exception('Jadwal tidak tersedia atau sudah penuh');
+            }
+
+            // Cek jadwal bentrok
+            $bentrok = DB::table('bimbingans')
+                ->where('nim', auth()->user()->nim)
+                ->where('tanggal', Carbon::parse($jadwal->waktu_mulai)->toDateString())
+                ->where(function($query) use ($jadwal) {
+                    $query->whereBetween('waktu_mulai', [
+                        Carbon::parse($jadwal->waktu_mulai)->format('H:i'),
+                        Carbon::parse($jadwal->waktu_selesai)->format('H:i')
+                    ])
+                    ->orWhereBetween('waktu_selesai', [
+                        Carbon::parse($jadwal->waktu_mulai)->format('H:i'),
+                        Carbon::parse($jadwal->waktu_selesai)->format('H:i')
+                    ]);
+                })
+                ->where('status', '!=', 'DITOLAK')
+                ->exists();
+
+            if ($bentrok) {
+                throw new \Exception('Anda sudah memiliki jadwal bimbingan di waktu yang sama');
+            }
+
+            // Cek apakah sudah pernah mengajukan jadwal yang sama
+            $existingBimbingan = DB::table('bimbingans')
+                ->where('nim', auth()->user()->nim)
+                ->where('event_id', $jadwal->event_id)
+                ->where('status', '!=', 'DITOLAK')
+                ->exists();
+
+            if ($existingBimbingan) {
+                throw new \Exception('Anda sudah pernah mengajukan bimbingan untuk jadwal ini');
+            }
+
+            // Cek apakah masih ada bimbingan dalam proses untuk jenis yang sama
+            $pendingBimbingan = DB::table('bimbingans')
+                ->where('nim', auth()->user()->nim)
+                ->where('jenis_bimbingan', $request->jenis_bimbingan)
+                ->whereIn('status', ['USULAN', 'DITERIMA'])
+                ->exists();
+
+            if ($pendingBimbingan) {
+                throw new \Exception('Anda masih memiliki pengajuan bimbingan yang dalam proses');
+            }
+
+            // Simpan bimbingan
+            $bimbingan = DB::table('bimbingans')->insertGetId([
+                'nim' => auth()->user()->nim,
+                'nip' => $request->nip,
+                'dosen_nama' => $jadwal->dosen_nama,
+                'jenis_bimbingan' => $request->jenis_bimbingan,
+                'tanggal' => Carbon::parse($jadwal->waktu_mulai)->toDateString(),
+                'waktu_mulai' => Carbon::parse($jadwal->waktu_mulai)->format('H:i'),
+                'waktu_selesai' => Carbon::parse($jadwal->waktu_selesai)->format('H:i'),
+                'lokasi' => $jadwal->lokasi,
+                'deskripsi' => $request->deskripsi ?? null, // Beri default null jika tidak diisi
+                'status' => 'USULAN',
+                'event_id' => $jadwal->event_id,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            // Update sisa kapasitas
+            DB::table('jadwal_bimbingans')
+                ->where('id', $request->jadwal_id)
+                ->decrement('sisa_kapasitas');
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Jadwal bimbingan berhasil diajukan',
+                'data' => $bimbingan
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 400);
+        }
     }
 }

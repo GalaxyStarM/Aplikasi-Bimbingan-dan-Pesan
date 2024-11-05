@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BimbinganController;
+use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\DosenController;
 
 // Route untuk guest (belum login)
@@ -67,10 +67,10 @@ Route::middleware(['auth:mahasiswa', 'checkRole:mahasiswa'])->group(function () 
     });
 
     // Bimbingan routes
-    Route::get('/pilihjadwal', [BimbinganController::class, 'create'])->name('jadwal.create');
-    Route::post('/pilihjadwal', [BimbinganController::class, 'store'])->name('jadwal.store');
-    Route::get('/bimbingan/create', [BimbinganController::class, 'create'])->name('bimbingan.create');
-    Route::post('/bimbingan', [BimbinganController::class, 'store'])->name('bimbingan.store');
+    Route::get('/pilihjadwal', [JadwalController::class, 'index'])->name('pilihjadwal.index');
+    Route::post('/pilihjadwal/store', [JadwalController::class, 'store'])->name('pilihjadwal.store');
+    Route::get('/pilihjadwal/available', [JadwalController::class, 'getAvailableJadwal'])->name('pilihjadwal.available');
+    
 });
 
 // Route untuk dosen
