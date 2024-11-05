@@ -4,35 +4,44 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Bimbingan extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     
-    protected $table = 'bimbingan';
+    protected $table = 'bimbingans'; 
     
     protected $fillable = [
         'nim',
+        'nip',
         'dosen_nama',
         'jenis_bimbingan',
         'tanggal',
         'waktu_mulai',
         'waktu_selesai',
         'lokasi',
-        'deskripsi',    // Deskripsi/keperluan dari mahasiswa
-        'status',       // USULAN/DISETUJUI/DITOLAK/SELESAI
-        'keterangan'    // Keterangan dari dosen (alasan ditolak/disetujui)
+        'deskripsi',    
+        'status',       
+        'keterangan',
+        'event_id'
     ];
 
     protected $casts = [
         'tanggal' => 'date',
-        'waktu_mulai' => 'time',
-        'waktu_selesai' => 'time'
+        'waktu_mulai' => 'time', // Ubah ke time karena di database time
+        'waktu_selesai' => 'time', // Ubah ke time karena di database time
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime'
     ];
 
     protected $attributes = [
-        'status' => self::STATUS_USULAN
+        'status' => self::STATUS_USULAN,
+        'lokasi' => null,
+        'keterangan' => null
     ];
 
     // Status bimbingan
@@ -43,79 +52,146 @@ class Bimbingan extends Model
 
     // Jenis bimbingan yang tersedia
     const JENIS_BIMBINGAN = [
-        'Bimbingan Skripsi',
-        'Bimbingan KP',
-        'Bimbingan Akademik',
-        'Konsultasi Pribadi'
+        'skripsi' => 'Bimbingan Skripsi',
+        'kp' => 'Bimbingan KP',
+        'akademik' => 'Bimbingan Akademik',
+        'konsultasi' => 'Konsultasi Pribadi'
     ];
 
-    // Relasi ke mahasiswa
-    public function mahasiswa()
+    // Relasi dengan model lain
+    public function mahasiswa(): BelongsTo
     {
         return $this->belongsTo(Mahasiswa::class, 'nim', 'nim');
     }
 
-    // Format tanggal ke Bahasa Indonesia
-    public function getTanggalIndonesiaAttribute()
+    public function dosen(): BelongsTo
     {
-        return Carbon::parse($this->tanggal)->translatedFormat('l, d F Y');
+        return $this->belongsTo(Dosen::class, 'nip', 'nip');
     }
 
-    // Format range waktu
-    public function getWaktuRangeAttribute()
+    public function jadwalBimbingan(): BelongsTo
     {
-        return date('H.i', strtotime($this->waktu_mulai)) . ' - ' . 
-               date('H.i', strtotime($this->waktu_selesai));
+        return $this->belongsTo(JadwalBimbingan::class, 'event_id', 'event_id');
     }
 
-    // Method untuk menyetujui usulan
-    public function setujui($lokasi)
-    {
-        $this->update([
-            'status' => self::STATUS_DISETUJUI,
-            'lokasi' => $lokasi,
-            'keterangan' => 'Disetujui'
-        ]);
-    }
-
-    // Method untuk menolak usulan
-    public function tolak($alasan)
-    {
-        $this->update([
-            'status' => self::STATUS_DITOLAK,
-            'keterangan' => $alasan
-        ]);
-    }
-
-    // Method untuk menyelesaikan bimbingan
-    public function selesaikan()
-    {
-        $this->update([
-            'status' => self::STATUS_SELESAI
-        ]);
-    }
-
-    // Scope untuk daftar usulan
+    // Scope query
     public function scopeUsulan($query)
     {
         return $query->where('status', self::STATUS_USULAN);
     }
 
-    // Scope untuk daftar yang disetujui
     public function scopeDisetujui($query)
     {
         return $query->where('status', self::STATUS_DISETUJUI);
     }
 
-    // Scope untuk daftar yang ditolak
     public function scopeDitolak($query)
     {
         return $query->where('status', self::STATUS_DITOLAK);
     }
 
-    // Scope untuk riwayat bimbingan
-    public function scopeRiwayat($query)
+    public function scopeSelesai($query)
     {
         return $query->where('status', self::STATUS_SELESAI);
+    }
+
+    public function scopeByMahasiswa($query, $nim)
+    {
+        return $query->where('nim', $nim);
+    }
+
+    public function scopeByDosen($query, $nip)
+    {
+        return $query->where('nip', $nip);
+    }
+
+    // Accessor dan Mutator
+    public function getWaktuLengkapAttribute(): string
+    {
+        return Carbon::parse($this->tanggal)->format('l, d F Y') . 
+               ' | ' . 
+               $this->waktu_mulai . ' - ' . $this->waktu_selesai;
+    }
+
+    public function getStatusColorAttribute(): string
+    {
+        return match($this->status) {
+            self::STATUS_USULAN => 'warning',
+            self::STATUS_DISETUJUI => 'success',
+            self::STATUS_DITOLAK => 'danger',
+            self::STATUS_SELESAI => 'info',
+            default => 'secondary'
+        };
+    }
+
+    public function getJenisBimbinganLabelAttribute(): string
+    {
+        return self::JENIS_BIMBINGAN[$this->jenis_bimbingan] ?? $this->jenis_bimbingan;
+    }
+
+    // Methods
+    public function isDiajukan(): bool
+    {
+        return $this->status === self::STATUS_USULAN;
+    }
+
+    public function isDisetujui(): bool
+    {
+        return $this->status === self::STATUS_DISETUJUI;
+    }
+
+    public function isDitolak(): bool
+    {
+        return $this->status === self::STATUS_DITOLAK;
+    }
+
+    public function isSelesai(): bool
+    {
+        return $this->status === self::STATUS_SELESAI;
+    }
+
+    public function setujui(?string $keterangan = null): bool
+    {
+        return $this->update([
+            'status' => self::STATUS_DISETUJUI,
+            'keterangan' => $keterangan
+        ]);
+    }
+
+    public function tolak(string $keterangan): bool
+    {
+        return $this->update([
+            'status' => self::STATUS_DITOLAK,
+            'keterangan' => $keterangan
+        ]);
+    }
+
+    public function selesaikan(?string $keterangan = null): bool
+    {
+        return $this->update([
+            'status' => self::STATUS_SELESAI,
+            'keterangan' => $keterangan
+        ]);
+    }
+
+    // Untuk validasi
+    public static function listStatus(): array
+    {
+        return [
+            self::STATUS_USULAN,
+            self::STATUS_DISETUJUI,
+            self::STATUS_DITOLAK,
+            self::STATUS_SELESAI
+        ];
+    }
+
+    public static function listJenisBimbingan(): array
+    {
+        return array_keys(self::JENIS_BIMBINGAN);
+    }
+
+    public static function getJenisBimbinganLabel(string $key): string
+    {
+        return self::JENIS_BIMBINGAN[$key] ?? $key;
     }
 }
