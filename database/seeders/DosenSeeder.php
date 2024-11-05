@@ -14,7 +14,7 @@ class DosenSeeder extends Seeder
         $dosen = [
             [
                 'nip' => '198501012015041001',
-                'nama' => 'Dr. Contoh Dosen',
+                'nama' => 'Contoh Dosen 1',
                 'nama_singkat' => 'CD',
                 'email' => 'tri.murniati2735@student.unri.ac.id',
                 'password' => Hash::make('password123'),
@@ -25,7 +25,7 @@ class DosenSeeder extends Seeder
             ],
             [
                 'nip' => '198501012015041002',
-                'nama' => 'Dr. Contoh Dosen',
+                'nama' => 'Contoh Dosen 2',
                 'nama_singkat' => 'CD',
                 'email' => 'desi.maya0665@student.unri.ac.id',
                 'password' => Hash::make('password123'),
@@ -36,7 +36,7 @@ class DosenSeeder extends Seeder
             ],
             [
                 'nip' => '198501012015041025',
-                'nama' => 'Dr. Contoh Dosen',
+                'nama' => 'Contoh Dosen 3',
                 'nama_singkat' => 'CD',
                 'email' => 'syahirah.tri0255@students.unri.ac.id',
                 'password' => Hash::make('password123'),
