@@ -22,13 +22,6 @@
         border-radius: 4px !important;
     }
 
-    /* Tooltip styling */
-    .tooltip-inner {
-        max-width: 300px !important;
-        padding: 10px !important;
-        background-color: rgba(33, 33, 33, 0.95) !important;
-    }
-
     /* Base Styles */
     :root {
         --fc-button-text-color: #3c4043;
@@ -467,19 +460,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const eventEl = info.el;
             const event = info.event;
             
-            // Create custom tooltip using Bootstrap
-            const tooltip = new bootstrap.Tooltip(eventEl, {
-                title: `
-                    <strong>${event.title}</strong><br>
-                    ${formatDateTime(event.start)} - ${formatDateTime(event.end)}
-                    ${event.extendedProps.description ? `<br>${event.extendedProps.description}` : ''}
-                `,
-                html: true,
-                placement: 'top',
-                trigger: 'hover',
-                container: 'body'
-            });
-
             if (event.classNames.includes('external-event')) {
                 eventEl.style.opacity = '0.7';
             }
