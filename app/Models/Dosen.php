@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable; 
+use App\Traits\HasGoogleCalendar;
 
 class Dosen extends Authenticatable
 {
+    use HasGoogleCalendar;
     use HasFactory, Notifiable;
     protected $primaryKey = 'nip';
     protected $keyType = 'string';
@@ -19,12 +21,22 @@ class Dosen extends Authenticatable
         'email',
         'password',
         'prodi_id',
-        'role_id'
+        'role_id',
+        'google_access_token',
+        'google_refresh_token',
+        'google_token_expires_in',
+        'google_token_created_at'
     ];
 
     protected $hidden = [
         'password',
-        'remember_token',
+        'google_access_token',
+        'google_refresh_token'
+    ];
+
+    protected $casts = [
+        'google_token_created_at' => 'datetime',
+        'google_token_expires_in' => 'integer',
     ];
 
     public function role()
@@ -35,11 +47,6 @@ class Dosen extends Authenticatable
     public function prodi()
     {
         return $this->belongsTo(Prodi::class);
-    }
-
-    public function googleToken()
-    {
-        return $this->hasOne(DosenGoogleToken::class, 'nip', 'nip');
     }
 
     public function hasRole($roleName)

@@ -321,21 +321,20 @@
             <i class="fas fa-arrow-left me-2"></i> Kembali
         </a>
     </button>
-    <div class="calendar-container">
-        @if(!Auth::guard('dosen')->user()->googleToken)
-            <div class="info-box">
-                <p class="mb-2">Untuk menggunakan fitur ini, Anda perlu memberikan izin akses ke Google Calendar dengan email: <strong>{{ Auth::guard('dosen')->user()->email }}</strong></p>
-                <a href="{{ route('dosen.google.connect') }}" class="btn btn-connect">
-                    <i class="fas fa-calendar-plus me-2"></i>
-                    Hubungkan dengan Google Calendar
-                </a>
-            </div>
-        @endif
-
-        <div id="calendar">
-            
+    
+    @if(!$isConnected)
+        <div class="info-box">
+            <p class="mb-2">Untuk menggunakan fitur ini, Anda perlu memberikan izin akses ke Google Calendar dengan email: <strong>{{ $email }}</strong></p>
+            <a href="{{ route('dosen.google.connect') }}" class="btn btn-connect">
+                <i class="fas fa-calendar-plus"></i>
+                Hubungkan dengan Google Calendar
+            </a>
         </div>
-    </div>
+    @else
+        <div class="calendar-container">
+            <div id="calendar"></div>
+        </div>
+    @endif
 </div>
 
 <!-- Modal Tambah Jadwal -->
@@ -503,7 +502,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 Swal.fire({
                     title: info.event.title,
                     html: `
-                        <div class="text-left">
+                        <div class="text-center">
                             <p><strong>Waktu:</strong> ${moment(info.event.start).format('HH:mm')} - ${moment(info.event.end).format('HH:mm')}</p>
                             ${info.event.extendedProps.description ? `<p><strong>Deskripsi:</strong> ${info.event.extendedProps.description}</p>` : ''}
                         </div>
@@ -589,7 +588,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
 
         events: function(fetchInfo, successCallback, failureCallback) {
-            fetch('/masukkanjadwal/events')
+            fetch('dosen/google/events')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -720,10 +719,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (error) {
             console.error('Error:', error);
+            console.log('Gagal menambahkan jadwal :', error.message);
             Swal.fire({
                 icon: 'error',
                 title: 'Gagal!',
-                text: error.message,
+                text: 'Gagal menambahkan jadwal',
                 confirmButtonColor: '#1a73e8'
             });
         }
@@ -765,10 +765,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (error) {
             console.error('Error:', error);
+            console.log('Gagal menghapus jadwal: +', error.message);
+            
             Swal.fire({
                 icon: 'error',
                 title: 'Gagal!',
-                text: 'Gagal menghapus jadwal: ' + error.message,
+                text: 'Gagal menghapus jadwal',
                 confirmButtonColor: '#1a73e8'
             });
         }

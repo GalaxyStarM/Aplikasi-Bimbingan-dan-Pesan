@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('bimbingans', function (Blueprint $table) {
+        Schema::create('usulan_bimbingans', function (Blueprint $table) {
             $table->id();
             // Foreign keys
             $table->string('nim');
@@ -30,7 +30,7 @@ return new class extends Migration
             
             // Lokasi dan deskripsi
             $table->string('lokasi')->nullable();
-            $table->text('deskripsi');
+            $table->text('deskripsi')->nullable();
             
             // Status dan keterangan
             $table->enum('status', [
@@ -41,12 +41,12 @@ return new class extends Migration
             ])->default('USULAN');
             $table->text('keterangan')->nullable();
             
-            // Google Calendar integration - hapus nullable
+            // Google Calendar integration 
             $table->string('event_id');
+            $table->string('student_event_id')->nullable();
             
             // Timestamps
             $table->timestamps();
-            $table->softDeletes();
 
             // Indexes
             $table->index('nim');

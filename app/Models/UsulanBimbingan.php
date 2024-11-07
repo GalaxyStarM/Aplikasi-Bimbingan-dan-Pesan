@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Bimbingan extends Model
+class UsulanBimbingan extends Model
 {
     use HasFactory, SoftDeletes;
     
@@ -17,6 +17,8 @@ class Bimbingan extends Model
     protected $fillable = [
         'nim',
         'nip',
+        'event_id',
+        'student_event_id',
         'dosen_nama',
         'jenis_bimbingan',
         'tanggal',
@@ -25,8 +27,7 @@ class Bimbingan extends Model
         'lokasi',
         'deskripsi',    
         'status',       
-        'keterangan',
-        'event_id'
+        'keterangan'
     ];
 
     protected $casts = [
