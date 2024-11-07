@@ -21,7 +21,10 @@ return new class extends Migration
             $table->datetime('updated_at');
             $table->unsignedBigInteger('prodi_id');
             $table->unsignedBigInteger('role_id');
-            $table->rememberToken();
+            $table->text('google_access_token')->nullable();
+            $table->text('google_refresh_token')->nullable();
+            $table->integer('google_token_expires_in')->nullable();
+            $table->timestamp('google_token_created_at')->nullable();
 
             $table->foreign('prodi_id')->references('id')->on('prodi');
             $table->foreign('role_id')->references('id')->on('role');

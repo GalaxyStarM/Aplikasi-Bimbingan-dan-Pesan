@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class JadwalController extends Controller
 {
@@ -33,16 +34,27 @@ class JadwalController extends Controller
                 'jenis_bimbingan' => 'required|in:skripsi,kp,akademik,konsultasi'
             ]);
 
-            // Cek apakah mahasiswa sudah pernah mengajukan untuk jadwal yang sama
+            \Log::info('Check Availability Request:', [
+                'nim' => auth()->user()->nim,
+                'jadwal_id' => $request->jadwal_id,
+                'jenis_bimbingan' => $request->jenis_bimbingan
+            ]);
+
+            // Get event_id untuk logging
+            $event_id = DB::table('jadwal_bimbingans')
+                ->where('id', $request->jadwal_id)
+                ->value('event_id');
+                
+            \Log::info('Event ID:', ['event_id' => $event_id]);
+
+            // Cek existing bimbingan
             $existingBimbingan = DB::table('bimbingans')
                 ->where('nim', auth()->user()->nim)
-                ->where('event_id', function($query) use ($request) {
-                    $query->select('event_id')
-                        ->from('jadwal_bimbingans')
-                        ->where('id', $request->jadwal_id);
-                })
+                ->where('event_id', $event_id)
                 ->where('status', '!=', 'DITOLAK')
                 ->exists();
+
+            \Log::info('Existing Bimbingan Check:', ['exists' => $existingBimbingan]);
 
             if ($existingBimbingan) {
                 return response()->json([
@@ -51,12 +63,14 @@ class JadwalController extends Controller
                 ]);
             }
 
-            // Cek apakah mahasiswa memiliki bimbingan yang masih dalam proses untuk jenis yang sama
+            // Cek pending bimbingan
             $pendingBimbingan = DB::table('bimbingans')
                 ->where('nim', auth()->user()->nim)
                 ->where('jenis_bimbingan', $request->jenis_bimbingan)
                 ->whereIn('status', ['USULAN', 'DITERIMA'])
                 ->exists();
+
+            \Log::info('Pending Bimbingan Check:', ['exists' => $pendingBimbingan]);
 
             if ($pendingBimbingan) {
                 return response()->json([
@@ -70,6 +84,7 @@ class JadwalController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('Check Availability Error:', ['error' => $e->getMessage()]);
             return response()->json([
                 'available' => false,
                 'message' => $e->getMessage()

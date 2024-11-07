@@ -16,7 +16,7 @@ class DosenSeeder extends Seeder
                 'nip' => '198501012015041001',
                 'nama' => 'Contoh Dosen 1',
                 'nama_singkat' => 'CD',
-                'email' => 'tri.murniati2735@student.unri.ac.id',
+                'email' => 'ummul.azhari4051@student.unri.ac.id',
                 'password' => Hash::make('password123'),
                 'prodi_id' => 1, // Sesuaikan dengan ID prodi yang sesuai
                 'role_id' => 2,  // Role dosen

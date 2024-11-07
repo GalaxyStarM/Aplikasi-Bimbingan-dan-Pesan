@@ -20,7 +20,6 @@ return new class extends Migration
             $table->integer('sisa_kapasitas')->default(1);
             $table->string('lokasi')->nullable();
             $table->timestamps();
-            $table->softDeletes();
 
             // Indexes
             $table->index('nip');

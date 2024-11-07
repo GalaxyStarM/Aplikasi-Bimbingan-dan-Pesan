@@ -22,7 +22,10 @@ return new class extends Migration
             $table->unsignedBigInteger('prodi_id');
             $table->unsignedBigInteger('konsentrasi_id');
             $table->unsignedBigInteger('role_id');
-            $table->rememberToken();
+            $table->text('google_access_token')->nullable();
+            $table->text('google_refresh_token')->nullable();
+            $table->integer('google_token_expires_in')->nullable();
+            $table->timestamp('google_token_created_at')->nullable();
 
             $table->foreign('prodi_id')->references('id')->on('prodi');
             $table->foreign('konsentrasi_id')->references('id')->on('konsentrasi');
