@@ -4,21 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UsulanBimbingan extends Model
 {
-    use HasFactory, SoftDeletes;
-    
-    protected $table = 'bimbingans'; 
+    use HasFactory;
     
     protected $fillable = [
         'nim',
         'nip',
         'event_id',
         'student_event_id',
+        'mahasiswa_nama',
         'dosen_nama',
         'jenis_bimbingan',
         'tanggal',
@@ -36,7 +34,6 @@ class UsulanBimbingan extends Model
         'waktu_selesai' => 'time', // Ubah ke time karena di database time
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'deleted_at' => 'datetime'
     ];
 
     protected $attributes = [

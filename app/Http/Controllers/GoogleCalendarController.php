@@ -60,26 +60,36 @@ class GoogleCalendarController extends Controller
      */
     public function connect()
     {
-        $guard = $this->getCurrentGuard();
-        $user = Auth::guard($guard)->user();
-        
-        // Set state untuk validasi
-        $state = base64_encode(json_encode([
-            'id' => $user->getAuthIdentifier(),
-            'guard' => $guard,
-            'timestamp' => time()
-        ]));
-        
-        $this->setCallbackUrl();
-        
-        // Tambahkan konfigurasi untuk memaksa menggunakan email yang sesuai
-        $this->client->setState($state);
-        $this->client->setLoginHint($user->email); // Paksa menggunakan email user
-        $this->client->setPrompt('select_account consent'); // Paksa pilih akun dan minta consent
-        $this->client->setHostedDomain($user->email); // Batasi domain email (opsional)
-        
-        $authUrl = $this->client->createAuthUrl();
-        return redirect($authUrl);
+        try {
+            $guard = $this->getCurrentGuard();
+            $user = Auth::guard($guard)->user();
+
+            if ($user->hasGoogleCalendarConnected()) {
+                return $this->redirectToIndex('Anda sudah terhubung dengan Google Calendar', 'warning');
+            }
+            
+            // Set state untuk validasi
+            $state = base64_encode(json_encode([
+                'id' => $user->getAuthIdentifier(),
+                'guard' => $guard,
+                'timestamp' => time()
+            ]));
+            
+            $this->setCallbackUrl();
+            
+            // Tambahkan konfigurasi untuk memaksa menggunakan email yang sesuai
+            $this->client->setState($state);
+            $this->client->setLoginHint($user->email); // Paksa menggunakan email user
+            $this->client->setPrompt('select_account consent'); // Paksa pilih akun dan minta consent
+            $this->client->setHostedDomain($user->email); // Batasi domain email (opsional)
+            
+            $authUrl = $this->client->createAuthUrl();
+            return redirect($authUrl);
+
+        } catch (\Exception $e) {
+            Log::error('Gagal menghubungkan ke Google Calendar: ' . $e->getMessage());
+            return $this->redirectToIndex('Terjadi kesalahan saat menghubungkan ke Google Calendar', 'error');
+        }
     }
 
     /**
@@ -137,18 +147,23 @@ class GoogleCalendarController extends Controller
             };
 
             return redirect()->route($routeName)
-                ->with('success', 'Google Calendar berhasil terhubung!');
+                ->with('success', 'Google Calendar berhasil terhubung!')
+                ->with('first_connection', true);
                     
         } catch (\Exception $e) {
-            // Redirect error sesuai guard
+            
+            $errorMessage = $this->getErrorMessage($e->getMessage());
+
             $routeName = match(Auth::getDefaultDriver()) {
                 'dosen' => 'dosen.jadwal.index',
                 'mahasiswa' => 'pilihjadwal.index',
                 default => 'login'
             };
 
+            Log::error('Error Google Calendar: ' . $e->getMessage());
+
             return redirect()->route($routeName)
-                ->with('error', 'Gagal terhubung ke Google Calendar: ' . $e->getMessage());
+                ->with('error', $errorMesage);
         }
     }
 
@@ -455,4 +470,19 @@ class GoogleCalendarController extends Controller
             'trace' => $exception->getTraceAsString()
         ]);
     }
+
+    protected function getErrorMessage($message)
+{
+    // Cek beberapa kondisi umum
+    if (str_contains($message, 'Email tidak sesuai')) {
+        return 'Gunakan email yang terdaftar di sistem untuk menghubungkan Google Calendar.';
+    }
+    
+    if (str_contains($message, 'invalid_grant') || str_contains($message, 'expired')) {
+        return 'Silakan hubungkan ulang dengan Google Calendar.';
+    }
+
+    // Pesan default untuk error lainnya
+    return 'Gagal terhubung ke Google Calendar. Silakan coba beberapa saat lagi.';
+}
 }
