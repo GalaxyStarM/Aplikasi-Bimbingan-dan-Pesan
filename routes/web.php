@@ -15,6 +15,10 @@ Route::middleware(['guest'])->group(function () {
 });
 
 // Route untuk pesanan
+Route::get('/dashboardpesanmahasiswa', function () {
+    return view('pesan.mahasiswa.dashboardpesanmahasiswa');
+});
+
 Route::get('/buatpesan', function () {
     return view('pesan.mahasiswa.buatpesan');
 });
@@ -25,6 +29,10 @@ Route::get('/isipesan', function () {
 
 Route::get('/dashboardpesan', function () {
     return view('pesan.dashboardpesan');
+});
+
+Route::get('/dashboardpesandosen', function () {
+    return view('pesan.dosen.dashboardpesandosen');
 });
 
 Route::get('/buatpesandosen', function () {

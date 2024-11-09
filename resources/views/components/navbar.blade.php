@@ -28,7 +28,7 @@
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('dashboardpesan') ? 'active' : '' }}" 
                        style="font-weight: bold;" 
-                       href="{{ url('/dashboardpesan') }}">PESAN</a>
+                       href="{{ url('/dashboardpesan') }}">KONSULTASI</a>
                 </li>
             </ul>
             <div class="d-flex align-items-center">
