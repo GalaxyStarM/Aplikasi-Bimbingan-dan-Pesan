@@ -26,7 +26,25 @@ class MasukkanJadwalController extends Controller
     public function index()
     {
         $dosen = Auth::guard('dosen')->user();
-        $isConnected = $dosen->hasGoogleCalendarConnected() && !$dosen->isGoogleTokenExpired();
+        
+        // Coba refresh token terlebih dahulu
+        $isConnected = false;
+        if ($dosen->hasGoogleCalendarConnected()) {
+            $isConnected = app(GoogleCalendarController::class)->validateAndRefreshToken();
+        }
+        
+        // Logging untuk membantu debug
+        Log::info('Google Calendar Status (Dosen):', [
+            'has_tokens' => $dosen->hasGoogleCalendarConnected(),
+            'is_expired' => $dosen->isGoogleTokenExpired(),
+            'token_created' => $dosen->google_token_created_at,
+            'expires_in' => $dosen->google_token_expires_in,
+            'expiry_time' => $dosen->getTokenExpiryTime()?->format('Y-m-d H:i:s'),
+            'has_access_token' => !empty($dosen->google_access_token),
+            'has_refresh_token' => !empty($dosen->google_refresh_token),
+            'is_connected' => $isConnected,
+            'dosen_nip' => $dosen->nip
+        ]);
         
         return view('bimbingan.dosen.masukkanjadwal', [
             'isConnected' => $isConnected,
@@ -34,14 +52,21 @@ class MasukkanJadwalController extends Controller
         ]);
     }
 
-        /**
-         * Menyimpan jadwal baru
-         */
+    /**
+     * Menyimpan jadwal baru
+     */
     public function store(Request $request)
     {
         try {
+            // Refresh token jika diperlukan
             if (!$this->googleCalendarController->validateAndRefreshToken()) {
-                return response()->json(['error' => 'Not authenticated'], 401);
+                Log::error('Google Calendar authentication failed for dosen:', [
+                    'nip' => Auth::guard('dosen')->user()->nip
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak dapat terhubung ke Google Calendar. Silakan hubungkan ulang.'
+                ], 401);
             }
 
             Log::info('Incoming request data:', $request->all());
@@ -82,36 +107,55 @@ class MasukkanJadwalController extends Controller
                 ],
             ];
 
-            $createdEvent = $this->googleCalendarController->createEvent($eventData);
-            
-            // Simpan ke database
-            $jadwal = JadwalBimbingan::create([
-                'event_id' => $createdEvent->id,
-                'nip' => $dosen->nip,
-                'waktu_mulai' => $start,
-                'waktu_selesai' => $end,
-                'catatan' => $request->description,
-                'status' => 'tersedia',
-                'kapasitas' => $request->capacity,
-                'sisa_kapasitas' => $request->capacity
-            ]);
+            DB::beginTransaction();
+            try {
+                // Buat event di Google Calendar
+                $createdEvent = $this->googleCalendarController->createEvent($eventData);
+                
+                // Simpan ke database
+                $jadwal = JadwalBimbingan::create([
+                    'event_id' => $createdEvent->id,
+                    'nip' => $dosen->nip,
+                    'waktu_mulai' => $start,
+                    'waktu_selesai' => $end,
+                    'catatan' => $request->description,
+                    'status' => 'tersedia',
+                    'kapasitas' => $request->capacity,
+                    'sisa_kapasitas' => $request->capacity
+                ]);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Jadwal berhasil ditambahkan!',
-                'data' => [
-                    'id' => $createdEvent->id,
-                    'title' => 'Jadwal Bimbingan',
-                    'start' => $start->toIso8601String(),
-                    'end' => $end->toIso8601String(),
-                    'description' => $request->description,
-                    'status' => 'Tersedia',
-                    'capacity' => $request->capacity
-                ]
-            ]);
+                DB::commit();
+
+                Log::info('Successfully created schedule:', [
+                    'event_id' => $createdEvent->id,
+                    'dosen_nip' => $dosen->nip
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Jadwal berhasil ditambahkan!',
+                    'data' => [
+                        'id' => $createdEvent->id,
+                        'title' => 'Jadwal Bimbingan',
+                        'start' => $start->toIso8601String(),
+                        'end' => $end->toIso8601String(),
+                        'description' => $request->description,
+                        'status' => 'Tersedia',
+                        'capacity' => $request->capacity
+                    ]
+                ]);
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
 
         } catch (\Exception $e) {
-            Log::error('Error adding event: ' . $e->getMessage());
+            Log::error('Error adding event: ' . $e->getMessage(), [
+                'dosen_nip' => Auth::guard('dosen')->user()->nip,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menambahkan jadwal: ' . $e->getMessage()
@@ -125,8 +169,16 @@ class MasukkanJadwalController extends Controller
     public function destroy($eventId)
     {
         try {
-            if (!$this->googleCalendarController-> validateAndRefreshToken()) {
-                return response()->json(['error' => 'Not authenticated'], 401);
+            // Refresh token jika diperlukan
+            if (!$this->googleCalendarController->validateAndRefreshToken()) {
+                Log::error('Google Calendar authentication failed for dosen on delete:', [
+                    'nip' => Auth::guard('dosen')->user()->nip,
+                    'event_id' => $eventId
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak dapat terhubung ke Google Calendar. Silakan hubungkan ulang.'
+                ], 401);
             }
 
             $jadwal = JadwalBimbingan::where('event_id', $eventId)->first();
@@ -145,22 +197,30 @@ class MasukkanJadwalController extends Controller
                 // Jika berhasil hapus dari Google Calendar, hapus dari database
                 $jadwal->delete();
 
-                // Commit transaction jika kedua operasi berhasil
-                    DB::commit();
+                DB::commit();
 
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Jadwal berhasil dihapus dari sistem dan Google Calendar!'
-                    ]);
+                Log::info('Successfully deleted schedule:', [
+                    'event_id' => $eventId,
+                    'dosen_nip' => Auth::guard('dosen')->user()->nip
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Jadwal berhasil dihapus dari sistem dan Google Calendar!'
+                ]);
 
             } catch (\Exception $e) {
-                // Rollback jika ada yang gagal
-                DB::rollback();
+                DB::rollBack();
                 throw $e;
             }
 
         } catch (\Exception $e) {
-            Log::error('Error deleting schedule: ' . $e->getMessage());
+            Log::error('Error deleting schedule: ' . $e->getMessage(), [
+                'event_id' => $eventId,
+                'dosen_nip' => Auth::guard('dosen')->user()->nip,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menghapus jadwal: ' . $e->getMessage()
