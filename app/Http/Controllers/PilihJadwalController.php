@@ -24,8 +24,21 @@ class PilihJadwalController extends Controller
     public function index()
     {
         $mahasiswa = Auth::guard('mahasiswa')->user();
-        $isConnected = $mahasiswa->hasGoogleCalendarConnected() && !$mahasiswa->isGoogleTokenExpired();
+        $isConnected = false;
+        if ($mahasiswa->hasGoogleCalendarConnected()) {
+            $isConnected = app(GoogleCalendarController::class)->validateAndRefreshToken();
+        }
         
+        Log::info('Google Calendar Status:', [
+            'has_tokens' => $mahasiswa->hasGoogleCalendarConnected(),
+            'is_expired' => $mahasiswa->isGoogleTokenExpired(),
+            'token_created' => $mahasiswa->google_token_created_at,
+            'expires_in' => $mahasiswa->google_token_expires_in,
+            'expiry_time' => $mahasiswa->getTokenExpiryTime()?->format('Y-m-d H:i:s'),
+            'has_access_token' => !empty($mahasiswa->google_access_token),
+            'has_refresh_token' => !empty($mahasiswa->google_refresh_token),
+            'is_connected' => $isConnected
+        ]);
         $dosenList = DB::table('dosens')
             ->select('nip', 'nama')
             ->get()

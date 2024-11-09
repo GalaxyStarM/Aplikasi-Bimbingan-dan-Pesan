@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use Illuminate\Support\Facades\Crypt;
+use Carbon\Carbon;
 
 trait HasGoogleCalendar
 {
@@ -55,9 +56,10 @@ trait HasGoogleCalendar
             return true;
         }
         
-        return $this->google_token_created_at
-            ->addSeconds($this->google_token_expires_in)
-            ->isPast();
+        $expiryTime = Carbon::parse($this->google_token_created_at)
+            ->addSeconds($this->google_token_expires_in - 300); // Kurangi 5 menit untuk buffer
+            
+        return now()->gt($expiryTime);
     }
 
     /**
@@ -65,19 +67,32 @@ trait HasGoogleCalendar
      */
     public function updateGoogleToken($accessToken, $refreshToken = null, $expiresIn = null)
     {
-        $this->google_access_token = $accessToken;
-        
+        $data = [
+            'google_access_token' => $accessToken,
+            'google_token_created_at' => now(),
+        ];
+
         if ($refreshToken) {
-            $this->google_refresh_token = $refreshToken;
+            $data['google_refresh_token'] = $refreshToken;
         }
-        
+
         if ($expiresIn) {
-            $this->google_token_expires_in = $expiresIn;
-            $this->google_token_created_at = now();
+            $data['google_token_expires_in'] = (int) $expiresIn;
         }
-        
-        $this->save();
-        
-        return $this;
+
+        return $this->update($data);
+    }
+
+    /**
+     * Get token expiry time
+     */
+    public function getTokenExpiryTime()
+    {
+        if (!$this->google_token_created_at || !$this->google_token_expires_in) {
+            return null;
+        }
+
+        return Carbon::parse($this->google_token_created_at)
+            ->addSeconds($this->google_token_expires_in);
     }
 }
