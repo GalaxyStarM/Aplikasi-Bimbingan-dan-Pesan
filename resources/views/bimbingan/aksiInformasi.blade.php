@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('title', 'Detail Mahasiswa')
 
 @push('styles')
@@ -8,7 +7,6 @@
         display: inline-block;
         margin-top: 10px;
         padding: 5px 15px;
-        background-color: #17a2b8;
         color: white;
         border-radius: 5px;
         font-size: 0.9em;
@@ -37,13 +35,13 @@
                 <h5 class="text-bold">Mahasiswa</h5>
                 <hr>
                 <p class="card-title text-muted text-sm">Nama</p>
-                <p class="card-text text-start">Syahirah Tri Meilina</p>
+                <p class="card-text text-start">{{ $usulan->mahasiswa_nama }}</p>
                 <p class="card-title text-muted text-sm">NIM</p>
-                <p class="card-text text-start">2107110255</p>
+                <p class="card-text text-start">{{ $usulan->nim }}</p>
                 <p class="card-title text-muted text-sm">Program Studi</p>
-                <p class="card-text text-start">Teknik Informatika S1</p>
+                <p class="card-text text-start">{{ $usulan->nama_prodi }}</p>
                 <p class="card-title text-muted text-sm">Konsentrasi</p>
-                <p class="card-text text-start">Rekayasa Perangkat Lunak</p>
+                <p class="card-text text-start">{{ $usulan->nama_konsentrasi }}</p>
             </div>
 
             <!-- Dosen Pembimbing Card -->
@@ -51,7 +49,7 @@
                 <h5 class="text-bold">Dosen Pembimbing</h5>
                 <hr>
                 <p class="card-title text-secondary text-sm">Nama Pembimbing</p>
-                <p class="card-text text-start">Edi Susilo, S.Pd., M.Kom., M.Eng.</p>
+                <p class="card-text text-start">{{ $usulan->dosen_nama }}</p>
             </div>
         </div>
     </div>
@@ -63,13 +61,15 @@
                 <h5 class="text-bold">Data Usulan Jadwal Bimbingan</h5>
                 <hr>
                 <p class="card-title text-muted text-sm">Jenis Bimbingan</p>
-                <p class="card-text text-start">Bimbingan Skripsi</p>
+                <p class="card-text text-start">{{ ucfirst($usulan->jenis_bimbingan) }}</p>
                 <p class="card-title text-muted text-sm">Tanggal</p>
-                <p class="card-text text-start">Senin, 30 September 2024</p>
+                <p class="card-text text-start">{{ $tanggal }}</p>
                 <p class="card-title text-muted text-sm">Waktu</p>
-                <p class="card-text text-start">13.30 - 16.00</p>
+                <p class="card-text text-start">{{ $waktuMulai }} - {{ $waktuSelesai }}</p>
+                <p class="card-title text-muted text-sm">Lokasi</p>
+                <p class="card-text text-start">{{ $usulan->lokasi ?? '-' }}</p>
                 <p class="card-title text-muted text-sm">Deskripsi</p>
-                <p class="card-text text-start">Izin bapak, saya ingin melakukan bimbingan bab 1 skripsi saya pak</p>
+                <p class="card-text text-start">{{ $usulan->deskripsi ?? '-' }}</p>
             </div>
 
             <!-- Keterangan Usulan Card -->
@@ -78,10 +78,18 @@
                 <hr>
                 <p class="card-title text-secondary text-sm">Status Usulan</p>
                 <p class="card-text text-start">
-                    <span class="status-badge">USULAN DISETUJUI</span>
+                    <span class="status-badge {{ $statusBadgeClass }}">{{ strtoupper($usulan->status) }}</span>
                 </p>
                 <p class="card-title text-secondary text-sm">Keterangan</p>
-                <p class="card-text text-start">Usulan Jadwal Bimbingan Disetujui</p>
+                <p class="card-text text-start">{{ $usulan->keterangan ?? 'Belum ada keterangan' }}</p>
+                @if($usulan->created_at)
+                <p class="card-title text-secondary text-sm">Diajukan pada</p>
+                <p class="card-text text-start">{{ \Carbon\Carbon::parse($usulan->created_at)->format('d/m/Y H:i') }}</p>
+                @endif
+                @if($usulan->updated_at && $usulan->status !== 'USULAN')
+                <p class="card-title text-secondary text-sm">Terakhir diupdate</p>
+                <p class="card-text text-start">{{ \Carbon\Carbon::parse($usulan->updated_at)->format('d/m/Y H:i') }}</p>
+                @endif
             </div>
         </div>
     </div>

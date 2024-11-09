@@ -2,10 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\GoogleCalendarController;
+use App\Http\Controllers\PilihJadwalController;
+use App\Http\Controllers\MasukkanJadwalController;
 
 // Route untuk guest (belum login)
 Route::middleware(['guest'])->group(function () {
@@ -52,13 +53,19 @@ Route::get('/datausulanbimbingan', function(){
 
 // Route untuk mahasiswa
 Route::middleware(['auth:mahasiswa', 'checkRole:mahasiswa'])->group(function () {
-    Route::get('/usulanbimbingan', function() { return view('bimbingan.mahasiswa.usulanbimbingan'); })->name('mahasiswa.usulanbimbingan');
-    Route::get('/aksiInformasi', function(){ return view('bimbingan.aksiInformasi'); });
-    Route::get('/detaildaftar', function(){ return view('bimbingan.mahasiswa.detaildaftar'); })->name('detaildaftar');
     Route::get('/riwayatmahasiswa', function(){ return view('bimbingan.riwayatmahasiswa'); });
 
+    Route::controller(MahasiswaController::class)->group(function () {
+        Route::get('/usulanbimbingan', 'index')->name('mahasiswa.usulanbimbingan');
+        Route::get('/aksiInformasi/{id}', 'getDetailBimbingan')->name('mahasiswa.aksiInformasi');
+        Route::get('/detaildaftar/{nip}', 'getDetailDaftar')->name('mahasiswa.detaildaftar');
+        Route::get('/load-usulan', 'getUsulanBimbingan')->name('mahasiswa.load.usulan');
+        Route::get('/load-jadwal', 'getDaftarDosen')->name('mahasiswa.load.jadwal');
+        Route::get('/load-riwayat', 'getRiwayatBimbingan')->name('mahasiswa.load.riwayat');
+    });
+
     // Bimbingan routes
-    Route::controller(MahasiswaController::class)->prefix('pilihjadwal')->group(function () {
+    Route::controller(PilihJadwalController::class)->prefix('pilihjadwal')->group(function () {
         Route::get('/', 'index')->name('pilihjadwal.index');
         Route::post('/store', 'store')->name('pilihjadwal.store');
         Route::get('/available', 'getAvailableJadwal')->name('pilihjadwal.available');
@@ -81,7 +88,7 @@ Route::middleware(['auth:dosen', 'checkRole:dosen'])->group(function () {
     Route::get('/editusulan', function(){ return view('bimbingan.dosen.editusulan'); });
 
     // Jadwal routes
-    Route::controller(DosenController::class)->prefix('masukkanjadwal')->group(function () {
+    Route::controller(MasukkanJadwalController::class)->prefix('masukkanjadwal')->group(function () {
         Route::get('/', 'index')->name('dosen.jadwal.index');
         Route::post('/store', 'store')->name('dosen.jadwal.store');
         Route::delete('/{eventId}', 'destroy')->name('dosen.jadwal.destroy');

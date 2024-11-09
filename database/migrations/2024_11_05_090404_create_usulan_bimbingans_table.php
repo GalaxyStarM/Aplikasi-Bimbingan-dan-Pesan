@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('nim');
             $table->string('nip');
             $table->string('dosen_nama');
+            $table->string('mahasiswa_nama');
 
             // Informasi bimbingan
             $table->enum('jenis_bimbingan', [
