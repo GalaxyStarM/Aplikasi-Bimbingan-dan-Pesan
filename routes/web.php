@@ -14,35 +14,6 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 });
 
-// Route untuk pesanan
-Route::get('/dashboardpesanmahasiswa', function () {
-    return view('pesan.mahasiswa.dashboardpesanmahasiswa');
-});
-
-Route::get('/buatpesan', function () {
-    return view('pesan.mahasiswa.buatpesan');
-});
-
-Route::get('/isipesan', function () {
-    return view('pesan.mahasiswa.isipesan');
-});
-
-Route::get('/dashboardpesan', function () {
-    return view('pesan.dashboardpesan');
-});
-
-Route::get('/dashboardpesandosen', function () {
-    return view('pesan.dosen.dashboardpesandosen');
-});
-
-Route::get('/buatpesandosen', function () {
-    return view('pesan.dosen.buatpesandosen');
-});
-
-Route::get('/isipesandosen', function () {
-    return view('pesan.dosen.isipesandosen');
-});
-
 Route::get('/profilmahasiswa', function(){
     return view('bimbingan.mahasiswa.profilmahasiswa');
   });
@@ -51,17 +22,22 @@ Route::get('/profilmahasiswa', function(){
     return view('bimbingan.mahasiswa.gantipassword');
   });
 
-Route::get('/contohdashboard', function(){
-    return view('pesan.contohdashboard');
-});
-
 Route::get('/datausulanbimbingan', function(){
     return view('bimbingan.admin.datausulanbimbingan');
 });
 
 // Route untuk mahasiswa
 Route::middleware(['auth:mahasiswa', 'checkRole:mahasiswa'])->group(function () {
-    Route::get('/riwayatmahasiswa', function(){ return view('bimbingan.riwayatmahasiswa'); });
+    // Route view biasa
+    Route::get('/dashboardpesanmahasiswa', function () { return view('pesan.mahasiswa.dashboardpesanmahasiswa');});
+    
+    Route::get('/buatpesan', function () {
+        return view('pesan.mahasiswa.buatpesan');
+    });
+
+    Route::get('/isipesan', function () {
+        return view('pesan.mahasiswa.isipesan');
+    });
 
     Route::controller(MahasiswaController::class)->group(function () {
         Route::get('/usulanbimbingan', 'index')->name('mahasiswa.usulanbimbingan');
@@ -89,6 +65,15 @@ Route::middleware(['auth:mahasiswa', 'checkRole:mahasiswa'])->group(function () 
 // Route untuk dosen
 Route::middleware(['auth:dosen', 'checkRole:dosen'])->group(function () {
     // Route view biasa
+    Route::get('/dashboardpesandosen', function () { return view('pesan.dosen.dashboardpesandosen');});
+    Route::get('/buatpesandosen', function () {
+        return view('pesan.dosen.buatpesandosen');
+    });
+    
+    Route::get('/isipesandosen', function () {
+        return view('pesan.dosen.isipesandosen');
+    });
+
     Route::controller(DosenController::class)->group(function () {
         Route::get('/persetujuan', 'index')->name('dosen.persetujuan');
         Route::get('/terimausulanbimbingan/{id}', 'getDetailBimbingan')->name('dosen.detailbimbingan');

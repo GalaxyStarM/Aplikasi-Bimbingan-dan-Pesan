@@ -26,9 +26,15 @@
                     @endif
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ Request::is('dashboardpesan') ? 'active' : '' }}" 
-                       style="font-weight: bold;" 
-                       href="{{ url('/dashboardpesan') }}">KONSULTASI</a>
+                    @if(Auth::guard('dosen')->check())
+                        <a class="nav-link {{ Request::is('dashboardpesandosen') || Request::is('buatpesandosen') || Request::is('isipesandosen') ? 'active' : '' }}" 
+                        style="font-weight: bold;" 
+                        href="{{ url('/dashboardpesandosen') }}">KONSULTASI</a>
+                    @else
+                        <a class="nav-link {{ Request::is('dashboardpesanmahasiswa') || Request::is('buatpesan') || Request::is('isipesan') ? 'active' : '' }}" 
+                        style="font-weight: bold;" 
+                        href="{{ url('/dashboardpesanmahasiswa') }}">KONSULTASI</a>
+                    @endif
                 </li>
             </ul>
             <div class="d-flex align-items-center">

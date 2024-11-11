@@ -238,7 +238,7 @@
                     <h2 class="d-inline-block me-3 gradient-text">Isi Konsultasi</h2>
                     <hr>
                     <div class="mt-3">
-                        <a href="/dashboardpesan" class="btn btn-kembali"><i class="fas fa-arrow-left"></i> Kembali</a>
+                        <a href="/dashboardpesandosen" class="btn btn-kembali"><i class="fas fa-arrow-left"></i> Kembali</a>
                     </div>
                 </div>
             </div>
