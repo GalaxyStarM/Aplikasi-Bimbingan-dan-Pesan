@@ -6,50 +6,73 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use App\Models\UsulanBimbingan;
 
 class MahasiswaController extends Controller
 {   
-
-    public function index()
-    {
-        return view('bimbingan.mahasiswa.usulanbimbingan', [
-            'activeTab' => 'usulan'
-        ]);
-    }
-    public function getUsulanBimbingan(Request $request)
+    public function index(Request $request)
     {
         try {
-            if (!Auth::check()) {
-                return response()->json(['error' => 'Unauthorized'], 401);
-            }
-
-            $perPage = $request->input('per_page', 10);
+            $activeTab = $request->query('tab', 'usulan');
+            $perPage = $request->query('per_page', 10);
             $nim = Auth::user()->nim;
 
-            $usulan = DB::table('usulan_bimbingans as ub')
-                ->join('mahasiswas as m', 'ub.nim', '=', 'm.nim')
-                ->where('ub.nim', $nim)
-                ->select('ub.*', 'm.nama as mahasiswa_nama')
-                ->orderBy('ub.created_at', 'desc')
-                ->paginate($perPage);
+            // Default values
+            $usulan = collect();
+            $daftarDosen = collect();
+            $riwayat = collect();
 
-            $html = view('components.tabs.usulan', [
-                'usulan' => $usulan
-            ])->render();
+            // Load data based on active tab
+            switch($activeTab) {
+                case 'usulan':
+                    $usulan = DB::table('usulan_bimbingans as ub')
+                        ->join('mahasiswas as m', 'ub.nim', '=', 'm.nim')
+                        ->where('ub.nim', $nim)
+                        ->whereIn('ub.status', ['USULAN', 'DISETUJUI'])
+                        ->select('ub.*', 'm.nama as mahasiswa_nama')
+                        ->orderBy('ub.created_at', 'desc')
+                        ->paginate($perPage);
+                    break;
 
-            return response()->json([
-                'html' => $html,
-                'pagination' => [
-                    'total' => $usulan->total(),
-                    'per_page' => $usulan->perPage(),
-                    'current_page' => $usulan->currentPage(),
-                    'last_page' => $usulan->lastPage(),
-                ]
-            ]);
+                case 'jadwal':
+                    $daftarDosen = DB::table('dosens as d')
+                        ->leftJoin('usulan_bimbingans as ub', function($join) {
+                            $join->on('d.nip', '=', 'ub.nip')
+                                ->where('ub.status', 'DISETUJUI');
+                        })
+                        ->select(
+                            'd.nip',
+                            'd.nama_singkat',
+                            'd.nama',
+                            DB::raw('COUNT(ub.id) as total_bimbingan')
+                        )
+                        ->groupBy('d.nip', 'nama_singkat', 'd.nama')
+                        ->orderBy('d.nama')
+                        ->paginate($perPage);
+                    break;
+
+                case 'riwayat':
+                    $riwayat = DB::table('usulan_bimbingans as ub')
+                        ->join('mahasiswas as m', 'ub.nim', '=', 'm.nim')
+                        ->join('dosens as d', 'ub.nip', '=', 'd.nip')
+                        ->where('ub.nim', $nim)
+                        ->whereIn('ub.status', ['SELESAI', 'DITOLAK'])
+                        ->select('ub.*', 'm.nama as mahasiswa_nama', 'd.nama as dosen_nama')
+                        ->orderBy('ub.tanggal', 'desc')
+                        ->paginate($perPage);
+                    break;
+            }
+
+            return view('bimbingan.mahasiswa.usulanbimbingan', compact(
+                'activeTab',
+                'usulan',
+                'daftarDosen',
+                'riwayat'
+            ));
 
         } catch (\Exception $e) {
-            Log::error('Error getting usulan bimbingan: ' . $e->getMessage());
-            return response()->json(['error' => 'Gagal memuat data usulan'], 500);
+            Log::error('Error in index: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat memuat data');
         }
     }
 
@@ -70,8 +93,6 @@ class MahasiswaController extends Controller
 
             // Format tanggal ke format Indonesia
             $tanggal = Carbon::parse($usulan->tanggal)->locale('id')->isoFormat('dddd, D MMMM Y');
-            
-            // Format waktu
             $waktuMulai = Carbon::parse($usulan->waktu_mulai)->format('H.i');
             $waktuSelesai = Carbon::parse($usulan->waktu_selesai)->format('H.i');
             
@@ -81,10 +102,7 @@ class MahasiswaController extends Controller
                 'DITOLAK' => 'bg-danger',
                 'USULAN' => 'bg-info',
             };
-            
-            \Log::info('Data usulan ditemukan', ['usulan' => $usulan]);
 
-            // Kirim data ke view
             return view('bimbingan.aksiInformasi', compact(
                 'usulan',
                 'tanggal',
@@ -94,54 +112,10 @@ class MahasiswaController extends Controller
             ));
 
         } catch (\Exception $e) {
-            \Log::error('Error di getDetailBimbingan: ' . $e->getMessage());
+            Log::error('Error di getDetailBimbingan: ' . $e->getMessage());
             return redirect()
                 ->back()
                 ->with('error', 'Terjadi kesalahan saat mengambil data usulan bimbingan');
-        }
-    }
-
-    public function getDaftarDosen(Request $request)
-    {
-        try {
-            if (!Auth::check()) {
-                return response()->json(['error' => 'Unauthorized'], 401);
-            }
-            
-            $perPage = $request->input('per_page', 10);
-            
-            $daftarDosen = DB::table('dosens as d')
-                ->leftJoin('usulan_bimbingans as ub', function($join) {
-                    $join->on('d.nip', '=', 'ub.nip')
-                        ->where('ub.status', 'DISETUJUI');
-                })
-                ->select(
-                    'd.nip',
-                    'd.nama_singkat',
-                    'd.nama',
-                    DB::raw('COUNT(ub.id) as total_bimbingan')
-                )
-                ->groupBy('d.nip', 'nama_singkat', 'd.nama')
-                ->orderBy('d.nama')
-                ->paginate($perPage);
-
-            $html = view('components.tabs.jadwal', [
-                'daftarDosen' => $daftarDosen
-            ])->render();
-
-            return response()->json([
-                'html' => $html,
-                'pagination' => [
-                    'total' => $daftarDosen->total(),
-                    'per_page' => $daftarDosen->perPage(),
-                    'current_page' => $daftarDosen->currentPage(),
-                    'last_page' => $daftarDosen->lastPage(),
-                ]
-            ]);
-
-        } catch (\Exception $e) {
-            Log::error('Error getting daftar dosen: ' . $e->getMessage());
-            return response()->json(['error' => 'Gagal memuat data daftar dosen'], 500);
         }
     }
 
@@ -175,42 +149,60 @@ class MahasiswaController extends Controller
         }
     }
 
-    public function getRiwayatBimbingan(Request $request)
+    public function getRiwayatDetail($id)
     {
         try {
-            if (!Auth::check()) {
-                return response()->json(['error' => 'Unauthorized'], 401);
-            }
-
-            $perPage = $request->input('per_page', 10);
-            $nim = Auth::user()->nim;
-
             $riwayat = DB::table('usulan_bimbingans as ub')
                 ->join('mahasiswas as m', 'ub.nim', '=', 'm.nim')
                 ->join('dosens as d', 'ub.nip', '=', 'd.nip')
-                ->where('ub.nim', $nim)
+                ->where('ub.id', $id)
                 ->where('ub.status', 'SELESAI')
                 ->select('ub.*', 'm.nama as mahasiswa_nama', 'd.nama as dosen_nama')
-                ->orderBy('ub.tanggal', 'desc')
-                ->paginate($perPage);
+                ->firstOrFail();
 
-            $html = view('components.tabs.riwayat', [
-                'riwayat' => $riwayat
-            ])->render();
+            $tanggal = Carbon::parse($riwayat->tanggal)->locale('id')->isoFormat('dddd, D MMMM Y');
+            $waktuMulai = Carbon::parse($riwayat->waktu_mulai)->format('H:i');
+            $waktuSelesai = Carbon::parse($riwayat->waktu_selesai)->format('H:i');
 
-            return response()->json([
-                'html' => $html,
-                'pagination' => [
-                    'total' => $riwayat->total(),
-                    'per_page' => $riwayat->perPage(),
-                    'current_page' => $riwayat->currentPage(),
-                    'last_page' => $riwayat->lastPage(),
-                ]
-            ]);
+            return view('bimbingan.mahasiswa.riwayatDetail', compact(
+                'riwayat',
+                'tanggal',
+                'waktuMulai',
+                'waktuSelesai'
+            ));
 
         } catch (\Exception $e) {
-            Log::error('Error getting riwayat: ' . $e->getMessage());
-            return back()->with('error', 'Gagal memuat riwayat bimbingan');
+            Log::error('Error getting riwayat detail: ' . $e->getMessage());
+            return back()->with('error', 'Gagal memuat detail riwayat bimbingan');
+        }
+    }
+
+    public function selesaiBimbingan(Request $request, $id)
+    {
+        try {
+            $usulan = UsulanBimbingan::findOrFail($id);
+            
+            if ($usulan->status !== 'DISETUJUI') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Hanya bimbingan yang disetujui yang dapat diselesaikan'
+                ], 422);
+            }
+
+            $usulan->update([
+                'status' => 'SELESAI'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Bimbingan berhasil diselesaikan'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in selesaiBimbingan: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyelesaikan bimbingan'
+            ], 500);
         }
     }
 }

@@ -477,7 +477,7 @@
         }
 
         .swal2-html-container {
-            text-align: left !important;
+            text-align: center !important;
             margin: 1em 0;
         }
 
@@ -519,6 +519,33 @@
         .swal2-cancel.swal2-styled {
             padding: 0.5em 2em;
             font-weight: 500;
+        }
+
+        /* Info Box Styling */
+        .info-box {
+            background-color: #e8f0fe;
+            border: 1px solid #1a73e8;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .info-box p {
+            color: #1967d2;
+            margin-bottom: 10px;
+        }
+
+        .info-box .btn-connect {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .info-box .btn-connect:hover {
+            background-color: #1557b0;
         }
     </style>
 @endpush

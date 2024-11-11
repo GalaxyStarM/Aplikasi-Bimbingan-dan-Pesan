@@ -312,6 +312,32 @@ class GoogleCalendarController extends Controller
         }
     }
 
+    public function updateEventAttendees($eventId, $attendees)
+    {
+        try {
+            if (!$this->checkAndRefreshToken()) {
+                throw new \Exception('Tidak terautentikasi dengan Google Calendar');
+            }
+
+            $this->service = new Google_Service_Calendar($this->client);
+            
+            // Ambil event yang akan diupdate
+            $event = $this->service->events->get('primary', $eventId);
+            
+            // Update attendees
+            $event->setAttendees($attendees);
+            
+            // Update event dengan notifikasi
+            return $this->service->events->update('primary', $eventId, $event, [
+                'sendUpdates' => 'all' // Kirim notifikasi ke semua peserta
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error updating event attendees: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
     /**
      * Helper Methods
      */

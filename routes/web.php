@@ -57,11 +57,10 @@ Route::middleware(['auth:mahasiswa', 'checkRole:mahasiswa'])->group(function () 
 
     Route::controller(MahasiswaController::class)->group(function () {
         Route::get('/usulanbimbingan', 'index')->name('mahasiswa.usulanbimbingan');
+        Route::post('/usulanbimbingan/selesai/{id}', 'selesaiBimbingan')->name('mahasiswa.selesaibimbingan');
         Route::get('/aksiInformasi/{id}', 'getDetailBimbingan')->name('mahasiswa.aksiInformasi');
         Route::get('/detaildaftar/{nip}', 'getDetailDaftar')->name('mahasiswa.detaildaftar');
-        Route::get('/load-usulan', 'getUsulanBimbingan')->name('mahasiswa.load.usulan');
-        Route::get('/load-jadwal', 'getDaftarDosen')->name('mahasiswa.load.jadwal');
-        Route::get('/load-riwayat', 'getRiwayatBimbingan')->name('mahasiswa.load.riwayat');
+
     });
 
     // Bimbingan routes
@@ -82,10 +81,14 @@ Route::middleware(['auth:mahasiswa', 'checkRole:mahasiswa'])->group(function () 
 // Route untuk dosen
 Route::middleware(['auth:dosen', 'checkRole:dosen'])->group(function () {
     // Route view biasa
-    Route::get('/persetujuan', function() { return view('bimbingan.dosen.persetujuan'); })->name('dosen.persetujuan');
-    Route::get('/riwayatdosen', function(){ return view('bimbingan.riwayatdosen'); });
-    Route::get('/terimausulanbimbingan', function(){ return view('bimbingan.dosen.terimausulanbimbingan'); });
-    Route::get('/editusulan', function(){ return view('bimbingan.dosen.editusulan'); });
+    Route::controller(DosenController::class)->group(function () {
+        Route::get('/persetujuan', 'index')->name('dosen.persetujuan');
+        Route::get('/terimausulanbimbingan/{id}', 'getDetailBimbingan')->name('dosen.detailbimbingan');
+        Route::post('/terimausulanbimbingan/terima/{id}', 'terima')->name('dosen.detailbimbingan.terima');
+        Route::post('/terimausulanbimbingan/tolak/{id}', 'tolak')->name('dosen.detailbimbingan.tolak');
+        Route::post('/persetujuan/terima/{id}', 'terima')->name('dosen.persetujuan.terima');
+        Route::post('/persetujuan/tolak/{id}', 'tolak')->name('dosen.persetujuan.tolak');
+    });
 
     // Jadwal routes
     Route::controller(MasukkanJadwalController::class)->prefix('masukkanjadwal')->group(function () {
