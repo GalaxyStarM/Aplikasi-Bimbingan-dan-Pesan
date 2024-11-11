@@ -1,13 +1,15 @@
 <?php
 namespace App\Http\Controllers;
 
-use Google_Service_Calendar;
-use Google_Service_Calendar_Event;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Models\JadwalBimbingan;
+use App\Models\UsulanBimbingan;
+use App\Models\Mahasiswa;
+use App\Models\Dosen;
 
 class PilihJadwalController extends Controller
 {
@@ -18,9 +20,6 @@ class PilihJadwalController extends Controller
         $this->googleCalendarController = $googleCalendarController;
     }
 
-    /**
-     * Menampilkan halaman pilih jadwal
-     */
     public function index()
     {
         $mahasiswa = Auth::guard('mahasiswa')->user();
@@ -29,16 +28,6 @@ class PilihJadwalController extends Controller
             $isConnected = app(GoogleCalendarController::class)->validateAndRefreshToken();
         }
         
-        Log::info('Google Calendar Status:', [
-            'has_tokens' => $mahasiswa->hasGoogleCalendarConnected(),
-            'is_expired' => $mahasiswa->isGoogleTokenExpired(),
-            'token_created' => $mahasiswa->google_token_created_at,
-            'expires_in' => $mahasiswa->google_token_expires_in,
-            'expiry_time' => $mahasiswa->getTokenExpiryTime()?->format('Y-m-d H:i:s'),
-            'has_access_token' => !empty($mahasiswa->google_access_token),
-            'has_refresh_token' => !empty($mahasiswa->google_refresh_token),
-            'is_connected' => $isConnected
-        ]);
         $dosenList = DB::table('dosens')
             ->select('nip', 'nama')
             ->get()
@@ -57,9 +46,6 @@ class PilihJadwalController extends Controller
         ]);
     }
 
-    /**
-     * Menyimpan jadwal bimbingan baru
-     */
     public function store(Request $request)
     {
         try {
@@ -86,7 +72,7 @@ class PilihJadwalController extends Controller
                 ->where('jb.status', 'tersedia')
                 ->where('jb.sisa_kapasitas', '>', 0)
                 ->where('jb.waktu_mulai', '>', now())
-                ->select('jb.*', 'd.nama as dosen_nama', 'd.email as dosen_email')
+                ->select('jb.*', 'd.nama as dosen_nama')
                 ->first();
 
             if (!$jadwal) {
@@ -127,32 +113,6 @@ class PilihJadwalController extends Controller
 
             $mahasiswa = Auth::guard('mahasiswa')->user();
             
-            // Buat event di Google Calendar
-            $description = "Bimbingan {$request->jenis_bimbingan}\n" .
-                    "Dosen: {$jadwal->dosen_nama}\n" .
-                    "Lokasi: {$jadwal->lokasi}\n" .
-                    "Status: Menunggu Persetujuan\n\n" .
-                    ($request->deskripsi ? "Catatan: {$request->deskripsi}" : "");
-
-            $eventData = [
-                'summary' => "Bimbingan dengan {$jadwal->dosen_nama}",
-                'description' => $description,
-                'start' => Carbon::parse($jadwal->waktu_mulai),
-                'end' => Carbon::parse($jadwal->waktu_selesai),
-                'attendees' => [
-                    ['email' => $jadwal->dosen_email]
-                ],
-                'reminders' => [
-                    'useDefault' => false,
-                    'overrides' => [
-                        ['method' => 'email', 'minutes' => 24 * 60],
-                        ['method' => 'popup', 'minutes' => 30],
-                    ],
-                ],
-            ];
-
-            $createdEvent = $this->googleCalendarController->createEvent($eventData);
-            
             // Simpan ke database
             $bimbingan = DB::table('usulan_bimbingans')->insertGetId([
                 'nim' => $mahasiswa->nim,
@@ -167,7 +127,6 @@ class PilihJadwalController extends Controller
                 'deskripsi' => $request->deskripsi,
                 'status' => 'USULAN',
                 'event_id' => $jadwal->event_id,
-                'student_event_id' => null,
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -179,9 +138,9 @@ class PilihJadwalController extends Controller
 
             DB::commit();
 
-            Log::info('Berhasil membuat bimbingan:', [
+            Log::info('Berhasil membuat usulan bimbingan:', [
                 'bimbingan_id' => $bimbingan,
-                'event_id' => $createdEvent->id
+                'event_id' => $jadwal->event_id
             ]);
 
             return response()->json([
@@ -199,6 +158,7 @@ class PilihJadwalController extends Controller
             ], 500);
         }
     }
+
     public function getAvailableJadwal(Request $request)
     {
         try {
@@ -357,107 +317,6 @@ class PilihJadwalController extends Controller
                 'available' => false,
                 'message' => $e->getMessage()
             ], 400);
-        }
-    }
-
-        /**
-     * Membuat event Google Calendar untuk bimbingan
-     */
-    public function createGoogleCalendarEvent(Request $request, $usulanId)
-    {
-        try {
-            // Validate Google Calendar connection
-            if (!$this->googleCalendarController->validateAndRefreshToken()) {
-                Log::error('Google Calendar authentication failed for usulan ID: ' . $usulanId);
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Belum terautentikasi dengan Google Calendar'
-                ], 401);
-            }
-
-            // Get usulan data
-            $usulan = DB::table('usulan_bimbingans as ub')
-                ->join('dosens as d', 'ub.nip', '=', 'd.nip')
-                ->where('ub.id', $usulanId)
-                ->select('ub.*', 'd.email as dosen_email')
-                ->first();
-
-            if (!$usulan) {
-                Log::error('Usulan not found: ' . $usulanId);
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Data bimbingan tidak ditemukan'
-                ], 404);
-            }
-
-            // Prepare event data
-            $description = "Bimbingan {$usulan->jenis_bimbingan}\n" .
-                    "Dosen: {$usulan->dosen_nama}\n" .
-                    "Lokasi: {$usulan->lokasi}\n" .
-                    "Status: Menunggu Persetujuan\n\n" .
-                    ($usulan->deskripsi ? "Catatan: {$usulan->deskripsi}" : "");
-
-            $eventData = [
-                'summary' => "Bimbingan dengan {$usulan->dosen_nama}",
-                'description' => $description,
-                'start' => Carbon::parse($usulan->tanggal . ' ' . $usulan->waktu_mulai),
-                'end' => Carbon::parse($usulan->tanggal . ' ' . $usulan->waktu_selesai),
-                'attendees' => [
-                    ['email' => $usulan->dosen_email]
-                ],
-                'reminders' => [
-                    'useDefault' => false,
-                    'overrides' => [
-                        ['method' => 'email', 'minutes' => 24 * 60],
-                        ['method' => 'popup', 'minutes' => 30],
-                    ],
-                ],
-            ];
-
-            // Create Google Calendar event
-            DB::beginTransaction();
-            try {
-                // Create event in Google Calendar
-                $createdEvent = $this->googleCalendarController->createEvent($eventData);
-                
-                // Update student_event_id in database
-                DB::table('usulan_bimbingans')
-                    ->where('id', $usulanId)
-                    ->update([
-                        'student_event_id' => $createdEvent->id,
-                        'updated_at' => now()
-                    ]);
-
-                DB::commit();
-                Log::info('Successfully created Google Calendar event for usulan ID: ' . $usulanId, [
-                    'event_id' => $createdEvent->id
-                ]);
-
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Event Google Calendar berhasil dibuat',
-                    'data' => [
-                        'event_id' => $createdEvent->id
-                    ]
-                ]);
-
-            } catch (\Exception $e) {
-                DB::rollBack();
-                Log::error('Failed to create Google Calendar event: ' . $e->getMessage(), [
-                    'usulan_id' => $usulanId
-                ]);
-                throw $e;
-            }
-
-        } catch (\Exception $e) {
-            Log::error('Error in createGoogleCalendarEvent: ' . $e->getMessage(), [
-                'usulan_id' => $usulanId
-            ]);
-            
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Gagal membuat event di Google Calendar'
-            ], 500);
         }
     }
 }

@@ -1,100 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Terima Usulan')
+@section('title', 'Detail Usulan Bimbingan')
 
 @push('styles')
 <style>
     .status {
-        background-color: #FFBE01;
         color: white;
         border-radius: 5px;
         font-size: 0.9em;
         display: inline-block;
         margin-top: 10px;
         padding: 5px 15px;
-    }
-
-    /* Modal styles */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4);
-    }
-
-    .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 400px;
-        border-radius: 10px;
-        text-align: center;
-    }
-
-    .modal-content h2 {
-        margin-top: 0;
-        font-size: 1.5rem;
-    }
-
-    .question-mark {
-        width: 60px;
-        height: 60px;
-        background-color: #f0f0f0;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 0 auto 20px;
-    }
-
-    .question-mark span {
-        color: #17a2b8;
-        font-size: 40px;
-        font-weight: bold;
-    }
-
-    .modal-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 20px;
-    }
-
-    .modal-buttons button {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .btn-terima {
-        background-color: #28a745;
-        color: white;
-    }
-
-    .btn-tolak {
-        background-color: #dc3545;
-        color: white;
-    }
-
-    .btn-batal {
-        background-color: #6c757d;
-        color: white;
-    }
-
-    #alasanPenolakan {
-        width: 100%;
-        margin-top: 10px;
-        padding: 10px;
-        border: 1px solid #ced4da;
-        border-radius: 5px;
     }
 </style>
 @endpush
@@ -104,7 +20,7 @@
     <h1 class="mb-2 gradient-text fw-bold">Detail Mahasiswa</h1>
     <hr>
     <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
-        <a href="{{ url('/persetujuan') }}">
+        <a href="{{ route('dosen.persetujuan', ['tab' => 'usulan']) }}">
             <i class="fas fa-arrow-left me-2"></i> Kembali
         </a>
     </button>
@@ -116,13 +32,13 @@
                 <h5 class="text-bold">Mahasiswa</h5>
                 <hr>
                 <p class="card-title text-muted text-sm">Nama</p>
-                <p class="card-text text-start">Syahirah Tri Meilina</p>
+                <p class="card-text text-start">{{ $usulan->mahasiswa_nama }}</p>
                 <p class="card-title text-muted text-sm">NIM</p>
-                <p class="card-text text-start">2107110255</p>
+                <p class="card-text text-start">{{ $usulan->nim }}</p>
                 <p class="card-title text-muted text-sm">Program Studi</p>
-                <p class="card-text text-start">Teknik Informatika S1</p>
+                <p class="card-text text-start">{{ $usulan->nama_prodi }}</p>
                 <p class="card-title text-muted text-sm">Konsentrasi</p>
-                <p class="card-text text-start">Rekayasa Perangkat Lunak</p>
+                <p class="card-text text-start">{{ $usulan->nama_konsentrasi }}</p>
             </div>
 
             <!-- Dosen Pembimbing Card -->
@@ -130,7 +46,7 @@
                 <h5 class="text-bold">Dosen Pembimbing</h5>
                 <hr>
                 <p class="card-title text-secondary text-sm">Nama Pembimbing</p>
-                <p class="card-text text-start">Edi Susilo, S.Pd., M.Kom., M.Eng.</p>
+                <p class="card-text text-start">{{ $usulan->dosen_nama }}</p>
             </div>
         </div>
     </div>
@@ -142,13 +58,13 @@
                 <h5 class="text-bold">Data Usulan Jadwal Bimbingan</h5>
                 <hr>
                 <p class="card-title text-muted text-sm">Jenis Bimbingan</p>
-                <p class="card-text text-start">Bimbingan Skripsi</p>
+                <p class="card-text text-start">{{ ucfirst($usulan->jenis_bimbingan) }}</p>
                 <p class="card-title text-muted text-sm">Tanggal</p>
-                <p class="card-text text-start">Senin, 30 September 2024</p>
+                <p class="card-text text-start">{{ $tanggal }}</p>
                 <p class="card-title text-muted text-sm">Waktu</p>
-                <p class="card-text text-start">13.30 - 16.00</p>
+                <p class="card-text text-start">{{ $waktu }}</p>
                 <p class="card-title text-muted text-sm">Deskripsi</p>
-                <p class="card-text text-start">Izin bapak, saya ingin melakukan bimbingan bab 1 skripsi saya pak</p>
+                <p class="card-text text-start">{{ $usulan->deskripsi ?? '-' }}</p>
             </div>
 
             <!-- Keterangan Usulan Card -->
@@ -157,120 +73,329 @@
                 <hr>
                 <p class="card-title text-secondary text-sm">Status Usulan</p>
                 <p class="card-text text-start">
-                    <span id="status" class="status">BELUM DIPROSES</span>
+                    <span id="status" class="status {{ $statusClass }}">{{ $usulan->status }}</span>
                 </p>
                 <p class="card-title text-secondary text-sm">Keterangan</p>
-                <p id="keteranganText" class="card-text text-start">-</p>
+                <p id="keteranganText" class="card-text text-start">
+                    @if($usulan->status == 'DISETUJUI')
+                        Lokasi: {{ $usulan->lokasi }}
+                    @elseif($usulan->status == 'DITOLAK')
+                        {{ $usulan->keterangan }}
+                    @else
+                        -
+                    @endif
+                </p>
             </div>
         </div>
     </div>
 
+    @if($usulan->status == 'USULAN')
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-12 mb-2">
-                <button id="btnTerima" class="btn btn-success w-100">Terima</button>
+                <button id="btnTerima" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#modalTerima">
+                    Terima
+                </button>
             </div>
             <div class="col-md-12 mb-2">
-                <button id="btnTolak" class="btn btn-danger w-100">Tolak</button>
+                <button id="btnTolak" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#modalTolak">
+                    Tolak
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+</div>
+
+<!-- Modal Terima -->
+<div class="modal fade" id="modalTerima" tabindex="-1" aria-labelledby="modalTerimaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold" id="modalTerimaLabel">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Terima Usulan Bimbingan
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Detail Usulan -->
+                <div class="bg-light p-3 rounded mb-3">
+                    <h6 class="fw-bold mb-3">Detail Usulan</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>NIM:</strong><br>{{ $usulan->nim }}</p>
+                            <p class="mb-2"><strong>Nama:</strong><br>{{ $usulan->mahasiswa_nama }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Tanggal:</strong><br>{{ $tanggal }}</p>
+                            <p class="mb-2"><strong>Waktu:</strong><br>{{ $waktu }}</p>
+                        </div>
+                    </div>
+                    <p class="mb-0"><strong>Jenis Bimbingan:</strong><br>{{ ucfirst($usulan->jenis_bimbingan) }}</p>
+                </div>
+
+                <!-- Form Lokasi -->
+                <div class="form-group">
+                    <label for="lokasiBimbingan" class="form-label fw-bold">Lokasi Bimbingan <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light">
+                            <i class="fas fa-location-dot"></i>
+                        </span>
+                        <input type="text" 
+                               class="form-control" 
+                               id="lokasiBimbingan" 
+                               required 
+                               value="{{ $usulan->lokasi_default ?? '' }}">
+                    </div>
+                    <div class="invalid-feedback">Lokasi bimbingan wajib diisi</div>
+                    <small class="text-muted">Masukkan lokasi fisik atau link meeting untuk bimbingan online</small>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Batal
+                </button>
+                <button type="button" class="btn btn-success" id="confirmTerima">
+                    <i class="fas fa-check me-2"></i>Setujui Usulan
+                </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Terima -->
-@include('components.dosen.modalterima')
-
 <!-- Modal Tolak -->
-@include('components.dosen.modaltolak')
+<div class="modal fade" id="modalTolak" tabindex="-1" aria-labelledby="modalTolakLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold" id="modalTolakLabel">
+                    <i class="fas fa-times-circle text-danger me-2"></i>
+                    Tolak Usulan Bimbingan
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Detail Usulan -->
+                <div class="bg-light p-3 rounded mb-3">
+                    <h6 class="fw-bold mb-3">Detail Usulan</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>NIM:</strong><br>{{ $usulan->nim }}</p>
+                            <p class="mb-2"><strong>Nama:</strong><br>{{ $usulan->mahasiswa_nama }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Tanggal:</strong><br>{{ $tanggal }}</p>
+                            <p class="mb-2"><strong>Waktu:</strong><br>{{ $waktu }}</p>
+                        </div>
+                    </div>
+                    <p class="mb-0"><strong>Jenis Bimbingan:</strong><br>{{ ucfirst($usulan->jenis_bimbingan) }}</p>
+                </div>
 
-<!-- Modal Alasan Penolakan -->
-@include('components.dosen.modalalasan')
+                <!-- Form Alasan -->
+                <div class="form-group">
+                    <label for="alasanPenolakan" class="form-label fw-bold">Alasan Penolakan <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light">
+                            <i class="fas fa-comment-alt"></i>
+                        </span>
+                        <textarea class="form-control" 
+                                  id="alasanPenolakan" 
+                                  rows="3" 
+                                  required></textarea>
+                    </div>
+                    <div class="invalid-feedback">Alasan penolakan wajib diisi</div>
+                    <small class="text-muted">Berikan alasan yang jelas mengapa Anda menolak usulan ini</small>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Batal
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmTolak">
+                    <i class="fas fa-times me-2"></i>Tolak Usulan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
-
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Get modal elements
-        var modalTerima = document.getElementById("modalTerima");
-        var modalTolak = document.getElementById("modalTolak");
-        var modalAlasanPenolakan = document.getElementById("modalAlasanPenolakan");
+document.addEventListener('DOMContentLoaded', function() {
+    // Get CSRF token from meta tag
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+    const confirmTerimaBtn = document.getElementById('confirmTerima');
+    const confirmTolakBtn = document.getElementById('confirmTolak');
+    const statusElement = document.getElementById('status');
+    const keteranganText = document.getElementById('keteranganText');
 
-        // Get buttons
-        var btnTerima = document.getElementById("btnTerima");
-        var btnTolak = document.getElementById("btnTolak");
-        var confirmTerima = document.getElementById("confirmTerima");
-        var confirmTolak = document.getElementById("confirmTolak");
-        var submitPenolakan = document.getElementById("submitPenolakan");
-
-        // Get close buttons
-        var closeButtons = document.getElementsByClassName("close-modal");
-
-        // Get status and keterangan elements
-        var statusBadge = document.getElementById("status");
-        var keteranganText = document.getElementById("keteranganText");
-
-        // Open Terima modal
-        btnTerima.onclick = function() {
-            modalTerima.style.display = "block";
+    // Handler untuk menerima usulan
+    confirmTerimaBtn?.addEventListener('click', async function() {
+        const lokasiInput = document.getElementById('lokasiBimbingan');
+        const lokasi = lokasiInput.value.trim();
+        
+        // Validasi input
+        if (!lokasi) {
+            lokasiInput.classList.add('is-invalid');
+            return;
         }
+        
+        lokasiInput.classList.remove('is-invalid');
+        
+        try {
+            // Tampilkan loading state
+            confirmTerimaBtn.disabled = true;
+            confirmTerimaBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
 
-        // Open Tolak modal
-        btnTolak.onclick = function() {
-            modalTolak.style.display = "block";
-        }
+            // Kirim request ke endpoint terima
+            const response = await fetch(`/terimausulanbimbingan/terima/{{ $usulan->id }}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ lokasi })
+            });
 
-        // Confirm Terima
-        confirmTerima.onclick = function() {
-            statusBadge.innerHTML = "USULAN DISETUJUI";
-            statusBadge.style.backgroundColor = "#28a745";
-            keteranganText.innerHTML = "Usulan Jadwal Bimbingan Disetujui";
-            modalTerima.style.display = "none";
-            disableButtons();
-        }
+            const data = await response.json();
 
-        // Confirm Tolak
-        confirmTolak.onclick = function() {
-            modalTolak.style.display = "none";
-            modalAlasanPenolakan.style.display = "block";
-        }
+            if (data.success) {
+                // Update UI
+                statusElement.className = 'status bg-success';
+                statusElement.textContent = 'DISETUJUI';
+                keteranganText.textContent = `Lokasi: ${lokasi}`;
+                
+                // Sembunyikan tombol
+                const btnTerima = document.getElementById('btnTerima');
+                const btnTolak = document.getElementById('btnTolak');
+                if (btnTerima) btnTerima.remove();
+                if (btnTolak) btnTolak.remove();
+                
+                // Tutup modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalTerima'));
+                modal?.hide();
 
-        // Submit Penolakan
-        submitPenolakan.onclick = function() {
-            var alasan = document.getElementById("alasanPenolakan").value;
-            if (alasan.trim() !== "") {
-                statusBadge.innerHTML = "USULAN DITOLAK";
-                statusBadge.style.backgroundColor = "#dc3545";
-                keteranganText.innerHTML = alasan;
-                modalAlasanPenolakan.style.display = "none";
-                disableButtons();
+                // Tampilkan notifikasi sukses
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: data.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.reload();
+                });
             } else {
-                alert("Harap isi alasan penolakan.");
+                throw new Error(data.message || 'Terjadi kesalahan');
             }
-        }
-
-        // Close modals
-        for (var i = 0; i < closeButtons.length; i++) {
-            closeButtons[i].onclick = function() {
-                modalTerima.style.display = "none";
-                modalTolak.style.display = "none";
-                modalAlasanPenolakan.style.display = "none";
-            }
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            if (event.target == modalTerima || event.target == modalTolak || event.target == modalAlasanPenolakan) {
-                modalTerima.style.display = "none";
-                modalTolak.style.display = "none";
-                modalAlasanPenolakan.style.display = "none";
-            }
-        }
-
-        // Disable buttons after action
-        function disableButtons() {
-            btnTerima.disabled = true;
-            btnTolak.disabled = true;
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.message || 'Terjadi kesalahan saat memproses usulan'
+            });
+        } finally {
+            // Reset loading state
+            confirmTerimaBtn.disabled = false;
+            confirmTerimaBtn.innerHTML = '<i class="fas fa-check me-2"></i>Setujui Usulan';
         }
     });
+
+    // Handler untuk menolak usulan
+    confirmTolakBtn?.addEventListener('click', async function() {
+        const alasanInput = document.getElementById('alasanPenolakan');
+        const keterangan = alasanInput.value.trim();
+        
+        // Validasi input
+        if (!keterangan) {
+            alasanInput.classList.add('is-invalid');
+            return;
+        }
+        
+        alasanInput.classList.remove('is-invalid');
+        
+        try {
+            // Tampilkan loading state
+            confirmTolakBtn.disabled = true;
+            confirmTolakBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
+
+            // Kirim request ke endpoint tolak
+            const response = await fetch(`/terimausulanbimbingan/tolak/{{ $usulan->id }}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ keterangan })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Update UI
+                statusElement.className = 'status bg-danger';
+                statusElement.textContent = 'DITOLAK';
+                keteranganText.textContent = keterangan;
+                
+                // Sembunyikan tombol
+                const btnTerima = document.getElementById('btnTerima');
+                const btnTolak = document.getElementById('btnTolak');
+                if (btnTerima) btnTerima.remove();
+                if (btnTolak) btnTolak.remove();
+                
+                // Tutup modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalTolak'));
+                modal?.hide();
+
+                // Tampilkan notifikasi sukses
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: data.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                throw new Error(data.message || 'Terjadi kesalahan');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.message || 'Terjadi kesalahan saat memproses usulan'
+            });
+        } finally {
+            // Reset loading state
+            confirmTolakBtn.disabled = false;
+            confirmTolakBtn.innerHTML = '<i class="fas fa-times me-2"></i>Tolak Usulan';
+        }
+    });
+
+    // Reset validasi saat modal ditutup
+    ['modalTerima', 'modalTolak'].forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        modal?.addEventListener('hidden.bs.modal', function() {
+            const input = modalId === 'modalTerima' ? 
+                document.getElementById('lokasiBimbingan') : 
+                document.getElementById('alasanPenolakan');
+            
+            if (input) {
+                input.classList.remove('is-invalid');
+                input.value = modalId === 'modalTerima' ? 
+                    '{{ $usulan->lokasi_default ?? "" }}' : '';
+            }
+        });
+    });
+});
 </script>
 @endpush
