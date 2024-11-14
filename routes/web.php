@@ -99,3 +99,15 @@ Route::middleware(['auth:dosen', 'checkRole:dosen'])->group(function () {
 
 // Logout route
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/firebase-config', function () {
+    return response()->json([
+        'apiKey' => config('services.firebase.api_key'),
+        'authDomain' => config('services.firebase.auth_domain'),
+        'projectId' => config('services.firebase.project_id'),
+        'storageBucket' => config('services.firebase.storage_bucket'),
+        'messagingSenderId' => config('services.firebase.messaging_sender_id'),
+        'appId' => config('services.firebase.app_id'),
+        'measurementId' => config('services.firebase.measurement_id'),
+    ]);
+});
