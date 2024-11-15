@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -9,10 +10,10 @@ use Carbon\Carbon;
 use App\Models\UsulanBimbingan;
 
 class DosenController extends Controller
-{   
+{
     protected $googleCalendarController;
 
-    public function __construct(GoogleCalendarController $googleCalendarController) 
+    public function __construct(GoogleCalendarController $googleCalendarController)
     {
         $this->googleCalendarController = $googleCalendarController;
     }
@@ -29,13 +30,13 @@ class DosenController extends Controller
             $riwayat = collect();
 
             // Load data based on active tab
-            switch($activeTab) {
+            switch ($activeTab) {
                 case 'usulan':
                     $usulan = DB::table('usulan_bimbingans as ub')
                         ->join('mahasiswas as m', 'ub.nim', '=', 'm.nim')
-                        ->join('bimbingankonsultasi.jadwal_bimbingans as jb', function($join) {
+                        ->join('bimbingankonsultasi.jadwal_bimbingans as jb', function ($join) {
                             $join->on('ub.event_id', '=', 'jb.event_id')
-                                 ->on('ub.nip', '=', 'jb.nip');
+                                ->on('ub.nip', '=', 'jb.nip');
                         })
                         ->where('jb.nip', $nip)
                         ->where('jb.status', 'tersedia')
@@ -84,7 +85,6 @@ class DosenController extends Controller
                 'jadwal',
                 'riwayat'
             ));
-
         } catch (\Exception $e) {
             Log::error('Error in dosen index: ' . $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan saat memuat data');
@@ -99,52 +99,52 @@ class DosenController extends Controller
                 ->join('prodi as p', 'm.prodi_id', '=', 'p.id')
                 ->join('konsentrasi as k', 'm.konsentrasi_id', '=', 'k.id')
                 ->join('dosens as d', 'ub.nip', '=', 'd.nip')
-                ->join('bimbingankonsultasi.jadwal_bimbingans as jb', function($join) {
-                    $join->on('ub.event_id', '=', 'jb.event_id')
-                        ->on('ub.nip', '=', 'jb.nip');
-                })
-                ->where('ub.id', $id)
                 ->select(
                     'ub.*',
                     'm.nama as mahasiswa_nama',
-                    'm.nim',
                     'p.nama_prodi',
                     'k.nama_konsentrasi',
-                    'd.nama as dosen_nama',
-                    'jb.lokasi as lokasi_default'
+                    'd.nama as dosen_nama'
                 )
+                ->where('ub.id', $id)
                 ->firstOrFail();
 
-            // Format data
+            // Format tanggal ke format Indonesia
             $tanggal = Carbon::parse($usulan->tanggal)->locale('id')->isoFormat('dddd, D MMMM Y');
-            $waktu = Carbon::parse($usulan->waktu_mulai)->format('H:i') . ' - ' . 
-                    Carbon::parse($usulan->waktu_selesai)->format('H:i');
+            $waktuMulai = Carbon::parse($usulan->waktu_mulai)->format('H.i');
+            $waktuSelesai = Carbon::parse($usulan->waktu_selesai)->format('H.i');
 
-            // Sesuaikan warna status
-            switch($usulan->status) {
+            // Set warna badge status
+            switch ($usulan->status) {
                 case 'DISETUJUI':
-                    $statusClass = 'bg-success';
+                    $statusBadgeClass = 'bg-success';
                     break;
                 case 'DITOLAK':
-                    $statusClass = 'bg-danger';
+                    $statusBadgeClass = 'bg-danger';
                     break;
                 case 'USULAN':
-                    $statusClass = 'bg-warning';
+                    $statusBadgeClass = 'bg-info';
+                    break;
+                case 'SELESAI':
+                    $statusBadgeClass = 'bg-primary';
                     break;
                 default:
-                    $statusClass = 'bg-secondary';
+                    $statusBadgeClass = '';
+                    break;
             }
 
-            return view('bimbingan.dosen.terimausulanbimbingan', compact(
+            return view('bimbingan.aksiInformasi', compact(
                 'usulan',
                 'tanggal',
-                'waktu',
-                'statusClass'
+                'waktuMulai',
+                'waktuSelesai',
+                'statusBadgeClass'
             ));
-
         } catch (\Exception $e) {
-            Log::error('Error in getDetailUsulan: ' . $e->getMessage());
-            return back()->with('error', 'Terjadi kesalahan saat memuat detail usulan');
+            Log::error('Error di getDetailBimbingan: ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Terjadi kesalahan saat mengambil data usulan bimbingan');
         }
     }
 
@@ -168,7 +168,6 @@ class DosenController extends Controller
                 'waktuMulai',
                 'waktuSelesai'
             ));
-
         } catch (\Exception $e) {
             Log::error('Error getting riwayat detail: ' . $e->getMessage());
             return back()->with('error', 'Gagal memuat detail riwayat bimbingan');
@@ -186,7 +185,6 @@ class DosenController extends Controller
                 ->firstOrFail();
 
             return view('bimbingan.dosen.editusulan', compact('usulan'));
-
         } catch (\Exception $e) {
             Log::error('Error in editUsulan: ' . $e->getMessage());
             return back()->with('error', 'Gagal memuat data usulan untuk diedit');
@@ -216,7 +214,6 @@ class DosenController extends Controller
             return redirect()
                 ->route('dosen.persetujuanbimbingan', ['tab' => 'usulan'])
                 ->with('success', 'Usulan bimbingan berhasil diperbarui');
-
         } catch (\Exception $e) {
             Log::error('Error in updateUsulan: ' . $e->getMessage());
             return back()->with('error', 'Gagal memperbarui usulan bimbingan');
@@ -227,20 +224,20 @@ class DosenController extends Controller
     {
         try {
             $usulan = UsulanBimbingan::with('mahasiswa')->findOrFail($id);
-            
+
             DB::beginTransaction();
-            
+
             if ($usulan->setujui($request->lokasi)) {
                 try {
                     // Debug log untuk memeriksa event_id
                     Log::info('Mencari event dengan ID: ' . $usulan->event_id);
-                    
+
                     // Cari event di calendar dosen
                     $events = $this->googleCalendarController->getEvents();
-                    
+
                     // Debug log untuk melihat response events
                     Log::info('Events response:', ['events' => $events]);
-                    
+
                     if (!$events || !isset($events->original)) {
                         throw new \Exception('Tidak bisa mengambil events dari Google Calendar');
                     }
@@ -248,26 +245,26 @@ class DosenController extends Controller
                     $event = collect($events->original)->first(function ($event) use ($usulan) {
                         return isset($event['id']) && $event['id'] === $usulan->event_id;
                     });
-                    
+
                     if ($event) {
                         // Siapkan data attendee
                         $existingAttendees = $event['attendees'] ?? [];
-                        
+
                         // Debug log untuk attendees
                         Log::info('Existing attendees:', ['attendees' => $existingAttendees]);
-                        
+
                         // Cek apakah email mahasiswa sudah ada
                         $mahasiswaEmail = $usulan->mahasiswa->email;
                         $emailExists = collect($existingAttendees)->contains('email', $mahasiswaEmail);
-                        
+
                         if (!$emailExists) {
                             Log::info('Menambahkan attendee baru:', ['email' => $mahasiswaEmail]);
-                            
+
                             $existingAttendees[] = [
                                 'email' => $mahasiswaEmail,
                                 'responseStatus' => 'needsAction'
                             ];
-                            
+
                             // Update event dengan attendee baru dan notifikasi
                             $this->googleCalendarController->updateEventAttendees(
                                 $usulan->event_id,
@@ -300,26 +297,25 @@ class DosenController extends Controller
                             'total_events' => count($events->original)
                         ]);
                     }
-                    
+
                     // Jika sampai di sini, event tidak ditemukan tapi tetap setujui usulan
                     DB::commit();
                     return response()->json([
                         'success' => true,
                         'message' => 'Usulan bimbingan berhasil disetujui (tanpa notifikasi calendar)'
                     ]);
-                    
                 } catch (\Exception $e) {
                     Log::error('Google Calendar Error Detail:', [
                         'message' => $e->getMessage(),
                         'event_id' => $usulan->event_id,
                         'trace' => $e->getTraceAsString()
                     ]);
-                    
+
                     // Jika gagal menambahkan ke calendar, tetap setujui usulan
                     DB::beginTransaction();
                     $usulan->setujui($request->lokasi);
                     DB::commit();
-                    
+
                     return response()->json([
                         'success' => true,
                         'message' => 'Usulan bimbingan berhasil disetujui (tanpa notifikasi calendar)'
@@ -332,14 +328,13 @@ class DosenController extends Controller
                 'success' => false,
                 'message' => 'Gagal menyetujui usulan bimbingan'
             ], 500);
-
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error in approve consultation:', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat memproses usulan'
@@ -351,7 +346,7 @@ class DosenController extends Controller
     {
         try {
             $usulan = UsulanBimbingan::findOrFail($id);
-            
+
             $usulan->update([
                 'status' => 'DITOLAK',
                 'keterangan' => $request->keterangan
@@ -368,5 +363,4 @@ class DosenController extends Controller
             ], 500);
         }
     }
-    
 }

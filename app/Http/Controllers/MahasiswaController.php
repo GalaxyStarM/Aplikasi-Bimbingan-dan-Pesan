@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -9,7 +10,7 @@ use Carbon\Carbon;
 use App\Models\UsulanBimbingan;
 
 class MahasiswaController extends Controller
-{   
+{
     public function index(Request $request)
     {
         try {
@@ -23,7 +24,7 @@ class MahasiswaController extends Controller
             $riwayat = collect();
 
             // Load data based on active tab
-            switch($activeTab) {
+            switch ($activeTab) {
                 case 'usulan':
                     $usulan = DB::table('usulan_bimbingans as ub')
                         ->join('mahasiswas as m', 'ub.nim', '=', 'm.nim')
@@ -36,7 +37,7 @@ class MahasiswaController extends Controller
 
                 case 'jadwal':
                     $daftarDosen = DB::table('dosens as d')
-                        ->leftJoin('usulan_bimbingans as ub', function($join) {
+                        ->leftJoin('usulan_bimbingans as ub', function ($join) {
                             $join->on('d.nip', '=', 'ub.nip')
                                 ->where('ub.status', 'DISETUJUI');
                         })
@@ -69,7 +70,6 @@ class MahasiswaController extends Controller
                 'daftarDosen',
                 'riwayat'
             ));
-
         } catch (\Exception $e) {
             Log::error('Error in index: ' . $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan saat memuat data');
@@ -95,13 +95,25 @@ class MahasiswaController extends Controller
             $tanggal = Carbon::parse($usulan->tanggal)->locale('id')->isoFormat('dddd, D MMMM Y');
             $waktuMulai = Carbon::parse($usulan->waktu_mulai)->format('H.i');
             $waktuSelesai = Carbon::parse($usulan->waktu_selesai)->format('H.i');
-            
+
             // Set warna badge status
-            $statusBadgeClass = match($usulan->status) {
-                'DISETUJUI' => 'bg-success',
-                'DITOLAK' => 'bg-danger',
-                'USULAN' => 'bg-info',
-            };
+            switch ($usulan->status) {
+                case 'DISETUJUI':
+                    $statusBadgeClass = 'bg-success';
+                    break;
+                case 'DITOLAK':
+                    $statusBadgeClass = 'bg-danger';
+                    break;
+                case 'USULAN':
+                    $statusBadgeClass = 'bg-info';
+                    break;
+                case 'SELESAI':
+                    $statusBadgeClass = 'bg-primary';
+                    break;
+                default:
+                    $statusBadgeClass = '';
+                    break;
+            }
 
             return view('bimbingan.aksiInformasi', compact(
                 'usulan',
@@ -110,7 +122,6 @@ class MahasiswaController extends Controller
                 'waktuSelesai',
                 'statusBadgeClass'
             ));
-
         } catch (\Exception $e) {
             Log::error('Error di getDetailBimbingan: ' . $e->getMessage());
             return redirect()
@@ -123,7 +134,7 @@ class MahasiswaController extends Controller
     {
         try {
             $perPage = $request->input('per_page', 10);
-            
+
             $dosen = DB::table('dosens')
                 ->where('nip', $nip)
                 ->firstOrFail();
@@ -142,7 +153,6 @@ class MahasiswaController extends Controller
                 ->paginate($perPage);
 
             return view('bimbingan.mahasiswa.detaildaftar', compact('dosen', 'bimbingan'));
-
         } catch (\Exception $e) {
             Log::error('Error getting detail dosen: ' . $e->getMessage());
             return back()->with('error', 'Gagal memuat detail dosen');
@@ -170,7 +180,6 @@ class MahasiswaController extends Controller
                 'waktuMulai',
                 'waktuSelesai'
             ));
-
         } catch (\Exception $e) {
             Log::error('Error getting riwayat detail: ' . $e->getMessage());
             return back()->with('error', 'Gagal memuat detail riwayat bimbingan');
@@ -181,7 +190,7 @@ class MahasiswaController extends Controller
     {
         try {
             $usulan = UsulanBimbingan::findOrFail($id);
-            
+
             if ($usulan->status !== 'DISETUJUI') {
                 return response()->json([
                     'success' => false,
