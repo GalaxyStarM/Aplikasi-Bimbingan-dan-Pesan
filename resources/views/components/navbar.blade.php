@@ -27,13 +27,13 @@
                 </li>
                 <li class="nav-item">
                     @if(Auth::guard('dosen')->check())
-                        <a class="nav-link {{ Request::is('dashboardpesandosen') || Request::is('buatpesandosen') || Request::is('isipesandosen') ? 'active' : '' }}" 
+                        <a class="nav-link {{ Request::routeIs('pesan.*') ? 'active' : '' }}" 
                         style="font-weight: bold;" 
-                        href="{{ url('/dashboardpesandosen') }}">KONSULTASI</a>
+                        href="{{ url('/pesan/dashboardkonsultasi') }}">KONSULTASI</a>
                     @else
-                        <a class="nav-link {{ Request::is('dashboardpesanmahasiswa') || Request::is('buatpesan') || Request::is('isipesan') ? 'active' : '' }}" 
+                        <a class="nav-link {{ Request::routeIs('pesan.*') ? 'active' : '' }}" 
                         style="font-weight: bold;" 
-                        href="{{ url('/dashboardpesanmahasiswa') }}">KONSULTASI</a>
+                        href="{{ route('pesan.dashboardkonsultasi') }}">KONSULTASI</a>
                     @endif
                 </li>
             </ul>

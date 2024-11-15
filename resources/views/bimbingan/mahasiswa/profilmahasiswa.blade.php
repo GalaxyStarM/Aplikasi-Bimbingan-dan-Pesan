@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Profil Mahasiswa')
+@section('title', $role === 'mahasiswa' ? 'Profil Mahasiswa' : 'Profil Dosen')
 
 @push('styles')
     <style>
@@ -136,52 +136,92 @@
 @endpush
 
 @section('content')
-    <div class="container my-5">
-        <h1 class="mb-3 gradient-text fw-bold">Profil Mahasiswa</h1>
-        <hr>
-        <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
-            <a href="/usulanbimbingan">
-                <i class="fas fa-arrow-left me-2"></i>Kembali
-            </a>
-        </button>
-        <div class="student-profile-container">
-            <div class="student-profile-card">
-                <div class="profile-header">
-                    <img src="{{ asset('images/fotosasa.jpg') }}" alt="Foto Mahasiswa" class="student-avatar mx-auto d-block">
-                    <h2 class="profile-name">SYAHIRAH TRI MEILINA</h2>
-                    <p class="profile-nim">NIM. 2107110255</p>
+<div class="container my-5">
+    <h1 class="mb-3 gradient-text fw-bold">{{ $role === 'mahasiswa' ? 'Profil Mahasiswa' : 'Profil Dosen' }}</h1>
+    <hr>
+    <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
+        <a href="{{ url()->previous() }}">
+            <i class="fas fa-arrow-left me-2"></i>Kembali
+        </a>
+    </button>
+    
+    <div class="student-profile-container">
+        <div class="student-profile-card">
+            <div class="profile-header">
+                <div class="position-relative d-inline-block">
+                    <img src="{{ $profile->foto_url }}" alt="Foto Profil" class="student-avatar mx-auto d-block">
+                    @if(auth()->user()->id === $profile->id)
+                        <div class="position-absolute bottom-0 end-0">
+                            <button type="button" class="btn btn-light rounded-circle p-2" data-bs-toggle="modal" data-bs-target="#updateFotoModal">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+                    @endif
                 </div>
-                <div class="profile-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Program Studi</span>
-                        <span class="detail-value">S1 - Teknik Informatika</span>
-                    </div>
-                    <div class="detail-item">
+                <h2 class="profile-name">{{ $profile->nama }}</h2>
+                <p class="profile-nim">{{ $role === 'mahasiswa' ? 'NIM. ' . $profile->nim : 'NIP. ' . $profile->nip }}</p>
+            </div>
+            
+            <div class="profile-details">
+                <div class="detail-item">
+                    <span class="detail-label">Program Studi</span>
+                    <span class="detail-value">{{ $profile->prodi }}</span>
+                </div>
+                @if($role === 'mahasiswa')
+                    <!-- <div class="detail-item">
                         <span class="detail-label">Pembimbing Akademik</span>
-                        <span class="detail-value">Rahmat Rizal Andhi</span>
-                    </div>
+                        <span class="detail-value">{{ $profile->dosen_pa }}</span>
+                    </div> -->
                     <div class="detail-item">
                         <span class="detail-label">Angkatan</span>
-                        <span class="detail-value">2021</span>
+                        <span class="detail-value">{{ $profile->angkatan }}</span>
                     </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Email</span>
-                        <span class="detail-value">syahirah.tri0255@student.unri.ac.id</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Status</span>
-                        <span class="detail-value text-success fw-bold">Aktif</span>
-                    </div>
+                @endif
+                <div class="detail-item">
+                    <span class="detail-label">Email</span>
+                    <span class="detail-value">{{ $profile->email }}</span>
                 </div>
-                <div class="profile-actions">
-                    <button class="btn btn-modern btn-password">
-                        <a href="{{ url('/gantipassword') }}">
-                            <i></i> Ganti Password
-                        </a>
-                    </button>
-                    {{-- <button class="btn btn-modern btn-update">Perbarui Data</button> --}}
-                </div>
+                <!-- <div class="detail-item">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value text-success fw-bold">{{ $profile->status }}</span>
+                </div> -->
             </div>
         </div>
     </div>
+</div>
+
+<!-- Modal Update Foto -->
+<div class="modal fade" id="updateFotoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Foto Profil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="mb-3">
+                        <label for="foto" class="form-label">Pilih Foto Baru</label>
+                        <input type="file" class="form-control" id="foto" name="foto" accept="image/*" required>
+                        <small class="text-muted">Format: JPG, JPEG, PNG (Max: 2MB)</small>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Upload Foto</button>
+                    </div>
+                </form>
+                @if($profile->foto)
+                    <hr>
+                    <form action="{{ route('profile.remove-foto') }}" method="POST" class="mt-3">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger w-100">Hapus Foto Profil</button>
+                    </form>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

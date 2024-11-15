@@ -22,6 +22,7 @@ class Mahasiswa extends Authenticatable
         'angkatan',
         'email',
         'password',
+        'foto',
         'prodi_id',
         'konsentrasi_id',
         'role_id',
@@ -68,5 +69,13 @@ class Mahasiswa extends Authenticatable
     {
         $this->fcm_token = $token;
         $this->save();
+    }
+
+    public function getFotoUrlAttribute()
+    {
+        if ($this->foto) {
+            return asset('storage/foto_profil/' . $this->foto);
+        }
+        return asset('images/default-avatar.png');
     }
 }

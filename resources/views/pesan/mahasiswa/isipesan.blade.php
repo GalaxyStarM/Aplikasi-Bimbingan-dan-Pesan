@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Isi Pesan Mahasiswa')
+@section('title', 'Isi Pesan')
 
 @push('styles')
     <style>
@@ -283,161 +283,317 @@
             font-weight: bold;
         }
     </style>
-    @endpush
+@endpush
 
-    @section('content')
-    <div class="container mt-5">
-        <h1 class="mb-2 gradient-text fw-bold">Isi Konsultasi</h1>
-        <hr></hr>
-        <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
-            <a href="/dashboardpesanmahasiswa">
-                <i class="fas fa-arrow-left me-2"></i> Kembali
-            </a>
-        </button>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="student-card">
-                    <img src="{{ asset('images/fotopakedi.png') }}" alt="Foto Mahasiswa" class="student-photo mx-auto d-block">
-                    <div class="student-info">
-                        <h3 class="student-name">Edi Susilo, Spd., M,Kom.,M.Eng </h3>
-                        <p class="student-id">NIP. 1991 1029 201903 010 </p>
-                        <p><i class="fas fa-chalkboard-teacher"></i> Dosen Teknik Informatika</p>
-                    </div>
-                    <table class="info-table">
-                        <tr>
-                            <th>Subjek</th>
-                            <td>Bimbingan Skripsi</td>
-                        </tr>
-                        <tr>
-                            <th>Penerima</th>
-                            <td>Edi Susilo, S.Pd., M.Kom., M.Eng.</td>
-                        </tr>
-                        <tr>
-                            <th>Prioritas</th>
-                            <td><span class="priority-badge priority-high">Mendesak</span></td>
-                        </tr>
-                        <tr>
-                            <th>Dikirim</th>
-                            <td>15:30, 26 September 2024</td>
-                        </tr>
-                        <tr id="statusRow" style="display: none;">
-                            <th>Status</th>
-                            <td class="status-ended">Pesan telah berakhir</td>
-                        </tr>
-                    </table>
-                    <button class="btn btn-danger btn-action" id="endChatBtn"><i class="fas fa-times-circle"></i> Akhiri Pesan</button>
-                </div>
-            </div>
+@section('content')
+<div class="container mt-5">
+    <h1 class="mb-2 gradient-text fw-bold">Isi Konsultasi</h1>
+    <hr>
+    <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
+        <a href="{{ route('pesan.dashboardkonsultasi') }}">
+            <i class="fas fa-arrow-left me-2"></i> Kembali
+        </a>
+    </button>
+    
+    <div class="row">
+        <!-- Kolom Informasi -->
+        <div class="col-md-4">
+            <div class="student-card">
+                @if($pesan->dosen->foto)
+                    <img src="{{ asset('storage/' . $pesan->dosen->foto) }}" alt="Foto {{ $pesan->dosen->nama }}" class="student-photo mx-auto d-block">
+                @else
+                    <img src="{{ asset('images/default-avatar.png') }}" alt="Default Avatar" class="student-photo mx-auto d-block">
+                @endif
                 
-            <div class="col-md-8">
-                <div class="chat-wrapper">
-                    <div class="chat-container">
-                        <div class="message-card student">
-                            <div class="message-header">
-                                <span class="name student"><i class="fas fa-user-circle"></i> Desi Maya Sari</span>
-                                <div>
-                                    <small class="text-muted"><i class="far fa-clock"></i> 15:30, 26 September 2024</small>
-                                </div>
+                <div class="student-info">
+                    <h3 class="student-name">{{ $pesan->dosen->nama }}</h3>
+                    <p class="student-id">NIP. {{ $pesan->dosen->nip }}</p>
+                    <p><i class="fas fa-chalkboard-teacher"></i> Dosen {{ $pesan->dosen->prodi }}</p>
+                </div>
+
+                <table class="info-table">
+                    <tr>
+                        <th>Subjek</th>
+                        <td>{{ $pesan->subjek }}</td>
+                    </tr>
+                    <tr>
+                        <th>Penerima</th>
+                        <td>{{ $pesan->dosen->nama }}</td>
+                    </tr>
+                    <tr>
+                    <th>Prioritas</th>
+                        <td>
+                            <span class="priority-badge {{ $pesan->prioritas == 'mendesak' ? 'priority-high' : 'priority-normal' }}">
+                                {{ ucfirst($pesan->prioritas) }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Dikirim</th>
+                        <td>{{ $pesan->created_at->format('H:i, d F Y') }}</td>
+                    </tr>
+                    <tr id="statusRow" style="{{ $pesan->status === 'selesai' ? '' : 'display: none;' }}">
+                        <th>Status</th>
+                        <td class="status-ended">Pesan telah berakhir</td>
+                    </tr>
+                </table>
+
+                @if($pesan->status === 'aktif')
+                    <button class="btn btn-danger btn-action" id="endChatBtn" 
+                            data-pesan-id="{{ $pesan->id }}">
+                        <i class="fas fa-times-circle"></i> Akhiri Pesan
+                    </button>
+                @else
+                    <button class="btn btn-secondary btn-action" disabled>
+                        <i class="fas fa-check-circle"></i> Pesan Diakhiri
+                    </button>
+                @endif
+            </div>
+        </div>
+
+        <!-- Kolom Chat -->
+        <div class="col-md-8">
+            <div class="chat-wrapper">
+                <div class="chat-container">
+                    <!-- Pesan Utama -->
+                    <div class="message-card {{ $pesan->mahasiswa_nim == auth()->id() ? 'student' : 'teacher' }}">
+                        <div class="message-header">
+                            <span class="name {{ $pesan->mahasiswa_nim == auth()->id() ? 'student' : 'teacher' }}">
+                                <i class="fas {{ $pesan->mahasiswa_nim == auth()->id() ? 'fa-user-circle' : 'fa-user-tie' }}"></i>
+                                {{ $pesan->mahasiswa->nama }}
+                            </span>
+                            <div>
+                                <small class="text-muted">
+                                    <i class="far fa-clock"></i> {{ $pesan->created_at->format('H:i, d F Y') }}
+                                </small>
                             </div>
-                            <div class="message-body">
-                                <p>Assalamualaikum Pak,</p>
-                                <p>Selamat sore.</p>
-                                <p>Saya Desi Maya Sari dari Prodi Teknik Informatika ingin melakukan bimbingan Skripsi. Karena itu, apakah Bapak ada di kampus?</p>
-                                <p>Terima kasih, Pak.</p>
-                                <p>Wassalamualaikum.</p>
-                            </div>
+                        </div>
+                        <div class="message-body">
+                            {!! nl2br(e($pesan->pesan)) !!}
+                        </div>
+                        @if($pesan->attachment)
                             <div class="attachment">
                                 <p><i class="fas fa-paperclip"></i> Lampiran:</p>
-                                <a href="#" target="_blank"><i class="fas fa-file-pdf"></i> Skripsi_Desi_Maya_Sari.pdf</a>
+                                <a href="{{ route('pesan.attachment', $pesan->id) }}" target="_blank">
+                                    <i class="fas fa-file-pdf"></i> {{ basename($pesan->attachment) }}
+                                </a>
                             </div>
-                        </div>
-                        <div class="message-card teacher">
-                            <div class="message-header">
-                                <span class="name teacher"><i class="fas fa-user-tie"></i> Edi Susilo, S.Pd., M.Kom., M.Eng.</span>
-                                <div>
-                                    <small class="text-muted"><i class="far fa-clock"></i> 16:45, 26 September 2024</small>
-                                </div>
-                            </div>
-                            <div class="message-body">
-                                <p>Waalaikumsalam</p>
-                                <p>Saya ada di kampus besok dari pukul 10.00 sampai 15.00. Silakan datang ke ruangan saya untuk bimbingan Skripsi.</p>
-                            </div>
-                        </div>
-                        <div class="message-card student">
-                            <div class="message-header">
-                                <span class="name student"><i class="fas fa-user-circle"></i> Desi Maya Sari</span>
-                                <div>
-                                    <small class="text-muted"><i class="far fa-clock"></i> 17:20, 26 September 2024</small>
-                                </div>
-                            </div>
-                            <div class="message-body">
-                                <p>Baik Pak, Terima kasih atas informasinya.</p>
-                            </div>
-                        </div>
+                        @endif
                     </div>
+
+                    <!-- Balasan Pesan -->
+                    @foreach($pesan->balasan as $balasan)
+                        <div class="message-card {{ $balasan->role->role_akses == 'mahasiswa' ? 'student' : 'teacher' }}">
+                            <div class="message-header">
+                                <span class="name {{ $balasan->role->role_akses == 'mahasiswa' ? 'student' : 'teacher' }}">
+                                    <i class="fas {{ $balasan->role->role_akses == 'mahasiswa' ? 'fa-user-circle' : 'fa-user-tie' }}"></i>
+                                    {{ $balasan->pengirim->nama }}
+                                </span>
+                                <div>
+                                    <small class="text-muted">
+                                        <i class="far fa-clock"></i> {{ $balasan->created_at->format('H:i, d F Y') }}
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="message-body">
+                                {!! nl2br(e($balasan->pesan)) !!}
+                            </div>
+                            @if($balasan->attachment)
+                                <div class="attachment">
+                                    <p><i class="fas fa-paperclip"></i> Lampiran:</p>
+                                    <a href="{{ route('pesan.attachment', $balasan->id) }}" target="_blank">
+                                        <i class="fas fa-file-pdf"></i> {{ basename($balasan->attachment) }}
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- Form Balas Pesan -->
+                @if($pesan->status === 'aktif')
                     <div class="reply-form" id="replyForm">
                         <h4><i class="fas fa-reply"></i> Balas Pesan</h4>
-                        <form>
+                        <form action="{{ route('pesan.reply', $pesan->id) }}" method="POST" id="replyMessageForm" enctype="multipart/form-data">
+                            @csrf
                             <div class="mb-3">
-                                <textarea class="form-control" rows="4" placeholder="Tulis pesan Anda di sini..."></textarea>
+                                <textarea class="form-control @error('pesan') is-invalid @enderror" 
+                                    name="pesan" 
+                                    rows="4" 
+                                    placeholder="Tulis pesan Anda di sini..." 
+                                    required>{{ old('pesan') }}</textarea>
+                                @error('pesan')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Kirim Pesan</button>
+                            <div class="mb-3">
+                                <label for="attachment" class="form-label">
+                                    <i class="fas fa-paperclip"></i> Lampiran (Optional)
+                                </label>
+                                <input type="file" 
+                                    class="form-control @error('attachment') is-invalid @enderror" 
+                                    name="attachment" 
+                                    accept=".pdf,.doc,.docx">
+                                @error('attachment')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <button type="submit" class="btn btn-gradient">
+                                <i class="fas fa-paper-plane"></i> Kirim Pesan
+                            </button>
                         </form>
                     </div>
-                </div>
+                @endif
             </div>
-
-            <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="confirmModalLabel">Konfirmasi Akhiri Pesan</h5>
-                            <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
-                        </div>
-                        <div class="modal-body">
-                            Apakah Anda yakin ingin mengakhiri pesan ini?
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="button" class="btn btn-danger" id="confirmEndChat">Ya, Akhiri Pesan</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
         </div>
     </div>
-    @endsection
+</div>
 
-    @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const endChatBtn = document.getElementById('endChatBtn');
-            const confirmEndChatBtn = document.getElementById('confirmEndChat');
-            const replyForm = document.getElementById('replyForm');
-            const statusRow = document.getElementById('statusRow');
-            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+<!-- Modal Konfirmasi -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Konfirmasi Akhiri Pesan</h5>
+            </div>
+            <div class="modal-body">
+                Apakah Anda yakin ingin mengakhiri pesan ini?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-danger" id="confirmEndChat">Ya, Akhiri Pesan</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+// Script JavaScript tetap sama persis seperti yang Anda berikan
+document.addEventListener('DOMContentLoaded', function() {
+    const endChatBtn = document.getElementById('endChatBtn');
+    const confirmEndChatBtn = document.getElementById('confirmEndChat');
+    const replyForm = document.getElementById('replyForm');
+    const statusRow = document.getElementById('statusRow');
+    const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    
+    if(document.getElementById('replyMessageForm')) {
+        document.getElementById('replyMessageForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
             
-            endChatBtn.addEventListener('click', function() {
-                modal.show();
-            });
-
-            confirmEndChatBtn.addEventListener('click', function() {
-                // Sembunyikan form balas pesan
-                replyForm.style.display = 'none';
+            const formData = new FormData(this);
+            const pesanId = '{{ $pesan->id }}';
+            
+            try {
+                const response = await fetch(`/pesan/reply/${pesanId}`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
                 
-                // Ubah teks tombol "Akhiri Pesan" menjadi "Pesan Diakhiri"
-                endChatBtn.innerHTML = '<i class="fas fa-check-circle"></i> Pesan Diakhiri';
-                endChatBtn.classList.remove('btn-danger');
-                endChatBtn.classList.add('btn-secondary');
-                endChatBtn.disabled = true;
-
-                // Tampilkan status pesan diakhiri dalam tabel
-                statusRow.style.display = 'table-row';
-
-                // Tutup modal
-                modal.hide();
-            });
+                const data = await response.json();
+                
+                if(data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Gagal mengirim pesan: ' + data.message);
+                }
+            } catch(error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat mengirim pesan');
+            }
         });
-    </script>
-    @endpush
+    }
+
+    // Handle End Chat
+    if(endChatBtn) {
+        endChatBtn.addEventListener('click', function() {
+            modal.show();
+        });
+
+        confirmEndChatBtn.addEventListener('click', async function() {
+            const pesanId = endChatBtn.dataset.pesanId;
+            
+            try {
+                const response = await fetch(`/pesan/end/${pesanId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if(data.success) {
+                    // Sembunyikan form balas pesan
+                    if(replyForm) replyForm.style.display = 'none';
+                    
+                    // Ubah tombol
+                    endChatBtn.innerHTML = '<i class="fas fa-check-circle"></i> Pesan Diakhiri';
+                    endChatBtn.classList.remove('btn-danger');
+                    endChatBtn.classList.add('btn-secondary');
+                    endChatBtn.disabled = true;
+
+                    // Tampilkan status
+                    statusRow.style.display = 'table-row';
+
+                    modal.hide();
+                } else {
+                    alert('Gagal mengakhiri pesan: ' + data.message);
+                }
+            } catch(error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat mengakhiri pesan');
+            }
+        });
+    }
+
+    if(replyForm) {
+            replyForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Disable submit button
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+                
+                try {
+                    const formData = new FormData(this);
+                    
+                    const response = await fetch(this.getAttribute('action'), {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if(result.success) {
+                        // Reset form
+                        this.reset();
+                        // Refresh halaman untuk menampilkan pesan baru
+                        window.location.reload();
+                    } else {
+                        alert('Gagal mengirim pesan: ' + result.message);
+                        // Re-enable submit button
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Pesan';
+                    }
+                } catch(error) {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat mengirim pesan');
+                    // Re-enable submit button
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Pesan';
+                }
+            });
+        }
+});
+</script>
+@endpush

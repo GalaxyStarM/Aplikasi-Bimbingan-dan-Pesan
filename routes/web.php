@@ -7,6 +7,8 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\GoogleCalendarController;
 use App\Http\Controllers\PilihJadwalController;
 use App\Http\Controllers\MasukkanJadwalController;
+use App\Http\Controllers\PesanController;
+use App\Http\Controllers\ProfilController;
 
 // Route untuk guest (belum login)
 Route::middleware(['guest'])->group(function () {
@@ -25,26 +27,48 @@ Route::get('/profilmahasiswa', function(){
 Route::get('/datausulanbimbingan', function(){
     return view('bimbingan.admin.datausulanbimbingan');
 });
+Route::get('/conso', function(){
+    return view('pesan.contohdashboard');
+});
+
+Route::get('/isipesandosen', function () {
+    return view('pesan.dosen.isipesandosen');
+});
+
+Route::get('/buatpesandosen', function () {
+    return view('pesan.dosen.buatpesandosen');
+});
+
+Route::middleware(['auth:mahasiswa,dosen'])->group(function () {
+    Route::prefix('pesan')->group(function () {
+        Route::get('/dashboardkonsultasi', [PesanController::class, 'indexMahasiswa'])
+            ->name('pesan.dashboardkonsultasi');
+        Route::get('/dashboardkonsultasi', [PesanController::class, 'indexDosen'])
+            ->name('pesan.dashboardkonsultasi');
+        // Route lainnya untuk pesan
+        Route::get('/create', [PesanController::class, 'create'])->name('pesan.create');
+        Route::post('/store', [PesanController::class, 'store'])->name('pesan.store');
+        Route::get('/{id}', [PesanController::class, 'show'])->name('pesan.show');
+        Route::patch('/{id}/status', [PesanController::class, 'updateStatus'])->name('pesan.updateStatus');
+        Route::post('/request-notification', [PesanController::class, 'requestNotification'])->name('pesan.requestNotification');
+        Route::get('/filterAktif', [PesanController::class, 'filterAktif'])->name('pesan.filterAktif');
+        Route::get('/filterSelesai', [PesanController::class, 'filterSelesai'])->name('pesan.filterSelesai');
+        Route::get('/getDosen', [PesanController::class, 'getDosen'])->name('pesan.getDosen');
+        Route::post('/reply/{id}', [PesanController::class, 'storeReply'])->name('pesan.reply');
+        Route::post('/end/{id}', [PesanController::class, 'endChat'])->name('pesan.end');
+        Route::get('/attachment/{id}', [PesanController::class, 'downloadAttachment'])->name('pesan.attachment');
+    });
+});
 
 // Route untuk mahasiswa
 Route::middleware(['auth:mahasiswa', 'checkRole:mahasiswa'])->group(function () {
     // Route view biasa
-    Route::get('/dashboardpesanmahasiswa', function () { return view('pesan.mahasiswa.dashboardpesanmahasiswa');});
-    
-    Route::get('/buatpesan', function () {
-        return view('pesan.mahasiswa.buatpesan');
-    });
-
-    Route::get('/isipesan', function () {
-        return view('pesan.mahasiswa.isipesan');
-    });
 
     Route::controller(MahasiswaController::class)->group(function () {
         Route::get('/usulanbimbingan', 'index')->name('mahasiswa.usulanbimbingan');
         Route::post('/usulanbimbingan/selesai/{id}', 'selesaiBimbingan')->name('mahasiswa.selesaibimbingan');
         Route::get('/aksiInformasi/{id}', 'getDetailBimbingan')->name('mahasiswa.aksiInformasi');
         Route::get('/detaildaftar/{nip}', 'getDetailDaftar')->name('mahasiswa.detaildaftar');
-
     });
 
     // Bimbingan routes
@@ -60,19 +84,18 @@ Route::middleware(['auth:mahasiswa', 'checkRole:mahasiswa'])->group(function () 
         Route::get('/google/connect','connect')->name('mahasiswa.google.connect');
         Route::get('/google/callback','callback')->name('mahasiswa.google.callback');
     });
+
+    
+    Route::prefix('profil')->group(function () {
+        Route::get('/profil', [ProfileController::class, 'show'])->name('profile.show');
+        Route::put('/profil/update', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profil/remove-foto', [ProfileController::class, 'remove'])->name('profile.remove-foto');
+    });
 });
 
 // Route untuk dosen
 Route::middleware(['auth:dosen', 'checkRole:dosen'])->group(function () {
     // Route view biasa
-    Route::get('/dashboardpesandosen', function () { return view('pesan.dosen.dashboardpesandosen');});
-    Route::get('/buatpesandosen', function () {
-        return view('pesan.dosen.buatpesandosen');
-    });
-    
-    Route::get('/isipesandosen', function () {
-        return view('pesan.dosen.isipesandosen');
-    });
 
     Route::controller(DosenController::class)->group(function () {
         Route::get('/persetujuan', 'index')->name('dosen.persetujuan');
@@ -101,6 +124,20 @@ Route::middleware(['auth:dosen', 'checkRole:dosen'])->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/firebase-config', function () {
+    $requiredKeys = [
+        'api_key',
+        'auth_domain', 
+        'project_id',
+        'messaging_sender_id',
+        'app_id'
+    ];
+    
+    foreach($requiredKeys as $key) {
+        if (!config("services.firebase.$key")) {
+            Log::error("Missing Firebase config: $key");
+            return response()->json(['error' => 'Invalid config'], 500);
+        }
+    }
     return response()->json([
         'apiKey' => config('services.firebase.api_key'),
         'authDomain' => config('services.firebase.auth_domain'),
@@ -110,4 +147,6 @@ Route::get('/firebase-config', function () {
         'appId' => config('services.firebase.app_id'),
         'measurementId' => config('services.firebase.measurement_id'),
     ]);
+
+    
 });

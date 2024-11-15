@@ -22,6 +22,7 @@ class Dosen extends Authenticatable
         'nama_singkat',
         'email',
         'password',
+        'foto',
         'prodi_id',
         'role_id',
         'fcm_token',
@@ -62,5 +63,13 @@ class Dosen extends Authenticatable
     {
         $this->fcm_token = $token;
         $this->save();
+    }
+
+    public function getFotoUrlAttribute()
+    {
+        if ($this->foto) {
+            return asset('storage/foto_profil/' . $this->foto);
+        }
+        return asset('images/default-avatar.png');
     }
 }

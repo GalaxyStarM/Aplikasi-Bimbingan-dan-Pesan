@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Mahasiswa;
 use App\Models\Pesan;
 use App\Models\PesanBalasan;
 use Kreait\Firebase\Messaging\CloudMessage;

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nama_singkat');
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('foto')->nullable();
             $table->string('fcm_token')->nullable();
             $table->datetime('created_at');
             $table->datetime('updated_at');
