@@ -5,22 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Pesan;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
-use App\Services\FirebaseService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // Tambahkan ini
+use Illuminate\Support\Facades\Auth; 
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PesanController extends Controller
 {
-    protected $firebaseService;
-
-    public function __construct(FirebaseService $firebaseService)
-    {
-        $this->firebaseService = $firebaseService;
-    }
-
     public function create()
     {
         // Cek guard yang aktif
@@ -38,7 +32,7 @@ class PesanController extends Controller
         // Validasi input
         $request->validate([
             'subject' => 'required|string|max:255',
-            'recipient' => 'required|exists:dosens,nip', // Validate NIP exists
+            'recipient' => 'required|exists:dosens,nip',
             'priority' => 'required|in:mendesak,umum',
             'message' => 'required|string',
             'attachment' => 'nullable|url'
@@ -61,13 +55,6 @@ class PesanController extends Controller
 
             // Simpan pesan ke database
             $pesan = Pesan::create($pesanData);
-
-            // Firebase notification jika diperlukan
-            try {
-                $this->firebaseService->sendNewConsultationNotification($pesan);
-            } catch (\Exception $e) {
-                \Log::error('Firebase notification failed: ' . $e->getMessage());
-            }
 
             return response()->json(['success' => true, 'message' => 'Pesan berhasil dikirim']);
         } catch (\Exception $e) {
@@ -112,17 +99,12 @@ class PesanController extends Controller
         ]);
     }
 
-    /**
-     * Menampilkan detail pesan beserta balasannya
-     */
     public function show($id)
     {
         try {
-            // Gunakan guard yang aktif untuk menentukan tipe user
-            $guard = Auth::getDefaultDriver(); // Akan return 'mahasiswa' atau 'dosen'
+            $guard = Auth::getDefaultDriver();
             $user = Auth::user();
             
-            // Ambil pesan dengan eager loading
             $pesan = Pesan::with([
                 'mahasiswa',
                 'dosen',
@@ -132,7 +114,6 @@ class PesanController extends Controller
                 'balasan.pengirim'
             ])->findOrFail($id);
 
-            // Validasi akses berdasarkan guard
             $isAuthorized = false;
             if ($guard === 'mahasiswa') {
                 $isAuthorized = $pesan->mahasiswa_nim === $user->nim;
@@ -148,7 +129,6 @@ class PesanController extends Controller
                     ->with('error', 'Anda tidak memiliki akses ke pesan ini');
             }
 
-            // Tentukan view berdasarkan guard
             $view = $guard === 'mahasiswa' ? 
                 'pesan.mahasiswa.isipesan' : 
                 'pesan.dosen.isipesandosen';
@@ -158,7 +138,6 @@ class PesanController extends Controller
         } catch (\Exception $e) {
             Log::error('Error showing pesan: ' . $e->getMessage());
             
-            // Redirect ke dashboard yang sesuai
             $redirectRoute = Auth::getDefaultDriver() === 'mahasiswa' ? 
                 'pesan.dashboardkonsultasi' : 
                 'pesan.dashboardkonsultasi';
@@ -172,7 +151,6 @@ class PesanController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $pesan = Pesan::findOrFail($id);
-        $oldStatus = $pesan->status;
         
         // Validasi akses
         if (auth()->user()->role === 'mahasiswa' && $pesan->mahasiswa_nim !== auth()->user()->nim) {
@@ -191,32 +169,7 @@ class PesanController extends Controller
             'status' => $request->status
         ]);
 
-        // Kirim notifikasi perubahan status
-        try {
-            $this->firebaseService->sendStatusChangeNotification($pesan, $oldStatus);
-        } catch (\Exception $e) {
-            \Log::error('Status change notification failed: ' . $e->getMessage());
-        }
-
         return back()->with('success', 'Status pesan berhasil diubah');
-    }
-
-    public function remindUnreplied()
-    {
-        $unrepliedPesan = Pesan::aktif()
-            ->whereNull('last_reply_at')
-            ->orWhere('last_reply_at', '<=', now()->subDays(2))
-            ->get();
-
-        foreach ($unrepliedPesan as $pesan) {
-            try {
-                $this->firebaseService->sendReminderNotification($pesan);
-            } catch (\Exception $e) {
-                \Log::error('Reminder notification failed: ' . $e->getMessage());
-            }
-        }
-
-        return response()->json(['message' => 'Reminders sent successfully']);
     }
 
     public function getDosen(Request $request)
@@ -235,6 +188,7 @@ class PesanController extends Controller
             return response()->json([], 500);
         }
     }
+
     public function filterAktif()
     {
         $user = auth()->user();
@@ -256,7 +210,7 @@ class PesanController extends Controller
 
         return view('pesan.index', [
             'pesanAktif' => $pesanList,
-            'pesanSelesai' => collect(), // Empty collection for completed messages
+            'pesanSelesai' => collect(),
             'filter' => 'aktif'
         ]);
     }
@@ -281,68 +235,24 @@ class PesanController extends Controller
         }
 
         return view('pesan.index', [
-            'pesanAktif' => collect(), // Empty collection for active messages
+            'pesanAktif' => collect(),
             'pesanSelesai' => $pesanList,
             'filter' => 'selesai'
         ]);
     }
 
-    public function storeFcmToken(Request $request)
-    {
-        $request->validate([
-            'fcm_token' => 'required|string'
-        ]);
-
-        $user = auth()->user();
-        
-        if ($user->role === 'mahasiswa') {
-            Mahasiswa::where('nim', $user->nim)
-                ->update(['fcm_token' => $request->fcm_token]);
-        } else {
-            Dosen::where('nip', $user->nip)
-                ->update(['fcm_token' => $request->fcm_token]);
-        }
-
-        return response()->json(['message' => 'Token updated successfully']);
-    }
-
-    public function requestNotificationPermission()
-    {
-        try {
-            $token = request()->fcm_token;
-            if ($token) {
-                $user = auth()->user();
-                if ($user->role === 'mahasiswa') {
-                    Mahasiswa::where('nim', $user->nim)->update(['fcm_token' => $token]);
-                } else {
-                    Dosen::where('nip', $user->nip)->update(['fcm_token' => $token]);
-                }
-                session(['fcm_token' => $token]);
-                return response()->json(['success' => true]);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
-
-    /**
-     * Menyimpan balasan pesan
-     */
     public function storeReply(Request $request, $id)
     {
         try {
             DB::beginTransaction();
             
-            // Validasi input
             $request->validate([
                 'pesan' => 'required|string',
-                'attachment' => 'nullable|file|mimes:pdf,doc,docx|max:10240' // max 10MB
+                'attachment' => 'nullable|file|mimes:pdf,doc,docx|max:10240'
             ]);
 
-            // Temukan pesan utama
             $pesan = Pesan::findOrFail($id);
             
-            // Cek apakah pesan masih aktif
             if ($pesan->status !== 'aktif') {
                 return response()->json([
                     'success' => false,
@@ -350,7 +260,6 @@ class PesanController extends Controller
                 ], 403);
             }
 
-            // Dapatkan user yang sedang login dan rolenya
             if (Auth::guard('mahasiswa')->check()) {
                 $user = Auth::guard('mahasiswa')->user();
                 $role = Role::where('role_akses', 'mahasiswa')->first();
@@ -368,7 +277,6 @@ class PesanController extends Controller
                 ], 401);
             }
 
-            // Cek autorisasi
             if (!$isAuthorized) {
                 return response()->json([
                     'success' => false,
@@ -380,7 +288,6 @@ class PesanController extends Controller
                 throw new \Exception('Role tidak ditemukan');
             }
 
-            // Handle attachment jika ada
             $attachmentPath = null;
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
@@ -389,11 +296,9 @@ class PesanController extends Controller
                     'public/attachments',
                     $fileName
                 );
-                // Hapus 'public/' dari path karena sudah di-handle oleh storage:link
                 $attachmentPath = str_replace('public/', '', $attachmentPath);
             }
 
-            // Simpan balasan
             $balasan = new PesanBalasan();
             $balasan->pesan_id = $id;
             $balasan->role_id = $role->id;
@@ -403,7 +308,6 @@ class PesanController extends Controller
             $balasan->is_read = false;
             $balasan->save();
 
-            // Update informasi pesan terakhir
             $pesan->update([
                 'last_reply_by' => $role->role_akses,
                 'last_reply_at' => Carbon::now()
@@ -411,7 +315,6 @@ class PesanController extends Controller
 
             DB::commit();
 
-            // Siapkan data untuk response
             $response_data = $balasan->load(['role', 'pengirim']);
 
             return response()->json([
@@ -431,16 +334,12 @@ class PesanController extends Controller
         }
     }
 
-    /**
-    * Mengakhiri percakapan
-    */
     public function endChat($id)
     {
         try {
             $user = Auth::user();
             $pesan = Pesan::findOrFail($id);
 
-            // Validasi akses
             $isAuthorized = false;
             if ($user->role === 'mahasiswa') {
                 $isAuthorized = $pesan->mahasiswa_nim === $user->nim;
@@ -455,7 +354,6 @@ class PesanController extends Controller
                 ], 403);
             }
 
-            // Update status pesan
             $pesan->update([
                 'status' => 'selesai'
             ]);
@@ -474,9 +372,6 @@ class PesanController extends Controller
         }
     }
 
-    /**
-     * Download attachment
-     */
     public function downloadAttachment($id)
     {
         try {
@@ -498,24 +393,11 @@ class PesanController extends Controller
         }
     }
 
-    <?php
-
-namespace App\Http\Controllers;
-
-use App\Models\Pesan;
-use App\Models\Mahasiswa;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-
-class PesanController extends Controller
-{
     public function storePesanDosen(Request $request)
     {
         try {
             DB::beginTransaction();
             
-            // Validasi input
             $request->validate([
                 'subject' => 'required|string|max:255',
                 'recipients' => 'required|array',
@@ -525,7 +407,6 @@ class PesanController extends Controller
                 'message' => 'required|string'
             ]);
 
-            // Dapatkan dosen yang sedang login
             $dosen = Auth::guard('dosen')->user();
             if (!$dosen) {
                 return response()->json([
@@ -538,13 +419,11 @@ class PesanController extends Controller
             $failed = 0;
             $pesanCreated = [];
 
-            // Konversi prioritas dari form ke database
             $priorityMap = [
                 'high' => 'mendesak',
                 'medium' => 'umum'
             ];
 
-            // Buat pesan untuk setiap penerima
             foreach ($request->recipients as $recipient) {
                 try {
                     $pesan = Pesan::create([
@@ -570,7 +449,6 @@ class PesanController extends Controller
 
             DB::commit();
 
-            // Prepare response message
             $message = sprintf(
                 'Berhasil mengirim pesan ke %d mahasiswa, %d gagal',
                 $success,
@@ -598,7 +476,6 @@ class PesanController extends Controller
         }
     }
 
-    // Method untuk mendapatkan daftar mahasiswa berdasarkan angkatan
     public function getMahasiswaByAngkatan($tahun)
     {
         try {
@@ -626,5 +503,4 @@ class PesanController extends Controller
             ], 500);
         }
     }
-}
 }

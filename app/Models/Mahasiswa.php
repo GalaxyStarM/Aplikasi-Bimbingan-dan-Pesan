@@ -26,7 +26,6 @@ class Mahasiswa extends Authenticatable
         'prodi_id',
         'konsentrasi_id',
         'role_id',
-        'fcm_token',
         'google_access_token',
         'google_refresh_token',
         'google_token_expires_in',
@@ -35,7 +34,6 @@ class Mahasiswa extends Authenticatable
 
     protected $hidden = [
         'password',
-        'fcm_token',
         'google_access_token',
         'google_refresh_token'
     ];
@@ -63,12 +61,6 @@ class Mahasiswa extends Authenticatable
     public function hasRole($roleName)
     {
         return $this->role && $this->role->role_akses === $roleName;
-    }
-
-    public function updateFcmToken($token)
-    {
-        $this->fcm_token = $token;
-        $this->save();
     }
 
     public function getFotoUrlAttribute()

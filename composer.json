@@ -12,7 +12,6 @@
         "firebase/php-jwt": "*",
         "google/apiclient": "*",
         "kreait/firebase-php": "*",
-        "kreait/laravel-firebase": "^5.2",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
         "laravel/ui": "*"

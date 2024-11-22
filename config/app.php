@@ -155,7 +155,6 @@ return [
         App\Providers\RouteServiceProvider::class,
         
         // Google Calendar Service Provider
-        App\Providers\GoogleCalendarServiceProvider::class,
-        Kreait\Laravel\Firebase\ServiceProvider::class
+        App\Providers\GoogleCalendarServiceProvider::class
     ],
 ];

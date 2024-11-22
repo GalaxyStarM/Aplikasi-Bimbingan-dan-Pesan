@@ -25,7 +25,6 @@ class Dosen extends Authenticatable
         'foto',
         'prodi_id',
         'role_id',
-        'fcm_token',
         'google_access_token',
         'google_refresh_token',
         'google_token_expires_in',
@@ -34,7 +33,6 @@ class Dosen extends Authenticatable
 
     protected $hidden = [
         'password',
-        'fcm_token',
         'google_access_token',
         'google_refresh_token'
     ];
@@ -57,12 +55,6 @@ class Dosen extends Authenticatable
     public function hasRole($roleName)
     {
         return $this->role->name === $roleName;
-    }
-
-    public function updateFcmToken($token)
-    {
-        $this->fcm_token = $token;
-        $this->save();
     }
 
     public function getFotoUrlAttribute()
