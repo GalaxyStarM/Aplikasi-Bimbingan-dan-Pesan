@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Buat Pesan Mahasiswa')
+@section('title', 'Buat Pesan')
 
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -186,22 +186,95 @@
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
-        
+
+        <!-- Bagian Pemilihan Penerima -->
         <div class="mb-3">
-            <label for="recipient" class="form-label">Penerima<span class="text-danger">*</span></label>
-            <select class="form-select @error('recipient') is-invalid @enderror" 
-                    id="recipient" name="recipient" required>
-                <option value="">Pilih Dosen</option>
-                @foreach($dosen as $d)
-                    <option value="{{ $d->nip }}" data-nama="{{ $d->nama }}"
-                            {{ old('recipient') == $d->nip ? 'selected' : '' }}>
-                        {{ $d->nama }}
-                    </option>
-                @endforeach
-            </select>
-            @error('recipient')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+            <label for="recipient" class="form-label fw-bold">Penerima<span class="text-danger">*</span></label>
+            
+            @if(auth()->guard('dosen')->check())
+                <!-- Tab untuk mode pengiriman khusus dosen -->
+                <ul class="nav nav-tabs mb-3" id="recipientTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="individual-tab" data-bs-toggle="tab" data-bs-target="#individual" type="button" role="tab">Mahasiswa Individual</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="batch-tab" data-bs-toggle="tab" data-bs-target="#batch" type="button" role="tab">Berdasarkan Angkatan</button>
+                    </li>
+                </ul>
+
+                <!-- Konten Tab untuk dosen -->
+                <div class="tab-content" id="recipientTabsContent">
+                    <div class="tab-pane fade show active" id="individual" role="tabpanel">
+                        <select class="form-control" id="individualStudents" name="penerima[]" multiple="multiple">
+                            @foreach($mahasiswas as $mahasiswa)
+                                <option value="{{ $mahasiswa->nim }}">
+                                    {{ $mahasiswa->nama }} ({{ $mahasiswa->nim }}) - Angkatan {{ $mahasiswa->angkatan }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Tab Berdasarkan Angkatan -->
+                    <div class="tab-pane fade" id="batch" role="tabpanel">
+                        <div class="batch-selection">
+                            <h5 class="mb-3">Pilih Angkatan:</h5>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input batch-checkbox" type="checkbox" value="2021" id="batch2021" name="angkatan[]">
+                                        <label class="form-check-label" for="batch2021">
+                                            Angkatan 2021
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input batch-checkbox" type="checkbox" value="2022" id="batch2022" name="angkatan[]">
+                                        <label class="form-check-label" for="batch2022">
+                                            Angkatan 2022
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input batch-checkbox" type="checkbox" value="2023" id="batch2023" name="angkatan[]">
+                                        <label class="form-check-label" for="batch2023">
+                                            Angkatan 2023
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input batch-checkbox" type="checkbox" value="2024" id="batch2024" name="angkatan[]">
+                                        <label class="form-check-label" for="batch2024">
+                                            Angkatan 2024
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="recipients-preview mt-3" id="batchPreview">
+                            <p class="text-muted mb-0">Mahasiswa yang dipilih akan muncul di sini...</p>
+                        </div>
+                        <input type="hidden" name="selected_mahasiswa" id="selectedMahasiswaNim">
+                    </div>
+                </div>
+            @else
+                <!-- Pemilihan penerima untuk mahasiswa (select dosen) -->
+                <select class="form-select @error('recipient') is-invalid @enderror" 
+                        id="recipient" name="recipient" required>
+                    <option value="">Pilih Dosen</option>
+                    @foreach($dosen as $d)
+                        <option value="{{ $d->nip }}" data-nama="{{ $d->nama }}"
+                                {{ old('recipient') == $d->nip ? 'selected' : '' }}>
+                            {{ $d->nama }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('recipient')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            @endif
         </div>
         
         <div class="mb-3">
@@ -278,6 +351,12 @@ $(document).ready(function() {
         }
     });
 
+    $('#individualStudents').select2({
+        placeholder: 'Pilih mahasiswa...',
+        allowClear: true,
+        width: '100%'
+    });
+
     // Handle custom clear button
     $(document).on('click', '.select2-selection__arrow.has-value', function(e) {
         e.preventDefault();
@@ -291,15 +370,10 @@ $(document).ready(function() {
         
         const $option = $(dosen.element);
         const nama = $option.data('nama');
-        const nip = dosen.id;
         
         return $(`
             <div class="dosen-result-item">
-                <i class="fas fa-user-tie text-gray-400"></i>
-                <div class="dosen-info">
-                    <span class="dosen-nama">${nama}</span>
-                    <span class="dosen-nip">${nip}</span>
-                </div>
+                <span class="dosen-nama">${nama}</span>
             </div>
         `);
     }
@@ -317,60 +391,179 @@ $(document).ready(function() {
     }
 
     $('#createMessageForm').on('submit', function(e) {
-        e.preventDefault();
+    e.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+    
+    // Data umum yang selalu dikirim
+    formData.append('subject', $('#subject').val());
+    formData.append('priority', $('#priority').val());
+    formData.append('message', $('#message').val());
+    formData.append('attachment', $('#attachment').val());
+
+    // Jika dosen (cek apakah elemen batch tab ada)
+    if ($('#batch-tab').length) {
+        const activeTab = $('.tab-pane.active').attr('id');
         
-        if (!$('#recipient').val()) {
+        if (activeTab === 'individual') {
+            const selectedStudents = $('#individualStudents').val();
+            if (!selectedStudents || selectedStudents.length === 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Pilih minimal satu mahasiswa'
+                });
+                return false;
+            }
+            formData.append('selected_mahasiswa', selectedStudents.join(','));
+        } else {
+            const selectedNims = $('#selectedMahasiswaNim').val();
+            if (!selectedNims) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Pilih minimal satu angkatan mahasiswa'
+                });
+                return false;
+            }
+            formData.append('selected_mahasiswa', selectedNims);
+        }
+    } else {
+        // Untuk mahasiswa
+        const selectedDosen = $('#recipient').val();
+        if (!selectedDosen) {
             $('#recipient').next('.select2-container').addClass('is-invalid');
             return false;
         }
+        formData.append('recipient', selectedDosen);
+    }
 
-        const formData = new FormData();
-        formData.append('subject', $('#subject').val());
-        formData.append('recipient', $('#recipient').val()); // Mengirim NIP dosen
-        formData.append('priority', $('#priority').val());
-        formData.append('message', $('#message').val());
-        formData.append('attachment', $('#attachment').val());
-        formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+    // Tampilkan loading
+    Swal.fire({
+        title: 'Mengirim pesan...',
+        didOpen: () => {
+            Swal.showLoading();
+        },
+        allowOutsideClick: false
+    });
 
-        $.ajax({
-            url: $(this).attr('action'),
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Pesan berhasil dikirim',
-                    timer: 1500,
-                    showConfirmButton: false
-                }).then(() => {
-                    window.location.href = '/pesan/dashboardkonsultasi';
-                });
-            },
-            error: function(xhr) {
-                if (xhr.status === 422) {
-                    const errors = xhr.responseJSON.errors;
-                    Object.keys(errors).forEach(key => {
-                        const input = $(`#${key}`);
-                        input.addClass('is-invalid');
-                        if (key === 'recipient') {
-                            input.next('.select2-container').addClass('is-invalid');
-                        }
-                        input.after(`<div class="invalid-feedback">${errors[key][0]}</div>`);
-                    });
-                } else {
-                    console.error('Error response:', xhr.responseText); // Debug
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Terjadi kesalahan saat mengirim pesan'
-                    });
-                }
+    // Kirim request
+    $.ajax({
+        url: $(this).attr('action'),
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: response.message || 'Pesan berhasil dikirim',
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => {
+                window.location.href = '/pesan/dashboardkonsultasi';
+            });
+        },
+        error: function(xhr) {
+            console.error('Error response:', xhr.responseText);
+            
+            let errorMessage = 'Terjadi kesalahan saat mengirim pesan';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
             }
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: errorMessage
+            });
+
+            if (xhr.status === 422) {
+                const errors = xhr.responseJSON.errors;
+                Object.keys(errors).forEach(key => {
+                    const input = $(`#${key}`);
+                    input.addClass('is-invalid');
+                    if (key === 'recipient') {
+                        input.next('.select2-container').addClass('is-invalid');
+                    }
+                    input.siblings('.invalid-feedback').remove();
+                    input.after(`<div class="invalid-feedback">${errors[key][0]}</div>`);
+                });
+            }
+        }
+    });
+});
+});
+
+document.querySelectorAll('.batch-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        const selectedBatches = Array.from(document.querySelectorAll('.batch-checkbox:checked'))
+            .map(input => input.value);
+
+        if (selectedBatches.length === 0) {
+            document.getElementById('batchPreview').innerHTML = 
+                '<p class="text-muted mb-0">Mahasiswa yang dipilih akan muncul di sini...</p>';
+            document.getElementById('selectedMahasiswaNim').value = '';
+            return;
+        }
+
+        // Show loading state
+        document.getElementById('batchPreview').innerHTML = 
+            '<p class="text-muted mb-0">Mengambil data mahasiswa...</p>';
+
+        fetch(`/pesan/getMahasiswaByAngkatan?angkatan=${encodeURIComponent(selectedBatches.join(','))}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Response data:', data);
+            
+            if (data.success) {
+                const mahasiswaList = data.data.map(mahasiswa => `
+                    <div class="mb-2">
+                        <i class="fas fa-user me-2"></i>
+                        ${mahasiswa.name} (NIM: ${mahasiswa.nim})
+                    </div>
+                `).join('');
+
+                document.getElementById('batchPreview').innerHTML = `
+                    <div class="mt-3 bg-light p-3 rounded">
+                        <h6 class="mb-3">Mahasiswa Terpilih (${data.data.length} orang):</h6>
+                        ${mahasiswaList}
+                    </div>`;
+
+                // Update hidden input
+                document.getElementById('selectedMahasiswaNim').value = 
+                    data.data.map(mahasiswa => mahasiswa.nim).join(',');
+            } else {
+                document.getElementById('batchPreview').innerHTML = `
+                    <p class="text-danger mb-0">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        ${data.message || 'Tidak ada data mahasiswa'}
+                    </p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('batchPreview').innerHTML = `
+                <p class="text-danger mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Terjadi kesalahan saat mengambil data mahasiswa
+                </p>`;
         });
     });
 });
+
 </script>
 @endpush

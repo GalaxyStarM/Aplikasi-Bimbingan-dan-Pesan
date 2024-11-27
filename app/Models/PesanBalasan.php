@@ -37,9 +37,9 @@ class PesanBalasan extends Model
     // Method untuk mendapatkan pengirim berdasarkan role
     public function pengirim()
     {
-        if ($this->role->role_akses === 'mahasiswa') {
+        if ($this->role_id == 3) {
             return $this->belongsTo(Mahasiswa::class, 'pengirim_id', 'nim');
-        }
+        } 
         return $this->belongsTo(Dosen::class, 'pengirim_id', 'nip');
     }
 }

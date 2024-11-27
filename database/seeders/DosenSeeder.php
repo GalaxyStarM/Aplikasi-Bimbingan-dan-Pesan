@@ -19,7 +19,7 @@ class DosenSeeder extends Seeder
                 'email' => 'ummul.azhari4051@student.unri.ac.id',
                 'password' => Hash::make('password123'),
                 'prodi_id' => 1, // Sesuaikan dengan ID prodi yang sesuai
-                'role_id' => 2,  // Role dosen
+                'role_id' => 1,  // Role dosen
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ],
@@ -30,7 +30,7 @@ class DosenSeeder extends Seeder
                 'email' => 'desi.maya0665@student.unri.ac.id',
                 'password' => Hash::make('password123'),
                 'prodi_id' => 1, // Sesuaikan dengan ID prodi yang sesuai
-                'role_id' => 2,  // Role dosen
+                'role_id' => 1,  // Role dosen
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ],
@@ -41,7 +41,7 @@ class DosenSeeder extends Seeder
                 'email' => 'adrian.marchel@student.unri.ac.id',
                 'password' => Hash::make('pw123'),
                 'prodi_id' => 1, // Sesuaikan dengan ID prodi yang sesuai
-                'role_id' => 2,  // Role dosen
+                'role_id' => 1,  // Role dosen
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ]

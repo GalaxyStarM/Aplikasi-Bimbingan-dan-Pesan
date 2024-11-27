@@ -27,27 +27,23 @@ Route::get('/profilmahasiswa', function(){
 Route::get('/datausulanbimbingan', function(){
     return view('bimbingan.admin.datausulanbimbingan');
 });
-Route::get('/conso', function(){
-    return view('pesan.contohdashboard');
-});
-
-Route::get('/isipesandosen', function () {
-    return view('pesan.dosen.isipesandosen');
-});
-
-Route::get('/buatpesandosen', function () {
-    return view('pesan.dosen.buatpesandosen');
-});
 
 Route::middleware(['auth:mahasiswa,dosen'])->group(function () {
     Route::prefix('pesan')->group(function () {
-        Route::get('/dashboardkonsultasi', [PesanController::class, 'indexMahasiswa'])
-            ->name('pesan.dashboardkonsultasi');
-        Route::get('/dashboardkonsultasi', [PesanController::class, 'indexDosen'])
-            ->name('pesan.dashboardkonsultasi');
-        // Route lainnya untuk pesan
+
+        Route::get('/dashboardkonsultasi', function() {
+            if(auth()->guard('mahasiswa')->check()) {
+                return app(PesanController::class)->indexMahasiswa();
+            } else {
+                return app(PesanController::class)->indexDosen();
+            }
+        })->name('pesan.dashboardkonsultasi');
+
+        Route::get('/getMahasiswaByAngkatan', [PesanController::class, 'getMahasiswaByAngkatan'])->name('pesan.getMahasiswaByAngkatan');
         Route::get('/create', [PesanController::class, 'create'])->name('pesan.create');
         Route::post('/store', [PesanController::class, 'store'])->name('pesan.store');
+
+        // Route lainnya untuk pesan
         Route::get('/{id}', [PesanController::class, 'show'])->name('pesan.show');
         Route::patch('/{id}/status', [PesanController::class, 'updateStatus'])->name('pesan.updateStatus');
         Route::post('/request-notification', [PesanController::class, 'requestNotification'])->name('pesan.requestNotification');
@@ -57,6 +53,7 @@ Route::middleware(['auth:mahasiswa,dosen'])->group(function () {
         Route::post('/reply/{id}', [PesanController::class, 'storeReply'])->name('pesan.reply');
         Route::post('/end/{id}', [PesanController::class, 'endChat'])->name('pesan.end');
         Route::get('/attachment/{id}', [PesanController::class, 'downloadAttachment'])->name('pesan.attachment');
+        
     });
 });
 
