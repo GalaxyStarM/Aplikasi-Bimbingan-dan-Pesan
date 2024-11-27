@@ -229,119 +229,219 @@
     }
 </style>
 @endpush
-
-    @section('content')
-    <div class="main-content">
-        <div class="container">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2 class="d-inline-block me-3 gradient-text">Isi Konsultasi</h2>
-                    <hr>
-                    <div class="mt-3">
-                        <a href="/dashboardpesandosen" class="btn btn-kembali"><i class="fas fa-arrow-left"></i> Kembali</a>
-                    </div>
+@section('content')
+<div class="main-content">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="d-inline-block me-3 gradient-text">Isi Konsultasi</h2>
+                <hr>
+                <div class="mt-3">
+                    <a href="{{ route('pesan.dashboardkonsultasi') }}" class="btn btn-kembali">
+                        <i class="fas fa-arrow-left"></i> Kembali
+                    </a>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="teacher-card">
-                        <img src="{{ asset('images/fotodesi.jpeg') }}" alt="Foto Dosen" class="teacher-photo mx-auto d-block">
-                        <div class="teacher-info">
-                            <h3 class="teacher-name">Desi Maya Sari</h3>
-                            <p class="student-id">2107110665</p>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="teacher-card">
+                    <img src="{{ asset('images/default-avatar.png') }}" alt="Foto" class="teacher-photo mx-auto d-block">
+                    <div class="teacher-info">
+                        @if(auth()->guard('mahasiswa')->check())
+                            <h3 class="teacher-name">{{ $pesan->dosen->nama }}</h3>
+                            <p class="student-id">{{ $pesan->dosen->nip }}</p>
                             <div class="info-details">
-                                <p class="mb-1"><i class="fas fa-graduation-cap me-2"></i> Teknik Informatika</p>
-                                <p class="mb-1"><i class="fas fa-calendar-alt me-2"></i> Semester 5</p>    
+                                <p class="mb-1"><i class="fas fa-graduation-cap me-2"></i> {{ $pesan->dosen->jurusan }}</p>
                             </div>
-                        </div>
-                        <table class="info-table">
-                            <tr>
-                                <th>Pengirim</th>
-                                <td>Desi Maya Sari</td>
-                            </tr>
-                            <tr>
-                                <th>NIM</th>
-                                <td>2107110665</td>
-                            </tr>
-                            <tr>
-                                <th>Subjek</th>
-                                <td>Bimbingan Skripsi</td>
-                            </tr>
-                            <tr>
-                                <th>Prioritas</th>
-                                <td><span class="priority-badge priority-high">Mendesak</span></td>
-                            </tr>
-                            <tr>
-                                <th>Dikirim</th>
-                                <td>15:30, 26 September 2024</td>
-                            </tr>
-                        </table>
+                        @else
+                            <h3 class="teacher-name">{{ $pesan->mahasiswa->nama }}</h3>
+                            <p class="student-id">{{ $pesan->mahasiswa->nim }}</p>
+                            <div class="info-details">
+                                <p class="mb-1"><i class="fas fa-graduation-cap me-2"></i> {{ $pesan->mahasiswa->jurusan }}</p>
+                                <p class="mb-1"><i class="fas fa-calendar-alt me-2"></i> Semester {{ $pesan->mahasiswa->semester }}</p>
+                            </div>
+                        @endif
                     </div>
+                    <table class="info-table">
+                        <tr>
+                            <th>Pengirim</th>
+                            <td>{{ $pesan->mahasiswa->nama }}</td>
+                        </tr>
+                        <tr>
+                            <th>NIM</th>
+                            <td>{{ $pesan->mahasiswa->nim }}</td>
+                        </tr>
+                        <tr>
+                            <th>Subjek</th>
+                            <td>{{ $pesan->subjek }}</td>
+                        </tr>
+                        <tr>
+                            <th>Prioritas</th>
+                            <td>
+                                <span class="priority-badge {{ $pesan->prioritas == 'mendesak' ? 'priority-high' : 'priority-medium' }}">
+                                    {{ ucfirst($pesan->prioritas) }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Dikirim</th>
+                            <td>{{ $pesan->created_at->format('H:i, d F Y') }}</td>
+                        </tr>
+                    </table>
                 </div>
-                
-                <div class="col-md-8">
-                    <div class="chat-wrapper">
-                        <div class="chat-container">
-                            <div class="message-card student">
-                                <div class="message-header">
-                                    <span class="name student"><i class="fas fa-user-circle"></i> Desi Maya Sari</span>
-                                    <div>
-                                        <small class="text-muted"><i class="far fa-clock"></i> 15:30, 26 September 2024</small>
-                                    </div>
-                                </div>
-                                <div class="message-body">
-                                    <p>Assalamualaikum pak,</p>
-                                    <p>Selamat sore.</p>
-                                    <p>Saya Desi Maya Sari dari Prodi Teknik Informatika ingin melakukan bimbingan Skripsi. Karena itu, apakah pak ada di kampus?</p>
-                                    <p>Terima kasih, bu.</p>
-                                    <p>Wassalamualaikum.</p>
-                                </div>
-                                <div class="attachment">
-                                    <p><i class="fas fa-paperclip"></i> Lampiran:</p>
-                                    <a href="#" target="_blank"><i class="fas fa-file-pdf"></i> KHS_Desi_Maya_Sari.pdf</a>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="chat-wrapper">
+                    <div class="chat-container">
+                        <!-- Pesan Utama -->
+                        <div class="message-card student">
+                            <div class="message-header">
+                                <span class="name student">
+                                    <i class="fas fa-user-circle"></i> {{ $pesan->mahasiswa->nama }}
+                                </span>
+                                <div>
+                                    <small class="text-muted">
+                                        <i class="far fa-clock"></i> {{ $pesan->created_at->format('H:i, d F Y') }}
+                                    </small>
                                 </div>
                             </div>
-    
-                            <div class="message-card teacher">
-                                <div class="message-header">
-                                    <span class="name teacher"><i class="fas fa-user-tie"></i> Edi Susilo, Spd., M,Kom.,M.Eng</span>
-                                    <div>
-                                        <small class="text-muted"><i class="far fa-clock"></i> 16:45, 26 September 2024</small>
-                                    </div>
-                                </div>
-                                <div class="message-body">
-                                    <p>Waalaikumsalam</p>
-                                    <p>Terima kasih atas pesannya. Saya akan ada di kampus besok dari pukul 10.00 sampai 15.00. Silakan datang ke ruangan saya untuk bimbingan Skripsi.</p>
-                                </div>
+                            <div class="message-body">
+                                {!! nl2br(e($pesan->pesan)) !!}
                             </div>
-                            <div class="message-card student">
-                                <div class="message-header">
-                                    <span class="name student"><i class="fas fa-user-circle"></i> Desi Maya Sari</span>
-                                    <div>
-                                        <small class="text-muted"><i class="far fa-clock"></i> 17:20, 26 September 2024</small>
-                                    </div>
-                                </div>
-                                <div class="message-body">
-                                    <p>Waalaikumsalam Bapak,</p>
-                                    <p>Terima kasih atas informasinya. Saya akan datang besok pukul 11.00 ke ruangan saya.</p>
-                                    <p>Wassalamualaikum.</p>
-                                </div>
+                            @if($pesan->attachment)
+                            <div class="attachment">
+                                <p><i class="fas fa-paperclip"></i> Lampiran:</p>
+                                <a href="{{ $pesan->attachment }}" target="_blank">
+                                    <i class="fas fa-file-pdf"></i> Lihat Lampiran
+                                </a>
                             </div>
+                            @endif
                         </div>
-                        <div class="reply-form">
-                            <h4><i class="fas fa-reply"></i> Balas Pesan</h4>
-                            <form>
-                                <div class="mb-3">
-                                    <textarea class="form-control" rows="4" placeholder="Tulis pesan Anda di sini..."></textarea>
+
+                        <!-- Balasan Pesan -->
+                        @foreach($pesan->balasan as $balasan)
+                        <div class="message-card {{ $balasan->role_id == 'mahasiswa' ? 'student' : 'teacher' }}">
+                            <div class="message-header">
+                                <span class="name {{ $balasan->role_id == 'mahasiswa' ? 'student' : 'teacher' }}">
+                                    <i class="fas {{ $balasan->role_id == 'mahasiswa' ? 'fa-user-circle' : 'fa-user-tie' }}"></i>
+                                    {{ $balasan->pengirim->nama }}
+                                </span>
+                                <div>
+                                    <small class="text-muted">
+                                        <i class="far fa-clock"></i> {{ $balasan->created_at->format('H:i, d F Y') }}
+                                    </small>
                                 </div>
-                                <button type="submit" class="btn btn-kirim">
-                                    <i class="fas fa-paper-plane"></i> Kirim Pesan
-                                </button>
-                            </form>
+                            </div>
+                            <div class="message-body">
+                                {!! nl2br(e($balasan->pesan)) !!}
+                            </div>
+                            @if($balasan->attachment)
+                            <div class="attachment">
+                                <p><i class="fas fa-paperclip"></i> Lampiran:</p>
+                                <a href="{{ route('pesan.attachment', $balasan->id) }}" target="_blank">
+                                    <i class="fas fa-file-pdf"></i> Lihat Lampiran
+                                </a>
+                            </div>
+                            @endif
                         </div>
+                        @endforeach
                     </div>
+
+                    <!-- Form Balas Pesan -->
+                    @if($pesan->status === 'aktif')
+                    <div class="reply-form">
+                        <h4><i class="fas fa-reply"></i> Balas Pesan</h4>
+                        <form id="replyForm" action="{{ route('pesan.reply', $pesan->id) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="mb-3">
+                                <textarea class="form-control @error('pesan') is-invalid @enderror" 
+                                        name="pesan" 
+                                        rows="4" 
+                                        placeholder="Tulis pesan Anda di sini..." 
+                                        required></textarea>
+                                @error('pesan')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="mb-3">
+                                <input type="file" 
+                                    name="attachment" 
+                                    class="form-control @error('attachment') is-invalid @enderror" 
+                                    accept=".pdf,.doc,.docx">
+                                @error('attachment')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted">Format yang diizinkan: PDF, DOC, DOCX (Max: 10MB)</small>
+                            </div>
+                            <button type="submit" class="btn btn-kirim">
+                                <i class="fas fa-paper-plane"></i> Kirim Pesan
+                            </button>
+                        </form>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
-    @endsection
+</div>
+@endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('replyForm');
+    if(form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            
+            try {
+                // Disable button & show loading
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+                
+                const formData = new FormData(this);
+                
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'same-origin'
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Terjadi kesalahan server');
+                }
+                
+                // Jika berhasil
+                if(data.success) {
+                    // Optional: Tampilkan pesan sukses
+                    alert('Pesan berhasil dikirim');
+                    // Reload halaman
+                    window.location.reload();
+                } else {
+                    throw new Error(data.message || 'Terjadi kesalahan');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message || 'Terjadi kesalahan saat mengirim pesan');
+            } finally {
+                // Restore button state
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        });
+    }
+});
+</script>
+@endpush

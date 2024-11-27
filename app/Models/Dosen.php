@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable; 
 use App\Traits\HasGoogleCalendar;
+use App\Traits\HasFcmNotification;
 
 class Dosen extends Authenticatable
 {
     use HasGoogleCalendar;
+    use HasFcmNotification;
     use HasFactory, Notifiable;
     protected $primaryKey = 'nip';
     protected $keyType = 'string';
@@ -20,6 +22,7 @@ class Dosen extends Authenticatable
         'nama_singkat',
         'email',
         'password',
+        'foto',
         'prodi_id',
         'role_id',
         'google_access_token',
@@ -52,5 +55,13 @@ class Dosen extends Authenticatable
     public function hasRole($roleName)
     {
         return $this->role->name === $roleName;
+    }
+
+    public function getFotoUrlAttribute()
+    {
+        if ($this->foto) {
+            return asset('storage/foto_profil/' . $this->foto);
+        }
+        return asset('images/default-avatar.png');
     }
 }

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('nama_singkat');
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('foto')->nullable();
+            $table->string('fcm_token')->nullable();
             $table->datetime('created_at');
             $table->datetime('updated_at');
             $table->unsignedBigInteger('prodi_id');
@@ -36,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dosen');
+        Schema::dropIfExists('dosens');
     }
 };

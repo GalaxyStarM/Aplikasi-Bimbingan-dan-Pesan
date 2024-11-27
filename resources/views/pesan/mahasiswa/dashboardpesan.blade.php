@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Pesan Mahasiswa')
+@section('title', 'Dashboard Konsultasi')
 
 @push('styles')
 <style>
@@ -204,31 +204,33 @@
 <div class="container py-4">
     <!-- Stats Row -->
     <div class="row mb-4">
-        <div class="col-md-4 mb-3">
+        <div class="col-4">
             <div class="stat-card">
                 <div class="stat-icon bg-primary bg-opacity-10 text-primary">
                     <i class="fas fa-ticket-alt"></i>
                 </div>
                 <h3 class="h6 text-muted">Total Konsultasi</h3>
-                <h2 class="h4 mb-0">1</h2>
+                <h2 class="h4 mb-0">{{ $pesanAktif->count() + $pesanSelesai->count() }}</h2>
             </div>
         </div>
-        <div class="col-md-4 mb-3">
+        
+        <div class="col-4">
             <div class="stat-card">
                 <div class="stat-icon bg-success bg-opacity-10 text-success">
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <h3 class="h6 text-muted">Konsultasi Selesai</h3>
-                <h2 class="h4 mb-0">0</h2>
+                <h2 class="h4 mb-0">{{ $pesanSelesai->count() }}</h2>
             </div>
         </div>
-        <div class="col-md-4 mb-3">
+
+        <div class="col-4">
             <div class="stat-card">
                 <div class="stat-icon bg-warning bg-opacity-10 text-warning">
                     <i class="fas fa-clock"></i>
                 </div>
                 <h3 class="h6 text-muted">Konsultasi Aktif</h3>
-                <h2 class="h4 mb-0">1</h2>
+                <h2 class="h4 mb-0">{{ $pesanAktif->count() }}</h2>
             </div>
         </div>
     </div>
@@ -239,17 +241,25 @@
         <div class="col-md-3 mb-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <button class="create-ticket-btn w-100 mb-4" onclick="window.location.href='http://127.0.0.1:8000/buatpesan'">
+                @if(auth()->user()->role === 'mahasiswa')
+                    <button class="create-ticket-btn w-100 mb-4" onclick="window.location.href='{{ route('pesan.create') }}'">
                         <i class="fas fa-plus-circle me-2"></i>Buat Konsultasi
-                    </button>                        
+                    </button>
+                @else
+                    <button class="create-ticket-btn w-100 mb-4" onclick="window.location.href='{{ route('pesan.create') }}'">
+                        <i class="fas fa-plus-circle me-2"></i>Buat Konsultasi
+                    </button>
+                @endif
                     <div class="list-group list-group-flush">
-                        <a href="#" class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center">
+                        <a href="{{ route('pesan.filterAktif') }}" 
+                        class="list-group-item list-group-item-action {{ !Request::routeIs('pesan.filterSelesai') ? 'active' : '' }} d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-inbox me-2"></i>Aktif</span>
-                            <span class="badge bg-white text-primary rounded-pill">3</span>
+                            <span class="badge bg-white text-primary rounded-pill">{{ $pesanAktif->count() }}</span>
                         </a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <a href="{{ route('pesan.filterSelesai') }}" 
+                        class="list-group-item list-group-item-action {{ Request::routeIs('pesan.filterSelesai') ? 'active' : '' }} d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-history me-2"></i>Riwayat</span>
-                            <span class="badge bg-light text-dark rounded-pill">0</span>
+                            <span class="badge bg-light text-dark rounded-pill">{{ $pesanSelesai->count() }}</span>
                         </a>
                     </div>
                 </div>
@@ -278,76 +288,95 @@
 
             <!-- Tickets List -->
             <div class="tickets-container" id="active-tickets">
-                <!-- Urgent Priority Ticket -->
-                <div class="ticket-card" data-priority="mendesak"  onclick="window.location.href='http://127.0.0.1:8000/isipesan'">
+            @forelse($pesanAktif as $pesan)
+                <div class="ticket-card" data-priority="{{ $pesan->prioritas }}" onclick="window.location.href='{{ route('pesan.show', $pesan->id) }}'">
                     <div class="d-flex align-items-center mb-3">
-                        <img src="{{ asset('images/fotopakedi.png') }}" alt="Avatar" class="avatar me-3">
+                        <img src="{{ asset('images/default-avatar.png') }}" alt="Avatar" class="avatar me-3">
                         <div class="flex-grow-1">
-                            <h6 class="mb-0">Edi Susilo, S.Pd., M.Kom., M.Eng.</h6>
-                            <small class="text-muted">1991 1029 201903 010</small>
+                            @if(auth()->user()->role === 'mahasiswa')
+                                <h6 class="mb-0">{{ $pesan->dosen->nama }}</h6>
+                                <small class="text-muted">{{ $pesan->dosen->nip }}</small>
+                            @else
+                                <h6 class="mb-0">{{ $pesan->mahasiswa->nama }}</h6>
+                                <small class="text-muted">{{ $pesan->mahasiswa->nim }}</small>
+                            @endif
                         </div>
-                        <span class="priority-badge priority-urgent">
-                            <i class="fas fa-arrow-up me-1"></i>Mendesak
+                        <span class="priority-badge {{ $pesan->prioritas == 'mendesak' ? 'priority-urgent' : 'priority-normal' }}">
+                            <i class="fas fa-arrow-up me-1"></i>{{ ucfirst($pesan->prioritas) }}
                         </span>
                     </div>
-                    <h5 class="mb-2">Bimbingan Skripsi</h5>
+                    <h5 class="mb-2">{{ $pesan->subjek }}</h5>
                     <div class="d-flex align-items-center text-muted">
                         <i class="far fa-clock me-2"></i>
-                        <small>08:30 - Hari ini</small>
+                        <small>{{ $pesan->created_at->format('H:i') }} - {{ $pesan->created_at->diffForHumans() }}</small>
                     </div>
                 </div>
+            @empty
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-inbox text-muted" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="text-muted">Tidak Ada Konsultasi Aktif</h5>
+                    <p class="text-muted mb-0">Konsultasi yang sedang berlangsung akan muncul di sini</p>
+                </div>
+            @endforelse
+            </div>
 
-            <!-- Tambahkan container untuk riwayat -->
-                <div class="history-container" id="history-tickets" style="display: none;">
-                    <!-- Div untuk pesan riwayat kosong -->
-                    <div class="text-center py-5">
-                        <div class="mb-4">
-                                <i class="fas fa-history text-muted" style="font-size: 3rem;"></i>
+            <!-- History Container -->
+            <div class="history-container" id="history-tickets" style="display: none;">
+                @forelse($pesanSelesai as $pesan)
+                    <div class="ticket-card" data-priority="{{ $pesan->prioritas }}" onclick="window.location.href='{{ route('pesan.show', $pesan->id) }}'">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="{{ asset('images/avatar.png') }}" alt="Avatar" class="avatar me-3">
+                            <div class="flex-grow-1">
+                                @if(auth()->user()->role === 'mahasiswa')
+                                    <h6 class="mb-0">{{ $pesan->dosen->nama }}</h6>
+                                    <small class="text-muted">{{ $pesan->dosen->nip }}</small>
+                                @else
+                                    <h6 class="mb-0">{{ $pesan->mahasiswa->nama }}</h6>
+                                    <small class="text-muted">{{ $pesan->mahasiswa->nim }}</small>
+                                @endif
                             </div>
-                            <h5 class="text-muted">Tidak Ada Riwayat Konsultasi</h5>
-                            <p class="text-muted mb-0">Riwayat konsultasi yang telah selesai akan muncul di sini</p>
+                            <span class="priority-badge {{ $pesan->prioritas == 'mendesak' ? 'priority-urgent' : 'priority-normal' }}">
+                                <i class="fas fa-arrow-up me-1"></i>{{ ucfirst($pesan->prioritas) }}
+                            </span>
+                        </div>
+                        <h5 class="mb-2">{{ $pesan->subjek }}</h5>
+                        <div class="d-flex align-items-center text-muted">
+                            <i class="far fa-clock me-2"></i>
+                            <small>{{ $pesan->created_at->format('H:i') }} - {{ $pesan->created_at->diffForHumans() }}</small>
                         </div>
                     </div>
-
-                    <!-- Pesan pencarian tidak tersedia -->
-                    <div id="no-results" class="text-center py-4" style="display: none;">
-                        <p class="text-muted">Konsultasi tidak tersedia</p>
+                @empty
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="fas fa-history text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="text-muted">Tidak Ada Riwayat Konsultasi</h5>
+                        <p class="text-muted mb-0">Riwayat konsultasi yang telah selesai akan muncul di sini</p>
                     </div>
-
-                <!-- Tambahkan div ini -->
-                    <div id="no-results" class="text-center py-4" style="display: none;">
-                        <p class="text-muted">Pencarian konsultasi tidak tersedia</p>
-                    </div>
+                @endforelse
             </div>
         </div>
     </div>
-    @endsection
+</div>
+@endsection
 
-    @push('scripts')
-    <script>
-       document.addEventListener('DOMContentLoaded', function() {
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
     const activeTickets = document.getElementById('active-tickets');
     const historyTickets = document.getElementById('history-tickets');
-    const noResults = document.getElementById('no-results');
-
-    // Fungsi untuk memeriksa dan menampilkan pesan "tidak tersedia"
-    function checkNoResults() {
-        const visibleTickets = document.querySelectorAll('.ticket-card[style="display: block;"]');
-        const noResults = document.getElementById('no-results');
-        const isHistory = document.querySelector('.list-group-item:last-child').classList.contains('active');
-        
-        // Tampilkan pesan sesuai dengan halaman yang aktif
-        if (isHistory) {
-            noResults.style.display = 'none';
-        } else {
-            noResults.style.display = visibleTickets.length === 0 ? 'block' : 'none';
-        }
+    
+    function getActiveContainer() {
+        return activeTickets.style.display !== 'none' ? activeTickets : historyTickets;
     }
 
-    // Fungsi untuk mengaktifkan filter berdasarkan kategori prioritas
     function filterMessages(priority) {
-        const allTickets = document.querySelectorAll('.ticket-card');
+        const activeContainer = getActiveContainer();
+        const allTickets = activeContainer.querySelectorAll('.ticket-card');
         const searchTerm = document.querySelector('.search-box').value.toLowerCase();
+        let visibleCount = 0;
 
         allTickets.forEach(ticket => {
             const ticketPriority = ticket.getAttribute('data-priority');
@@ -360,92 +389,72 @@
                                 nim.includes(searchTerm);
             const matchesPriority = priority === 'semua' || ticketPriority === priority;
 
-            // Tampilkan ticket jika memenuhi kriteria pencarian DAN filter
-            ticket.style.display = (matchesSearch && matchesPriority) ? 'block' : 'none';
+            if (matchesSearch && matchesPriority) {
+                ticket.style.display = 'block';
+                visibleCount++;
+            } else {
+                ticket.style.display = 'none';
+            }
         });
 
-        checkNoResults();
+        // Tampilkan atau sembunyikan pesan "tidak ada konsultasi"
+        const emptyStateDiv = activeContainer.querySelector('.text-center.py-5');
+        if (emptyStateDiv) {
+            emptyStateDiv.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
     }
 
-    // Fungsi untuk menambahkan class 'active' pada tombol yang sedang diklik
     function setActiveFilterButton(button) {
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
     }
 
-    // Event listener untuk menu aktif dan riwayat
+    // Event listener untuk menu sidebar
     document.querySelectorAll('.list-group-item').forEach(item => {
         item.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Hapus class active dari semua menu
-            document.querySelectorAll('.list-group-item').forEach(i => {
-                i.classList.remove('active');
-            });
+            // Reset filter dan search
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.filter-btn.btn-outline-primary').classList.add('active');
+            document.querySelector('.search-box').value = '';
             
-            // Tambah class active ke menu yang diklik
+            // Update active menu
+            document.querySelectorAll('.list-group-item').forEach(i => i.classList.remove('active'));
             this.classList.add('active');
             
-            // Cek apakah yang diklik adalah menu riwayat
-            const isHistory = this.textContent.includes('Riwayat');
+            // Toggle containers
+            const isActive = this.textContent.includes('Aktif');
+            activeTickets.style.display = isActive ? 'block' : 'none';
+            historyTickets.style.display = isActive ? 'none' : 'block';
             
-            // Tampilkan container yang sesuai
-            activeTickets.style.display = isHistory ? 'none' : 'block';
-            historyTickets.style.display = isHistory ? 'block' : 'none';
-            
-            // Reset pesan tidak tersedia
-            noResults.style.display = 'none';
-        });
-    });
-
-    // Event listener untuk tombol filter
-    // Filter Mendesak
-    document.querySelector('.filter-btn.urgent').addEventListener('click', function() {
-        const isHistory = document.querySelector('.list-group-item:last-child').classList.contains('active');
-        if (!isHistory) {
-            filterMessages('mendesak');
-        }
-        setActiveFilterButton(this);
-    });
-
-    // Filter Umum
-    document.querySelector('.filter-btn.normal').addEventListener('click', function() {
-        const isHistory = document.querySelector('.list-group-item:last-child').classList.contains('active');
-        if (!isHistory) {
-            filterMessages('umum');
-        }
-        setActiveFilterButton(this);
-    });
-
-    // Filter Semua
-    document.querySelector('.filter-btn.btn-outline-primary').addEventListener('click', function() {
-        const isHistory = document.querySelector('.list-group-item:last-child').classList.contains('active');
-        if (!isHistory) {
+            // Reset filter untuk menampilkan semua ticket
             filterMessages('semua');
-        }
-        setActiveFilterButton(this);
-    });
-    
-    // Fungsi pencarian
-    document.querySelector('.search-box').addEventListener('input', function(e) {
-        const isHistory = document.querySelector('.list-group-item:last-child').classList.contains('active');
-        if (!isHistory) {
-            const activeFilter = document.querySelector('.filter-btn.active');
-            const filterType = activeFilter.classList.contains('urgent') ? 'mendesak' : 
-                             activeFilter.classList.contains('normal') ? 'umum' : 'semua';
-            filterMessages(filterType);
-        }
+        });
     });
 
-    // Event listener untuk klik pada ticket card
-    document.querySelectorAll('.ticket-card').forEach(ticket => {
-        ticket.addEventListener('click', function() {
-            const href = this.getAttribute('onclick');
-            if (href) {
-                const url = href.match(/'([^']+)'/)[1];
-                window.location.href = url;
-            }
-        });
+    // Event listeners untuk tombol filter
+    document.querySelector('.filter-btn.urgent').addEventListener('click', function() {
+        filterMessages('mendesak');
+        setActiveFilterButton(this);
+    });
+
+    document.querySelector('.filter-btn.normal').addEventListener('click', function() {
+        filterMessages('umum');
+        setActiveFilterButton(this);
+    });
+
+    document.querySelector('.filter-btn.btn-outline-primary').addEventListener('click', function() {
+        filterMessages('semua');
+        setActiveFilterButton(this);
+    });
+
+    // Event listener untuk pencarian
+    document.querySelector('.search-box').addEventListener('input', function() {
+        const activeFilter = document.querySelector('.filter-btn.active');
+        const filterType = activeFilter.classList.contains('urgent') ? 'mendesak' : 
+                          activeFilter.classList.contains('normal') ? 'umum' : 'semua';
+        filterMessages(filterType);
     });
 });
 </script>

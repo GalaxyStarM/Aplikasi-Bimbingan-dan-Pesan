@@ -20,7 +20,7 @@ class MahasiswaSeeder extends Seeder
                 'password' => Hash::make('bismillah123'),
                 'prodi_id' => 2,
                 'konsentrasi_id' => 1, 
-                'role_id' => 3,
+                'role_id' => 2,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ],
@@ -32,7 +32,7 @@ class MahasiswaSeeder extends Seeder
                 'password' => Hash::make('2107110665'),
                 'prodi_id' => 2,
                 'konsentrasi_id' => 1, 
-                'role_id' => 3,
+                'role_id' => 2,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ],
@@ -44,7 +44,7 @@ class MahasiswaSeeder extends Seeder
                 'password' => Hash::make('2107110255'),
                 'prodi_id' => 2,
                 'konsentrasi_id' => 1, 
-                'role_id' => 3,
+                'role_id' => 2,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ],

@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Traits\HasGoogleCalendar;
+use App\Traits\HasFcmNotification;
 
 class Mahasiswa extends Authenticatable
 {
     use HasGoogleCalendar;
+    use HasFcmNotification;
     use HasFactory, Notifiable;
     protected $primaryKey = 'nim';
     protected $keyType = 'string';
@@ -20,6 +22,7 @@ class Mahasiswa extends Authenticatable
         'angkatan',
         'email',
         'password',
+        'foto',
         'prodi_id',
         'konsentrasi_id',
         'role_id',
@@ -58,5 +61,13 @@ class Mahasiswa extends Authenticatable
     public function hasRole($roleName)
     {
         return $this->role && $this->role->role_akses === $roleName;
+    }
+
+    public function getFotoUrlAttribute()
+    {
+        if ($this->foto) {
+            return asset('storage/foto_profil/' . $this->foto);
+        }
+        return asset('images/default-avatar.png');
     }
 }
