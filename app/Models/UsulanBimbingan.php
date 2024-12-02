@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -23,7 +24,8 @@ class UsulanBimbingan extends Model
         'waktu_selesai',
         'lokasi',
         'status',       
-        'keterangan'
+        'keterangan',
+        'nomor_antrian'
     ];
 
     protected $casts = [
@@ -32,12 +34,14 @@ class UsulanBimbingan extends Model
         'waktu_selesai' => 'string', 
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'nomor_antrian' => 'integer'
     ];
 
     protected $attributes = [
         'status' => self::STATUS_USULAN,
         'lokasi' => null,
-        'keterangan' => null
+        'keterangan' => null,
+        'nomor_antrian' => 0
     ];
 
     // Status bimbingan
@@ -65,20 +69,72 @@ class UsulanBimbingan extends Model
                $this->waktu_mulai . ' - ' . $this->waktu_selesai;
     }
 
-    // Methods untuk persetujuan
     public function setujui(?string $lokasi = null): bool
     {
-        return $this->update([
-            'status' => self::STATUS_DISETUJUI,
-            'lokasi' => $lokasi 
-        ]);
+        try {
+            DB::beginTransaction();
+
+            // Dapatkan nomor antrian terakhir untuk jadwal yang sama
+            $lastQueue = self::where('event_id', $this->event_id)
+                            ->where('status', self::STATUS_DISETUJUI)
+                            ->max('nomor_antrian') ?? 0;
+
+            // Set nomor antrian berikutnya
+            $nextQueue = $lastQueue + 1;
+
+            $updated = $this->update([
+                'status' => self::STATUS_DISETUJUI,
+                'lokasi' => $lokasi,
+                'nomor_antrian' => $nextQueue
+            ]);
+
+            DB::commit();
+            return $updated;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function tolak(string $keterangan): bool
     {
         return $this->update([
             'status' => self::STATUS_DITOLAK,
-            'keterangan' => $keterangan
+            'keterangan' => $keterangan,
+            'nomor_antrian' => null  // Reset nomor antrian jika ditolak
         ]);
+    }
+
+    // Method untuk mendapatkan posisi antrian saat ini
+    public function getQueuePosition(): int
+    {
+        if (!$this->nomor_antrian) {
+            return 0;
+        }
+
+        return $this->nomor_antrian;
+    }
+
+    // Method untuk cek total antrian pada jadwal yang sama
+    public function getTotalQueue(): int
+    {
+        return self::where('event_id', $this->event_id)
+                  ->where('status', self::STATUS_DISETUJUI)
+                  ->count();
+    }
+
+    // Method untuk mengatur ulang antrian jika ada pembatalan
+    public static function reorderQueue(string $event_id): void
+    {
+        $bimbingans = self::where('event_id', $event_id)
+                         ->where('status', self::STATUS_DISETUJUI)
+                         ->orderBy('nomor_antrian')
+                         ->get();
+
+        $newQueue = 1;
+        foreach ($bimbingans as $bimbingan) {
+            $bimbingan->update(['nomor_antrian' => $newQueue]);
+            $newQueue++;
+        }
     }
 }

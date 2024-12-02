@@ -16,14 +16,6 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 });
 
-Route::get('/profilmahasiswa', function(){
-    return view('bimbingan.mahasiswa.profilmahasiswa');
-  });
-
-  Route::get('/gantipassword', function(){
-    return view('bimbingan.mahasiswa.gantipassword');
-  });
-
 Route::get('/datausulanbimbingan', function(){
     return view('bimbingan.admin.datausulanbimbingan');
 });
@@ -55,6 +47,12 @@ Route::middleware(['auth:mahasiswa,dosen'])->group(function () {
         Route::get('/attachment/{id}', [PesanController::class, 'downloadAttachment'])->name('pesan.attachment');
         
     });
+
+    Route::controller(ProfilController::class)->group(function () {
+        Route::get('/profil', 'show')->name('profile.show');
+        Route::put('/profil/update', 'update')->name('profile.update');
+        Route::delete('/profil/remove', 'remove')->name('profile.remove');
+    });
 });
 
 // Route untuk mahasiswa
@@ -82,12 +80,6 @@ Route::middleware(['auth:mahasiswa', 'checkRole:mahasiswa'])->group(function () 
         Route::get('/google/callback','callback')->name('mahasiswa.google.callback');
     });
 
-    
-    Route::prefix('profil')->group(function () {
-        Route::get('/profil', [ProfileController::class, 'show'])->name('profile.show');
-        Route::put('/profil/update', [ProfileController::class, 'update'])->name('profile.update');
-        Route::delete('/profil/remove-foto', [ProfileController::class, 'remove'])->name('profile.remove-foto');
-    });
 });
 
 // Route untuk dosen

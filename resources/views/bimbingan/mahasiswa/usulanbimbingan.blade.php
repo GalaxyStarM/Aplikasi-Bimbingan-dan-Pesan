@@ -156,6 +156,7 @@
                                             <th>Tanggal</th>
                                             <th>Waktu</th>
                                             <th>Lokasi</th>
+                                            <th>Antrian</th>
                                             <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -172,6 +173,7 @@
                                                 <td>{{ \Carbon\Carbon::parse($item->waktu_mulai)->format('H:i') }} -
                                                     {{ \Carbon\Carbon::parse($item->waktu_selesai)->format('H:i') }}</td>
                                                 <td>{{ $item->lokasi ?? '-' }}</td>
+                                                <td>{{ $item->nomor_antrian ?? '-' }}</td>
                                                 <td
                                                     class="fw-bold bg-{{ $item->status === 'DISETUJUI' ? 'success' : ($item->status === 'DITOLAK' ? 'danger' : 'warning') }} text-white">
                                                     {{ $item->status }}
@@ -206,7 +208,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="9" class="text-center">Tidak ada data usulan bimbingan</td>
+                                                <td colspan="10" class="text-center">Tidak ada data usulan bimbingan</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -270,6 +272,7 @@
                                             <th>Tanggal</th>
                                             <th>Waktu</th>
                                             <th>Lokasi</th>
+                                            <th>Antrian</th>
                                             <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -287,6 +290,7 @@
                                                     {{ \Carbon\Carbon::parse($item->waktu_selesai)->format('H:i') }}</td>
                                                 <td>{{ $item->lokasi && trim($item->lokasi) !== '' ? $item->lokasi : '-' }}
                                                 </td>
+                                                <td>{{ $item->nomor_antrian ?? '-' }}</td>
                                                 <td
                                                     class="fw-bold {{ $item->status === 'SELESAI' ? 'bg-success' : 'bg-danger' }} text-white">
                                                     {{ $item->status }}
@@ -303,7 +307,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="7" class="text-center">Tidak ada riwayat bimbingan</td>
+                                                <td colspan="10" class="text-center">Tidak ada riwayat bimbingan</td>
                                             </tr>
                                         @endforelse
                                     </tbody>

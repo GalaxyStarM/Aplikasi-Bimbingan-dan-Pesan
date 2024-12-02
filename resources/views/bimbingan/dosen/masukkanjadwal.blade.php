@@ -600,10 +600,6 @@
                         <small class="text-muted mt-2 d-block">Jadwal tersedia pada jam kerja (08:00 - 18:00)<br>Durasi minimum bimbingan adalah 30 menit</small>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Kapasitas Mahasiswa</label>
-                        <input type="number" class="form-control" id="capacity" min="1" max="10" value="1" required>
-                    </div>
-                    <div class="mb-3">
                         <label class="form-label">Catatan (Opsional)</label>
                         <textarea class="form-control" id="eventDescription" rows="3" ></textarea>
                     </div>
@@ -852,14 +848,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const description = document.getElementById('eventDescription').value;
             const startTime = document.getElementById('startTime').value;
             const endTime = document.getElementById('endTime').value;
-            const capacity = parseInt(document.getElementById('capacity').value);
 
             if (!startTime || !endTime) {
                 throw new Error('Mohon isi waktu mulai dan selesai');
-            }
-
-            if (isNaN(capacity) || capacity < 1) {
-                throw new Error('Kapasitas minimal adalah 1 mahasiswa');
             }
 
             // Buat objek tanggal dari selectedDate
@@ -917,7 +908,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 start: startDateTime.toISOString(),
                 end: endDateTime.toISOString(),
                 description: description,
-                capacity: capacity
             };
             console.log('Request Data:', requestData);
 
@@ -1018,7 +1008,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('startTime').value = '';
         document.getElementById('endTime').value = '';
         document.getElementById('eventDescription').value = '';
-        document.getElementById('capacity').value = '';
     });
     document.getElementById('startTime')?.addEventListener('change', validateTimes);
     document.getElementById('endTime')?.addEventListener('change', validateTimes);

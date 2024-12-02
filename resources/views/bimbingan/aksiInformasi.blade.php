@@ -74,6 +74,8 @@
                     <p class="card-text text-start">{{ $waktuMulai }} - {{ $waktuSelesai }}</p>
                     <p class="card-title text-muted text-sm">Lokasi</p>
                     <p class="card-text text-start">{{ $usulan->lokasi ?? '-' }}</p>
+                    <p class="card-title text-muted text-sm">Antrian</p>
+                    <p class="card-text text-start">{{ $usulan->nomor_antrian ?? '-' }}</p>
                     <p class="card-title text-muted text-sm">Deskripsi</p>
                     <p class="card-text text-start">{{ $usulan->deskripsi ?? '-' }}</p>
                 </div>

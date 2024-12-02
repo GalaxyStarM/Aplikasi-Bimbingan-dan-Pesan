@@ -7,39 +7,63 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\Mahasiswa;
 use App\Models\Dosen;
+use Illuminate\Support\Facades\Auth;
 
-class ProfileController extends Controller
+class ProfilController extends Controller
 {
     public function show()
     {
-        $user = auth()->user();
-        $role = $user->role;
-
-        if ($role === 'mahasiswa') {
-            $profile = Mahasiswa::where('nim', $user->nim)->first();
-        } else {
-            $profile = Dosen::where('nip', $user->nip)->first();
+        // Cek guard 
+        if (Auth::guard('mahasiswa')->check()) {
+            $profile = Auth::guard('mahasiswa')->user();
+            $role = 'mahasiswa';
+        } 
+        elseif (Auth::guard('dosen')->check()) {
+            $profile = Auth::guard('dosen')->user();
+            $role = 'dosen';
+        } 
+        // Jika tidak terautentikasi di kedua guard
+        else {
+            return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu');
         }
 
-        return view('bimbingan.mahasiswa.profilmahasiswa', compact('profile', 'role'));
+        // Double check untuk memastikan $profile tidak null
+        if (!$profile) {
+            return redirect()->route('login')->with('error', 'Profil tidak ditemukan');
+        }
+
+        return view('bimbingan.mahasiswa.profilmahasiswa', [
+            'profile' => $profile,
+            'role' => $role
+        ]);
     }
 
     public function update(Request $request)
     {
-        $user = auth()->user();
-        $role = $user->role;
-
         $request->validate([
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
         try {
-            if ($role === 'mahasiswa') {
-                $profile = Mahasiswa::where('nim', $user->nim)->first();
-                $identifier = $user->nim;
-            } else {
-                $profile = Dosen::where('nip', $user->nip)->first();
-                $identifier = $user->nip;
+            // Cek guard mahasiswa
+            if (Auth::guard('mahasiswa')->check()) {
+                $profile = Auth::guard('mahasiswa')->user();
+                $identifier = $profile->nim;
+            } 
+            // Cek guard dosen
+            elseif (Auth::guard('dosen')->check()) {
+                $profile = Auth::guard('dosen')->user();
+                $identifier = $profile->nip;
+            } 
+            // Jika tidak terautentikasi di kedua guard
+            else {
+                return redirect()->route('login')
+                    ->with('error', 'Anda harus login terlebih dahulu');
+            }
+
+            // Double check untuk memastikan $profile tidak null
+            if (!$profile) {
+                throw new \Exception('Profil tidak ditemukan');
             }
 
             if ($request->hasFile('foto')) {
@@ -58,20 +82,30 @@ class ProfileController extends Controller
 
             return redirect()->back()->with('success', 'Foto profil berhasil diperbarui');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui foto profil');
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui foto profil: ' . $e->getMessage());
         }
     }
 
     public function remove()
     {
-        $user = auth()->user();
-        $role = $user->role;
-
         try {
-            if ($role === 'mahasiswa') {
-                $profile = Mahasiswa::where('nim', $user->nim)->first();
-            } else {
-                $profile = Dosen::where('nip', $user->nip)->first();
+            // Cek guard mahasiswa
+            if (Auth::guard('mahasiswa')->check()) {
+                $profile = Auth::guard('mahasiswa')->user();
+            } 
+            // Cek guard dosen
+            elseif (Auth::guard('dosen')->check()) {
+                $profile = Auth::guard('dosen')->user();
+            } 
+            // Jika tidak terautentikasi di kedua guard
+            else {
+                return redirect()->route('login')
+                    ->with('error', 'Anda harus login terlebih dahulu');
+            }
+
+            // Double check untuk memastikan $profile tidak null
+            if (!$profile) {
+                throw new \Exception('Profil tidak ditemukan');
             }
 
             if ($profile->foto && Storage::disk('public')->exists('foto_profil/' . $profile->foto)) {
@@ -82,7 +116,7 @@ class ProfileController extends Controller
 
             return redirect()->back()->with('success', 'Foto profil berhasil dihapus');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus foto profil');
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus foto profil: ' . $e->getMessage());
         }
     }
 }

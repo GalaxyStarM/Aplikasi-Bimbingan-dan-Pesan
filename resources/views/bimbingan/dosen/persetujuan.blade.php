@@ -170,6 +170,7 @@
                                             <th>Tanggal</th>
                                             <th>Waktu</th>
                                             <th>Lokasi</th>
+                                            <th>Antrian</th>
                                             <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -187,6 +188,7 @@
                                                     {{ \Carbon\Carbon::parse($item->waktu_selesai)->format('H:i') }}</td>
                                                 <td>{{ $item->lokasi && trim($item->lokasi) !== '' ? $item->lokasi : '-' }}
                                                 </td>
+                                                <td>{{ $item->nomor_antrian && trim($item->nomor_antrian) !== '' ? $item->nomor_antrian : '-' }}</td>
                                                 <td
                                                     class="fw-bold bg-{{ $item->status === 'DISETUJUI' ? 'success' : ($item->status === 'DITOLAK' ? 'danger' : 'warning') }} text-white">
                                                     {{ $item->status }}</td>
@@ -214,7 +216,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="9" class="text-center">Tidak ada data usulan bimbingan</td>
+                                                <td colspan="10" class="text-center">Tidak ada data usulan bimbingan</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -273,6 +275,7 @@
                                             <th>Tanggal</th>
                                             <th>Waktu</th>
                                             <th>Lokasi</th>
+                                            <th>Antrian</th>
                                             <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -290,6 +293,7 @@
                                                     {{ \Carbon\Carbon::parse($item->waktu_selesai)->format('H:i') }}</td>
                                                 <td>{{ $item->lokasi && trim($item->lokasi) !== '' ? $item->lokasi : '-' }}
                                                 </td>
+                                                <td>{{ $item->nomor_antrian && trim($item->nomor_antrian) !== '' ? $item->nomor_antrian : '-' }}</td>
                                                 <td class="fw-bold text-white bg-success">DISETUJUI</td>
                                                 <td>
                                                     <div class="action-icons">
@@ -303,7 +307,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="9" class="text-center">Tidak ada jadwal bimbingan aktif</td>
+                                                <td colspan="10" class="text-center">Tidak ada jadwal bimbingan aktif</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -325,6 +329,7 @@
                                             <th>Tanggal</th>
                                             <th>Waktu</th>
                                             <th>Lokasi</th>
+                                            <th>Antrian</th>
                                             <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -342,6 +347,7 @@
                                                     {{ \Carbon\Carbon::parse($item->waktu_selesai)->format('H:i') }}</td>
                                                 <td>{{ $item->lokasi && trim($item->lokasi) !== '' ? $item->lokasi : '-' }}
                                                 </td>
+                                                <td>{{ $item->nomor_antrian && trim($item->nomor_antrian) !== '' ? $item->nomor_antrian : '-' }}</td>
                                                 <td
                                                     class="fw-bold {{ $item->status === 'SELESAI' ? 'bg-success' : 'bg-danger' }} text-white">
                                                     {{ $item->status }}
@@ -358,7 +364,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="9" class="text-center">Tidak ada data riwayat bimbingan
+                                                <td colspan="10" class="text-center">Tidak ada data riwayat bimbingan
                                                 </td>
                                             </tr>
                                         @endforelse
@@ -437,22 +443,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Detail Usulan -->
-                    <div class="bg-light p-3 rounded mb-3">
-                        <h6 class="fw-bold mb-3">Detail Usulan</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p class="mb-2"><strong>NIM:</strong><br><span class="nim-display"></span></p>
-                                <p class="mb-2"><strong>Nama:</strong><br><span class="nama-display"></span></p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-2"><strong>Tanggal:</strong><br><span class="tanggal-display"></span></p>
-                                <p class="mb-2"><strong>Waktu:</strong><br><span class="waktu-display"></span></p>
-                            </div>
-                        </div>
-                        <p class="mb-0"><strong>Jenis Bimbingan:</strong><br><span class="jenis-display"></span></p>
-                    </div>
-
                     <!-- Form Lokasi -->
                     <div class="form-group">
                         <label for="lokasiBimbingan" class="form-label fw-bold">Lokasi Bimbingan <span
@@ -492,22 +482,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Detail Usulan -->
-                    <div class="bg-light p-3 rounded mb-3">
-                        <h6 class="fw-bold mb-3">Detail Usulan</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p class="mb-2"><strong>NIM:</strong><br><span class="nim-display"></span></p>
-                                <p class="mb-2"><strong>Nama:</strong><br><span class="nama-display"></span></p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-2"><strong>Tanggal:</strong><br><span class="tanggal-display"></span></p>
-                                <p class="mb-2"><strong>Waktu:</strong><br><span class="waktu-display"></span></p>
-                            </div>
-                        </div>
-                        <p class="mb-0"><strong>Jenis Bimbingan:</strong><br><span class="jenis-display"></span></p>
-                    </div>
-
                     <!-- Form Alasan -->
                     <div class="form-group">
                         <label for="alasanPenolakan" class="form-label fw-bold">Alasan Penolakan <span
@@ -538,254 +512,218 @@
 @endsection
 
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let currentRow = null;
-            let currentId = null;
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    let currentRow = null;
+    let currentId = null;
 
-            function initializeTooltips() {
-                if (typeof bootstrap !== 'undefined') {
-                    const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-                    tooltips.forEach(tooltip => {
-                        if (!bootstrap.Tooltip.getInstance(tooltip)) {
-                            new bootstrap.Tooltip(tooltip);
-                        }
-                    });
+    function initializeTooltips() {
+        if (typeof bootstrap !== 'undefined') {
+            const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltips.forEach(tooltip => {
+                if (!bootstrap.Tooltip.getInstance(tooltip)) {
+                    new bootstrap.Tooltip(tooltip);
                 }
+            });
+        }
+    }
+
+    initializeTooltips();
+
+    // Function to update row after approval/rejection
+    function updateRowAfterAction(row, id, lokasi, status) {
+        if (!row) return;
+
+        const statusCell = row.querySelector('td:nth-child(9)'); // Adjusted to correct column
+        if (statusCell) {
+            statusCell.textContent = status;
+            statusCell.className = 'fw-bold text-white';
+
+            if (status === 'DISETUJUI') {
+                statusCell.classList.add('bg-success');
+            } else if (status === 'DITOLAK') {
+                statusCell.classList.add('bg-danger');
+            } else {
+                statusCell.classList.add('bg-warning');
             }
+        }
 
-            initializeTooltips();
+        if (lokasi) {
+            const lokasiCell = row.querySelector('td:nth-child(7)');
+            if (lokasiCell) {
+                lokasiCell.textContent = lokasi;
+            }
+        }
 
-            // Function to update row after approval/rejection
-            function updateRowAfterAction(row, id, lokasi, status) {
-                if (!row) return;
-
-                const statusCell = row.querySelector('td:nth-child(8)');
-                if (statusCell) {
-                    statusCell.textContent = status;
-                    statusCell.className = '';
-                    statusCell.classList.add('fw-bold');
-
-                    if (status === 'DISETUJUI') {
-                        statusCell.classList.add('bg-success');
-                    } else if (status === 'DITOLAK') {
-                        statusCell.classList.add('bg-danger');
-                    } else {
-                        statusCell.classList.add('bg-info');
-                    }
-                }
-
-                if (lokasi) {
-                    const lokasiCell = row.querySelector('td:nth-child(7)');
-                    if (lokasiCell) {
-                        lokasiCell.textContent = lokasi;
-                    }
-                }
-
-                const actionCell = row.querySelector('.action-icons');
-                if (actionCell) {
-                    actionCell.innerHTML = `
-                <a href="/terimausulanbimbingan/${id}" 
+        const actionCell = row.querySelector('.action-icons');
+        if (actionCell) {
+            actionCell.innerHTML = `
+                <a href="/dosen/detailbimbingan/${id}" 
                    class="action-icon info-icon" 
                    data-bs-toggle="tooltip" 
                    title="Info">
                     <i class="bi bi-info-circle"></i>
-                </a>
-            `;
-                    initializeTooltips();
-                }
+                </a>`;
+            initializeTooltips();
+        }
+    }
+
+    // Setup modal handling for approve action
+    document.querySelectorAll('.approve-icon').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            currentRow = this.closest('tr');
+            currentId = currentRow.getAttribute('data-id');
+
+            if (!currentRow || !currentId) return;
+
+            const modalInstance = new bootstrap.Modal(document.getElementById('modalTerima'));
+            modalInstance.show();
+        });
+    });
+
+    // Setup modal handling for reject action
+    document.querySelectorAll('.reject-icon').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            currentRow = this.closest('tr');
+            currentId = currentRow.getAttribute('data-id');
+
+            if (!currentRow || !currentId) return;
+
+            const modalInstance = new bootstrap.Modal(document.getElementById('modalTolak'));
+            modalInstance.show();
+        });
+    });
+
+    // Handle approve confirmation
+    document.getElementById('confirmTerima')?.addEventListener('click', async function() {
+        const lokasiInput = document.getElementById('lokasiBimbingan');
+        if (!lokasiInput || !currentId || !currentRow) return;
+
+        const lokasi = lokasiInput.value.trim();
+        if (!lokasi) {
+            lokasiInput.classList.add('is-invalid');
+            return;
+        }
+
+        try {
+            this.disabled = true;
+
+            const response = await fetch(`/persetujuan/terima/${currentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    lokasi: lokasi
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalTerima'));
+                if (modal) modal.hide();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Usulan bimbingan berhasil disetujui',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                throw new Error(data.message || 'Terjadi kesalahan saat menyimpan data');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.message || 'Terjadi kesalahan saat memproses usulan'
+            });
+        } finally {
+            this.disabled = false;
+        }
+    });
+
+    // Handle reject confirmation
+    document.getElementById('confirmTolak')?.addEventListener('click', async function() {
+        const alasanInput = document.getElementById('alasanPenolakan');
+        if (!alasanInput || !currentId || !currentRow) return;
+
+        const alasan = alasanInput.value.trim();
+        if (!alasan) {
+            alasanInput.classList.add('is-invalid');
+            return;
+        }
+
+        try {
+            this.disabled = true;
+
+            const response = await fetch(`/persetujuan/tolak/${currentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    keterangan: alasan
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalTolak'));
+                if (modal) modal.hide();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Usulan bimbingan telah ditolak',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                throw new Error(data.message || 'Terjadi kesalahan saat menyimpan data');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.message || 'Terjadi kesalahan saat memproses usulan'
+            });
+        } finally {
+            this.disabled = false;
+        }
+    });
+
+    // Handle modal cleanup
+    ['modalTerima', 'modalTolak'].forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        modal?.addEventListener('hidden.bs.modal', function() {
+            const input = modalId === 'modalTerima' ?
+                document.getElementById('lokasiBimbingan') :
+                document.getElementById('alasanPenolakan');
+
+            if (input) {
+                input.classList.remove('is-invalid');
+                input.value = '';
             }
 
-            // Setup modal handling for approve action
-            document.querySelectorAll('.approve-icon').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    currentRow = this.closest('tr');
-                    currentId = currentRow.getAttribute('data-id');
-
-                    if (!currentRow || !currentId) return;
-
-                    const nim = currentRow.querySelector('td:nth-child(2)')?.textContent;
-                    const nama = currentRow.querySelector('td:nth-child(3)')?.textContent;
-                    const jenisBimbingan = currentRow.querySelector('td:nth-child(4)')?.textContent;
-
-                    const modal = document.getElementById('modalTerima');
-                    if (!modal) return;
-
-                    modal.querySelector('.nim-display').textContent = nim;
-                    modal.querySelector('.nama-display').textContent = nama;
-                    modal.querySelector('.jenis-display').textContent = jenisBimbingan;
-                    modal.querySelector('.tanggal-display').textContent = currentRow.querySelector(
-                        'td:nth-child(5)')?.textContent;
-                    modal.querySelector('.waktu-display').textContent = currentRow.querySelector(
-                        'td:nth-child(6)')?.textContent;
-
-                    const modalInstance = new bootstrap.Modal(modal);
-                    modalInstance.show();
-                });
-            });
-
-            // Setup modal handling for reject action
-            document.querySelectorAll('.reject-icon').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    currentRow = this.closest('tr');
-                    currentId = currentRow.getAttribute('data-id');
-
-                    if (!currentRow || !currentId) return;
-
-                    const nim = currentRow.querySelector('td:nth-child(2)')?.textContent;
-                    const nama = currentRow.querySelector('td:nth-child(3)')?.textContent;
-                    const jenisBimbingan = currentRow.querySelector('td:nth-child(4)')?.textContent;
-
-                    const modal = document.getElementById('modalTolak');
-                    if (!modal) return;
-
-                    modal.querySelector('.nim-display').textContent = nim;
-                    modal.querySelector('.nama-display').textContent = nama;
-                    modal.querySelector('.jenis-display').textContent = jenisBimbingan;
-                    modal.querySelector('.tanggal-display').textContent = currentRow.querySelector(
-                        'td:nth-child(5)')?.textContent;
-                    modal.querySelector('.waktu-display').textContent = currentRow.querySelector(
-                        'td:nth-child(6)')?.textContent;
-
-                    const modalInstance = new bootstrap.Modal(modal);
-                    modalInstance.show();
-                });
-            });
-
-            // Handle approve confirmation
-            document.getElementById('confirmTerima')?.addEventListener('click', async function() {
-                const lokasiInput = document.getElementById('lokasiBimbingan');
-                if (!lokasiInput || !currentId || !currentRow) return;
-
-                const lokasi = lokasiInput.value.trim();
-                if (!lokasi) {
-                    lokasiInput.classList.add('is-invalid');
-                    return;
-                }
-
-                try {
-                    this.disabled = true;
-
-                    const response = await fetch(`/persetujuan/terima/${currentId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                ?.content
-                        },
-                        body: JSON.stringify({
-                            lokasi: lokasi
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        const modal = bootstrap.Modal.getInstance(document.getElementById(
-                            'modalTerima'));
-                        if (modal) modal.hide();
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: 'Usulan bimbingan berhasil disetujui',
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            window.location.reload();
-                        });
-                    } else {
-                        throw new Error(data.message || 'Terjadi kesalahan saat menyimpan data');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: error.message || 'Terjadi kesalahan saat memproses usulan'
-                    });
-                } finally {
-                    this.disabled = false;
-                }
-            });
-
-            // Handle reject confirmation
-            document.getElementById('confirmTolak')?.addEventListener('click', async function() {
-                const alasanInput = document.getElementById('alasanPenolakan');
-                if (!alasanInput || !currentId || !currentRow) return;
-
-                const alasan = alasanInput.value.trim();
-                if (!alasan) {
-                    alasanInput.classList.add('is-invalid');
-                    return;
-                }
-
-                try {
-                    this.disabled = true;
-
-                    const response = await fetch(`/persetujuan/tolak/${currentId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                ?.content
-                        },
-                        body: JSON.stringify({
-                            keterangan: alasan
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        const modal = bootstrap.Modal.getInstance(document.getElementById(
-                        'modalTolak'));
-                        if (modal) modal.hide();
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: 'Usulan bimbingan telah ditolak',
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            window.location.reload();
-                        });
-                    } else {
-                        throw new Error(data.message || 'Terjadi kesalahan saat menyimpan data');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: error.message || 'Terjadi kesalahan saat memproses usulan'
-                    });
-                } finally {
-                    this.disabled = false;
-                }
-            });
-
-            // Handle modal cleanup
-            ['modalTerima', 'modalTolak'].forEach(modalId => {
-                const modal = document.getElementById(modalId);
-                modal?.addEventListener('hidden.bs.modal', function() {
-                    const input = modalId === 'modalTerima' ?
-                        document.getElementById('lokasiBimbingan') :
-                        document.getElementById('alasanPenolakan');
-
-                    if (input) {
-                        input.classList.remove('is-invalid');
-                        input.value = '';
-                    }
-
-                    currentRow = null;
-                    currentId = null;
-                });
-            });
+            currentRow = null;
+            currentId = null;
         });
-    </script>
+    });
+});
+</script>
 @endpush

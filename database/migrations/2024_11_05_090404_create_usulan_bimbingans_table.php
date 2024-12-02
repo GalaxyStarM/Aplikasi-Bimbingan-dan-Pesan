@@ -32,6 +32,7 @@ return new class extends Migration
             // Lokasi dan deskripsi
             $table->string('lokasi')->nullable();
             $table->text('deskripsi')->nullable();
+            $table->integer('nomor_antrian')->nullable();
             
             // Status dan keterangan
             $table->enum('status', [
@@ -44,7 +45,6 @@ return new class extends Migration
             
             // Google Calendar integration 
             $table->string('event_id');
-            $table->string('student_event_id')->nullable();
             
             // Timestamps
             $table->timestamps();
@@ -54,7 +54,7 @@ return new class extends Migration
             $table->index('nip');
             $table->index(['tanggal', 'waktu_mulai']);
             $table->index('status');
-            $table->index('event_id'); // Tambahkan index untuk event_id
+            $table->index('event_id'); 
             
             // Foreign key constraints
             $table->foreign('nim')->references('nim')->on('mahasiswas');

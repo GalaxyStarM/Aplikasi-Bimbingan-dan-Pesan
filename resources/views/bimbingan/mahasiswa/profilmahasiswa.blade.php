@@ -24,7 +24,6 @@
             overflow: hidden;
             transition: all 0.4s ease-in-out;
             transform-style: preserve-3d;
-            yy
         }
 
         .student-profile-card:hover {
@@ -139,18 +138,15 @@
 <div class="container my-5">
     <h1 class="mb-3 gradient-text fw-bold">{{ $role === 'mahasiswa' ? 'Profil Mahasiswa' : 'Profil Dosen' }}</h1>
     <hr>
-    <button class="btn btn-gradient mb-4 mt-2 d-flex align-items-center justify-content-center">
-        <a href="{{ url()->previous() }}">
-            <i class="fas fa-arrow-left me-2"></i>Kembali
-        </a>
-    </button>
     
     <div class="student-profile-container">
         <div class="student-profile-card">
             <div class="profile-header">
                 <div class="position-relative d-inline-block">
-                    <img src="{{ $profile->foto_url }}" alt="Foto Profil" class="student-avatar mx-auto d-block">
-                    @if(auth()->user()->id === $profile->id)
+                    <img src="{{ $profile->foto_url }}" 
+                         alt="Foto Profil" 
+                         class="student-avatar mx-auto d-block">
+                    @if(auth()->user()->nim === $profile->nim || auth()->user()->nip === $profile->nip)
                         <div class="position-absolute bottom-0 end-0">
                             <button type="button" class="btn btn-light rounded-circle p-2" data-bs-toggle="modal" data-bs-target="#updateFotoModal">
                                 <i class="fas fa-camera"></i>
@@ -165,26 +161,24 @@
             <div class="profile-details">
                 <div class="detail-item">
                     <span class="detail-label">Program Studi</span>
-                    <span class="detail-value">{{ $profile->prodi }}</span>
+                    <span class="detail-value">{{ $profile->prodi->nama_prodi }}</span>
                 </div>
                 @if($role === 'mahasiswa')
-                    <!-- <div class="detail-item">
-                        <span class="detail-label">Pembimbing Akademik</span>
-                        <span class="detail-value">{{ $profile->dosen_pa }}</span>
-                    </div> -->
                     <div class="detail-item">
                         <span class="detail-label">Angkatan</span>
                         <span class="detail-value">{{ $profile->angkatan }}</span>
                     </div>
+                    @if($profile->konsentrasi)
+                    <div class="detail-item">
+                        <span class="detail-label">Konsentrasi</span>
+                        <span class="detail-value">{{ $profile->konsentrasi->nama_konsentrasi }}</span>
+                    </div>
+                    @endif
                 @endif
                 <div class="detail-item">
                     <span class="detail-label">Email</span>
                     <span class="detail-value">{{ $profile->email }}</span>
                 </div>
-                <!-- <div class="detail-item">
-                    <span class="detail-label">Status</span>
-                    <span class="detail-value text-success fw-bold">{{ $profile->status }}</span>
-                </div> -->
             </div>
         </div>
     </div>
@@ -214,7 +208,7 @@
                 </form>
                 @if($profile->foto)
                     <hr>
-                    <form action="{{ route('profile.remove-foto') }}" method="POST" class="mt-3">
+                    <form action="{{ route('profile.remove') }}" method="POST" class="mt-3">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger w-100">Hapus Foto Profil</button>
@@ -224,4 +218,18 @@
         </div>
     </div>
 </div>
+
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show position-fixed bottom-0 end-0 m-3" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show position-fixed bottom-0 end-0 m-3" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 @endsection

@@ -52,9 +52,8 @@ class PilihJadwalController extends Controller
             if (!$this->googleCalendarController->validateAndRefreshToken()) {
                 return response()->json(['error' => 'Belum terautentikasi dengan Google Calendar'], 401);
             }
-
             Log::info('Request pengajuan bimbingan:', $request->all());
-
+            
             // Validasi request
             $request->validate([
                 'nip' => 'required|exists:dosens,nip',
@@ -70,7 +69,6 @@ class PilihJadwalController extends Controller
                 ->join('dosens as d', 'jb.nip', '=', 'd.nip')
                 ->where('jb.id', $request->jadwal_id)
                 ->where('jb.status', 'tersedia')
-                ->where('jb.sisa_kapasitas', '>', 0)
                 ->where('jb.waktu_mulai', '>', now())
                 ->select('jb.*', 'd.nama as dosen_nama')
                 ->first();
@@ -114,7 +112,7 @@ class PilihJadwalController extends Controller
             $mahasiswa = Auth::guard('mahasiswa')->user();
             
             // Simpan ke database
-            $bimbingan = DB::table('usulan_bimbingans')->insertGetId([
+            $bimbingan = UsulanBimbingan::create([
                 'nim' => $mahasiswa->nim,
                 'nip' => $request->nip,
                 'dosen_nama' => $jadwal->dosen_nama,
@@ -127,14 +125,10 @@ class PilihJadwalController extends Controller
                 'deskripsi' => $request->deskripsi,
                 'status' => 'USULAN',
                 'event_id' => $jadwal->event_id,
+                'nomor_antrian' => null,
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
-
-            // Update sisa kapasitas
-            DB::table('jadwal_bimbingans')
-                ->where('id', $request->jadwal_id)
-                ->decrement('sisa_kapasitas');
 
             DB::commit();
 
@@ -168,53 +162,62 @@ class PilihJadwalController extends Controller
                 'jenis_bimbingan' => 'required|in:skripsi,kp,akademik,konsultasi'
             ]);
 
-            // Get jadwal yang tersedia
-            $jadwal = DB::table('jadwal_bimbingans as jb')
+            // Get jadwal dasar yang tersedia
+            $baseJadwal = DB::table('jadwal_bimbingans as jb')
                 ->join('dosens as d', 'jb.nip', '=', 'd.nip')
                 ->where('jb.nip', $request->nip)
                 ->where('jb.status', 'tersedia')
-                ->where('jb.sisa_kapasitas', '>', 0)
                 ->where('jb.waktu_mulai', '>', now())
                 ->select(
                     'jb.id',
                     'jb.event_id',
                     'jb.waktu_mulai',
                     'jb.waktu_selesai',
-                    'jb.sisa_kapasitas',
                     'jb.catatan',
                     'jb.lokasi',
                     'd.nama as dosen_nama'
                 )
-                ->get()
+                ->get();
+
+            $allJadwal = collect();
+
+            foreach ($baseJadwal as $jadwal) {
+                // Tambahkan jadwal asli
+                $waktuMulai = Carbon::parse($jadwal->waktu_mulai);
+                $waktuSelesai = Carbon::parse($jadwal->waktu_selesai);
+
+                // Cek apakah mahasiswa sudah memilih jadwal ini
+                $isSelected = DB::table('usulan_bimbingans')
+                    ->where('nim', auth()->user()->nim)
+                    ->where('event_id', $jadwal->event_id)
+                    ->where('status', '!=', 'DITOLAK')
+                    ->exists();
+
+                $allJadwal->push([
+                    'id' => $jadwal->id,
+                    'event_id' => $jadwal->event_id,
+                    'tanggal' => $waktuMulai->isoFormat('dddd, D MMMM Y'),
+                    'waktu' => $waktuMulai->format('H:i') . ' - ' . $waktuSelesai->format('H:i'),
+                    'waktu_mulai_raw' => $waktuMulai->format('Y-m-d H:i:s'), // Tambahkan ini untuk sorting
+                    'lokasi' => $jadwal->lokasi,
+                    'catatan' => $jadwal->catatan,
+                    'dosen_nama' => $jadwal->dosen_nama,
+                    'is_selected' => $isSelected
+                ]);
+            }
+
+            // Sort menggunakan waktu_mulai_raw
+            $sortedJadwal = $allJadwal->sortBy('waktu_mulai_raw')
                 ->map(function ($item) {
-                    $waktuMulai = Carbon::parse($item->waktu_mulai);
-                    $waktuSelesai = Carbon::parse($item->waktu_selesai);
-                    
-                    // Cek apakah mahasiswa sudah memilih jadwal ini
-                    $isSelected = DB::table('usulan_bimbingans')
-                        ->where('nim', auth()->user()->nim)
-                        ->where('event_id', $item->event_id)
-                        ->where('status', '!=', 'DITOLAK')
-                        ->exists();
-                    
-                    return [
-                        'id' => $item->id,
-                        'event_id' => $item->event_id,
-                        'tanggal' => $waktuMulai->isoFormat('dddd, D MMMM Y'),
-                        'waktu' => $waktuMulai->format('H:i') . ' - ' . $waktuSelesai->format('H:i'),
-                        'sisa_kapasitas' => $item->sisa_kapasitas,
-                        'lokasi' => $item->lokasi,
-                        'catatan' => $item->catatan,
-                        'dosen_nama' => $item->dosen_nama,
-                        'is_selected' => $isSelected
-                    ];
+                    // Hapus waktu_mulai_raw dari output
+                    unset($item['waktu_mulai_raw']);
+                    return $item;
                 })
-                ->sortBy('waktu_mulai')
                 ->values();
 
             return response()->json([
                 'status' => 'success',
-                'data' => $jadwal
+                'data' => $sortedJadwal
             ]);
 
         } catch (\Exception $e) {

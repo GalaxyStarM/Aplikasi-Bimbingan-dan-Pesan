@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Models\UsulanBimbingan;
+use App\Models\JadwalBimbingan;
+use App\Models\Mahasiswa;
+use App\Models\Dosen;
 
 class DosenController extends Controller
 {
@@ -38,14 +41,17 @@ class DosenController extends Controller
                             $join->on('ub.event_id', '=', 'jb.event_id')
                                 ->on('ub.nip', '=', 'jb.nip');
                         })
-                        ->where('jb.nip', $nip)
-                        ->where('jb.status', 'tersedia')
-                        ->where('ub.status', 'USULAN')
                         ->select(
                             'ub.*',
                             'm.nama as mahasiswa_nama',
-                            'jb.lokasi as lokasi_default'
+                            'jb.lokasi as lokasi_default',
+                            DB::raw('(SELECT COUNT(*) FROM usulan_bimbingans 
+                                    WHERE event_id = ub.event_id 
+                                    AND status = "DISETUJUI") as total_antrian')
                         )
+                        ->where('jb.nip', $nip)
+                        ->where('jb.status', 'tersedia')
+                        ->where('ub.status', 'USULAN')
                         ->orderBy('jb.waktu_mulai', 'asc')
                         ->orderBy('ub.created_at', 'desc')
                         ->paginate($perPage);
@@ -53,14 +59,19 @@ class DosenController extends Controller
 
                 case 'jadwal':
                     $jadwal = DB::table('usulan_bimbingans as ub')
+                        ->join('mahasiswas as m', 'ub.nim', '=', 'm.nim')
                         ->where('ub.nip', $nip)
                         ->where('status', 'DISETUJUI')
                         ->select(
                             'ub.*',
+                            'm.nama as mahasiswa_nama',
                             DB::raw('(SELECT COUNT(*) FROM usulan_bimbingans 
-                                    WHERE tanggal = ub.tanggal 
-                                    AND waktu_mulai = ub.waktu_mulai 
-                                    AND status = "DISETUJUI") as total_bimbingan')
+                                    WHERE event_id = ub.event_id 
+                                    AND status = "DISETUJUI" 
+                                    AND nomor_antrian <= ub.nomor_antrian) as posisi_antrian'),
+                            DB::raw('(SELECT COUNT(*) FROM usulan_bimbingans 
+                                    WHERE event_id = ub.event_id 
+                                    AND status = "DISETUJUI") as total_antrian')
                         )
                         ->orderBy('ub.tanggal', 'desc')
                         ->orderBy('ub.waktu_mulai', 'asc')
@@ -225,6 +236,17 @@ class DosenController extends Controller
         try {
             $usulan = UsulanBimbingan::with('mahasiswa')->findOrFail($id);
 
+            $jadwal = JadwalBimbingan::where('event_id', $usulan->event_id)
+                                    ->where('status', 'tersedia')
+                                    ->first();
+            
+            if (!$jadwal) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Jadwal bimbingan sudah tidak tersedia'
+                ], 400);
+            }
+
             DB::beginTransaction();
 
             if ($usulan->setujui($request->lokasi)) {
@@ -247,13 +269,9 @@ class DosenController extends Controller
                     });
 
                     if ($event) {
-                        // Siapkan data attendee
                         $existingAttendees = $event['attendees'] ?? [];
-
-                        // Debug log untuk attendees
                         Log::info('Existing attendees:', ['attendees' => $existingAttendees]);
 
-                        // Cek apakah email mahasiswa sudah ada
                         $mahasiswaEmail = $usulan->mahasiswa->email;
                         $emailExists = collect($existingAttendees)->contains('email', $mahasiswaEmail);
 
@@ -265,25 +283,30 @@ class DosenController extends Controller
                                 'responseStatus' => 'needsAction'
                             ];
 
-                            // Update event dengan attendee baru dan notifikasi
+                            $description = "Status: Disetujui\n" .
+                                        "Dosen: {$usulan->dosen->nama}\n" .
+                                        "Mahasiswa: {$usulan->mahasiswa->nama}\n" .
+                                        "NIM: {$usulan->nim}\n" .
+                                        "Nomor Antrian: {$usulan->nomor_antrian}\n" .
+                                        "Lokasi: {$request->lokasi}\n";
+
                             $this->googleCalendarController->updateEventAttendees(
                                 $usulan->event_id,
                                 $existingAttendees,
                                 [
+                                    'description' => $description,
                                     'sendUpdates' => 'all',
                                     'reminders' => [
                                         'useDefault' => false,
                                         'overrides' => [
-                                            ['method' => 'email', 'minutes' => 24 * 60], // 1 hari sebelum
-                                            ['method' => 'popup', 'minutes' => 30]  // 30 menit sebelum
+                                            ['method' => 'email', 'minutes' => 24 * 60],
+                                            ['method' => 'popup', 'minutes' => 30]
                                         ]
                                     ]
                                 ]
                             );
 
                             Log::info('Berhasil menambahkan attendee dengan notifikasi');
-                        } else {
-                            Log::info('Email mahasiswa sudah terdaftar sebagai attendee');
                         }
 
                         DB::commit();
@@ -291,19 +314,14 @@ class DosenController extends Controller
                             'success' => true,
                             'message' => 'Usulan bimbingan berhasil disetujui dan undangan telah dikirim'
                         ]);
-                    } else {
-                        Log::warning('Event tidak ditemukan di Google Calendar:', [
-                            'event_id' => $usulan->event_id,
-                            'total_events' => count($events->original)
-                        ]);
                     }
 
-                    // Jika sampai di sini, event tidak ditemukan tapi tetap setujui usulan
                     DB::commit();
                     return response()->json([
                         'success' => true,
                         'message' => 'Usulan bimbingan berhasil disetujui (tanpa notifikasi calendar)'
                     ]);
+
                 } catch (\Exception $e) {
                     Log::error('Google Calendar Error Detail:', [
                         'message' => $e->getMessage(),
@@ -311,11 +329,7 @@ class DosenController extends Controller
                         'trace' => $e->getTraceAsString()
                     ]);
 
-                    // Jika gagal menambahkan ke calendar, tetap setujui usulan
-                    DB::beginTransaction();
-                    $usulan->setujui($request->lokasi);
                     DB::commit();
-
                     return response()->json([
                         'success' => true,
                         'message' => 'Usulan bimbingan berhasil disetujui (tanpa notifikasi calendar)'
@@ -328,6 +342,7 @@ class DosenController extends Controller
                 'success' => false,
                 'message' => 'Gagal menyetujui usulan bimbingan'
             ], 500);
+
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error in approve consultation:', [

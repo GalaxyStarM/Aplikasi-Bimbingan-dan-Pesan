@@ -76,7 +76,6 @@ class MasukkanJadwalController extends Controller
                 'start' => 'required|date',
                 'end' => 'required|date|after:start',
                 'description' => 'nullable|string',
-                'capacity' => 'required|integer|min:1|max:10'
             ]);
 
             // Parse dates with explicit timezone
@@ -90,7 +89,6 @@ class MasukkanJadwalController extends Controller
                     "Dosen: {$dosen->nama}\n" .
                     "NIP: {$dosen->nip}\n" .
                     "Email: {$dosen->email}\n" .
-                    "Kapasitas: {$request->capacity} Mahasiswa\n\n" .
                     ($request->description ? "Catatan: {$request->description}" : "");
 
             $eventData = [
@@ -119,9 +117,7 @@ class MasukkanJadwalController extends Controller
                     'waktu_mulai' => $start,
                     'waktu_selesai' => $end,
                     'catatan' => $request->description,
-                    'status' => 'tersedia',
-                    'kapasitas' => $request->capacity,
-                    'sisa_kapasitas' => $request->capacity
+                    'status' => 'tersedia'
                 ]);
 
                 DB::commit();
@@ -141,7 +137,6 @@ class MasukkanJadwalController extends Controller
                         'end' => $end->toIso8601String(),
                         'description' => $request->description,
                         'status' => 'Tersedia',
-                        'capacity' => $request->capacity
                     ]
                 ]);
 
