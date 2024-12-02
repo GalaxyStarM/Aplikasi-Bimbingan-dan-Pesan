@@ -340,7 +340,10 @@ class PesanController extends Controller
             
             $request->validate([
                 'pesan' => 'required|string',
-                'attachment' => 'nullable|file|mimes:pdf,doc,docx|max:10240'
+                'attachment' => ['nullable', 'string', 'url']
+            ], [
+                'attachment.url' => 'Format link tidak valid',
+                'attachment.regex' => 'Link harus dari Google Drive'
             ]);
 
             $pesan = Pesan::findOrFail($id);
@@ -378,23 +381,12 @@ class PesanController extends Controller
                 throw new \Exception('Role tidak ditemukan');
             }
 
-            $attachmentPath = null;
-            if ($request->hasFile('attachment')) {
-                $file = $request->file('attachment');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $attachmentPath = $request->file('attachment')->storeAs(
-                    'public/attachments',
-                    $fileName
-                );
-                $attachmentPath = str_replace('public/', '', $attachmentPath);
-            }
-
             $balasan = PesanBalasan::create([
                 'pesan_id' => $id,
                 'role_id' => $user->role_id,
                 'pengirim_id' => $pengirim_id,
                 'pesan' => $request->pesan,
-                'attachment' => $attachmentPath,
+                'attachment' => $request->attachment,
                 'is_read' => false
             ]);
 
@@ -425,14 +417,20 @@ class PesanController extends Controller
     public function endChat($id)
     {
         try {
-            $user = Auth::user();
             $pesan = Pesan::findOrFail($id);
-
-            $isAuthorized = false;
-            if ($user->role === 'mahasiswa') {
+            
+            // Cek guard yang aktif
+            if (Auth::guard('mahasiswa')->check()) {
+                $user = Auth::guard('mahasiswa')->user();
                 $isAuthorized = $pesan->mahasiswa_nim === $user->nim;
-            } elseif ($user->role === 'dosen') {
+            } elseif (Auth::guard('dosen')->check()) {
+                $user = Auth::guard('dosen')->user();
                 $isAuthorized = $pesan->dosen_nip === $user->nip;
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized access'
+                ], 403);
             }
 
             if (!$isAuthorized) {

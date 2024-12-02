@@ -180,14 +180,14 @@
     <div class="row">
         <!-- Sidebar Profile Card -->
         <div class="col-md-4">
-            <div class="profile-card">
+            <div class="profile-card text-center">
                 @php
                     $profileUser = auth()->guard('mahasiswa')->check() ? $pesan->dosen : $pesan->mahasiswa;
                     $isStudent = auth()->guard('mahasiswa')->check();
                     $borderColor = $isStudent ? '#007bff' : '#28a745';
                 @endphp
 
-                <img src="{{ $profileUser->foto ? asset('storage/' . $profileUser->foto) : asset('images/default-avatar.png') }}" 
+                <img src="{{ $profileUser->foto ? asset('storage/foto_profil/' . $profileUser->foto) : asset('images/default-avatar.png') }}" 
                      alt="Profile Photo" 
                      class="profile-photo mx-auto d-block"
                      style="border-color: {{ $borderColor }}">
@@ -195,15 +195,6 @@
                 <div class="profile-info">
                     <h3 class="profile-name" style="color: {{ $borderColor }}">{{ $profileUser->nama }}</h3>
                     <p class="profile-id">{{ $isStudent ? 'NIP. ' . $profileUser->nip : 'NIM. ' . $profileUser->nim }}</p>
-                    
-                    <div class="info-details">
-                        <p><i class="fas {{ $isStudent ? 'fa-chalkboard-teacher' : 'fa-graduation-cap' }} me-2"></i>
-                           {{ $isStudent ? 'Dosen ' . $profileUser->prodi : $profileUser->jurusan }}
-                        </p>
-                        @if(!$isStudent)
-                            <p><i class="fas fa-calendar-alt me-2"></i> Semester {{ $profileUser->semester }}</p>
-                        @endif
-                    </div>
                 </div>
 
                 <table class="info-table">
@@ -272,9 +263,11 @@
                     </div>
                     @if($pesan->attachment)
                     <div class="attachment">
-                        <p><i class="fas fa-paperclip"></i> Lampiran:</p>
-                        <a href="{{ route('pesan.attachment', $pesan->id) }}" target="_blank">
-                            <i class="fas fa-file-pdf"></i> {{ basename($pesan->attachment) }}
+                        <p>
+                            <i class="fab fa-google-drive"></i> Lampiran:
+                        </p>
+                        <a href="{{ $pesan->attachment }}" class="btn btn-sm btn-primary" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i> Buka File di Google Drive
                         </a>
                     </div>
                     @endif
@@ -302,9 +295,11 @@
                     </div>
                     @if($balasan->attachment)
                     <div class="attachment">
-                        <p><i class="fas fa-paperclip"></i> Lampiran:</p>
-                        <a href="{{ route('pesan.attachment', $balasan->id) }}" target="_blank">
-                            <i class="fas fa-file-pdf"></i> {{ basename($balasan->attachment) }}
+                        <p>
+                            <i class="fab fa-google-drive"></i> Lampiran:
+                        </p>
+                        <a href="{{ $balasan->attachment }}" class="btn btn-sm btn-primary" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i> Buka File di Google Drive
                         </a>
                     </div>
                     @endif
@@ -327,15 +322,24 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <!-- Ganti bagian input file yang lama -->
                         <div class="mb-3">
-                            <input type="file" 
-                                   name="attachment" 
-                                   class="form-control @error('attachment') is-invalid @enderror" 
-                                   accept=".pdf,.doc,.docx">
+                            <label for="attachment" class="form-label">
+                                <i class="fab fa-google-drive"></i> Link Google Drive (Opsional)
+                            </label>
+                            <input type="url" 
+                                id="attachment" 
+                                name="attachment" 
+                                class="form-control @error('attachment') is-invalid @enderror" 
+                                placeholder="https://drive.google.com/file/d/..."
+                                value="{{ old('attachment') }}"
+                            >
                             @error('attachment')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <small class="text-muted">Format yang diizinkan: PDF, DOC, DOCX (Max: 10MB)</small>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> Pastikan link dapat diakses oleh publik
+                            </small>
                         </div>
                         <button type="submit" class="btn btn-kirim">
                             <i class="fas fa-paper-plane"></i> Kirim Pesan

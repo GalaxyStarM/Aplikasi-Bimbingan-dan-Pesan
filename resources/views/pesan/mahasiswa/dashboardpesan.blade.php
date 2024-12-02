@@ -291,7 +291,9 @@
             @forelse($pesanAktif as $pesan)
                 <div class="ticket-card" data-priority="{{ $pesan->prioritas }}" onclick="window.location.href='{{ route('pesan.show', $pesan->id) }}'">
                     <div class="d-flex align-items-center mb-3">
-                        <img src="{{ asset('images/default-avatar.png') }}" alt="Avatar" class="avatar me-3">
+                    <img src="{{ $pesan->mahasiswa->foto ? asset('storage/foto_profil/' . $pesan->mahasiswa->foto) : asset('images/default-avatar.png') }}" 
+                     alt="Avatar" 
+                     class="avatar me-3">
                         <div class="flex-grow-1">
                             @if(auth()->user()->role === 'mahasiswa')
                                 <h6 class="mb-0">{{ $pesan->dosen->nama }}</h6>
@@ -327,7 +329,9 @@
                 @forelse($pesanSelesai as $pesan)
                     <div class="ticket-card" data-priority="{{ $pesan->prioritas }}" onclick="window.location.href='{{ route('pesan.show', $pesan->id) }}'">
                         <div class="d-flex align-items-center mb-3">
-                            <img src="{{ asset('images/avatar.png') }}" alt="Avatar" class="avatar me-3">
+                            <img src="{{ $pesan->mahasiswa->foto ? asset('storage/foto_profil/' . $pesan->mahasiswa->foto) : asset('images/default-avatar.png') }}" 
+                                alt="Avatar" 
+                                class="avatar me-3">
                             <div class="flex-grow-1">
                                 @if(auth()->user()->role === 'mahasiswa')
                                     <h6 class="mb-0">{{ $pesan->dosen->nama }}</h6>
