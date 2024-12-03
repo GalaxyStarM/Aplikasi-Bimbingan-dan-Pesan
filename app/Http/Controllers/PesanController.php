@@ -6,41 +6,44 @@ use App\Models\Pesan;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use App\Models\PesanBalasan;
-use App\Models\Role;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class PesanController extends Controller
 {
+    protected function getAuthenticatedUser()
+    {
+        if (Auth::guard('mahasiswa')->check()) {
+            return ['user' => Auth::guard('mahasiswa')->user(), 'guard' => 'mahasiswa'];
+        }
+        return ['user' => Auth::guard('dosen')->user(), 'guard' => 'dosen'];
+    }
+
     public function create()
     {
-        // Cek guard yang aktif
-        if (Auth::guard('mahasiswa')->check()) {
-            $dosen = Dosen::all();
-            return view('pesan.mahasiswa.buatpesan', compact('dosen'));
+        $auth = $this->getAuthenticatedUser();
+        if ($auth['guard'] === 'mahasiswa') {
+            $data = Dosen::all();
         } else {
-            $mahasiswas = Mahasiswa::orderBy('nama', 'asc')->get();
-            return view('pesan.mahasiswa.buatpesan', compact('mahasiswas'));
+            $data = Mahasiswa::orderBy('nama', 'asc')->get();
         }
+        return view('pesan.mahasiswa.buatpesan', [$auth['guard'] === 'mahasiswa' ? 'dosen' : 'mahasiswas' => $data]);
     }
 
     public function store(Request $request)
     {
-        if (auth()->guard('mahasiswa')->check()) {
-            return $this->storePesanMahasiswa($request);
-        } else {
-            return $this->storePesanDosen($request);
-        }
+        $auth = $this->getAuthenticatedUser();
+        return $auth['guard'] === 'mahasiswa' ? 
+            $this->storePesanMahasiswa($request) : 
+            $this->storePesanDosen($request);
     }
 
-    public function storePesanMahasiswa(Request $request)
+    protected function storePesanMahasiswa(Request $request)
     {
-        // Validasi input
         $request->validate([
             'subject' => 'required|string|max:255',
             'recipient' => 'required|exists:dosens,nip',
@@ -51,7 +54,6 @@ class PesanController extends Controller
 
         try {
             $user = auth()->user();
-
             $pesanData = [
                 'subjek' => $request->subject,
                 'pesan' => $request->message,
@@ -64,42 +66,34 @@ class PesanController extends Controller
                 'last_reply_by' => 'mahasiswa'
             ];
 
-            // Simpan pesan ke database
-            $pesan = Pesan::create($pesanData);
-
+            Pesan::create($pesanData);
             return response()->json(['success' => true, 'message' => 'Pesan berhasil dikirim']);
         } catch (\Exception $e) {
-            \Log::error('Error storing message: ' . $e->getMessage());
+            Log::error('Error storing message: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menyimpan pesan'], 500);
         }
     }
 
-    public function storePesanDosen(Request $request)
+    protected function storePesanDosen(Request $request)
     {
         try {
             $request->validate([
                 'subject' => 'required|string|max:255',
-                'selected_mahasiswa' => 'required|string', // Untuk menerima string NIM yang dipisahkan koma
+                'selected_mahasiswa' => 'required|string',
                 'priority' => 'required|in:mendesak,umum',
                 'message' => 'required|string',
                 'attachment' => 'nullable|string|url'
             ]);
 
             DB::beginTransaction();
-
             $dosen = Auth::guard('dosen')->user();
+            
             if (!$dosen) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized access'
-                ], 401);
+                return response()->json(['success' => false, 'message' => 'Unauthorized access'], 401);
             }
 
-            // Pecah string NIM menjadi array
             $selectedNims = explode(',', $request->selected_mahasiswa);
-            
-            $success = 0;
-            $failed = 0;
+            $success = $failed = 0;
             $pesanCreated = [];
 
             foreach ($selectedNims as $nim) {
@@ -115,42 +109,25 @@ class PesanController extends Controller
                         'mahasiswa_nim' => $nim,
                         'dosen_nip' => $dosen->nip
                     ]);
-
                     $pesanCreated[] = $pesan;
                     $success++;
-
                 } catch (\Exception $e) {
-                    \Log::error('Error creating message for NIM: ' . $nim . ' - ' . $e->getMessage());
+                    Log::error("Error creating message for NIM: $nim - " . $e->getMessage());
                     $failed++;
                 }
             }
 
             DB::commit();
-
-            $message = sprintf(
-                'Berhasil mengirim pesan ke %d mahasiswa, %d gagal',
-                $success,
-                $failed
-            );
-
             return response()->json([
                 'success' => true,
-                'message' => $message,
-                'data' => [
-                    'success_count' => $success,
-                    'failed_count' => $failed,
-                    'messages' => $pesanCreated
-                ]
+                'message' => "Berhasil mengirim pesan ke $success mahasiswa, $failed gagal",
+                'data' => compact('success', 'failed', 'pesanCreated')
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Error sending messages: ' . $e->getMessage());
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat mengirim pesan: ' . $e->getMessage()
-            ], 500);
+            Log::error('Error sending messages: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
         }
     }
 
@@ -158,26 +135,22 @@ class PesanController extends Controller
     {
         try {
             $user = auth()->guard('mahasiswa')->user();
-            \Log::info('User NIM: ' . $user->nim);
-            
             $pesanList = Pesan::where('mahasiswa_nim', $user->nim)
                 ->with(['dosen', 'balasan'])
                 ->orderBy('created_at', 'desc')
                 ->get();
-                
-            \Log::info('Jumlah pesan: ' . $pesanList->count());
-            \Log::info('Pesan aktif: ' . $pesanList->where('status', 'aktif')->count());
-            
+
             return view('pesan.mahasiswa.dashboardpesan', [
                 'pesanAktif' => $pesanList->where('status', 'aktif'),
                 'pesanSelesai' => $pesanList->where('status', 'selesai')
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error in indexMahasiswa: ' . $e->getMessage());
+            Log::error('Error in indexMahasiswa: ' . $e->getMessage());
             throw $e;
         }
     }
-    public function indexDosen() 
+
+    public function indexDosen()
     {
         $user = auth()->user();
         $pesanList = Pesan::where('dosen_nip', $user->nip)
@@ -194,143 +167,31 @@ class PesanController extends Controller
     public function show($id)
     {
         try {
-            $guard = Auth::getDefaultDriver();
-            $user = Auth::user();
-            
+            $auth = $this->getAuthenticatedUser();
             $pesan = Pesan::with([
                 'mahasiswa',
                 'dosen',
-                'balasan' => function($query) {
-                    $query->orderBy('created_at', 'asc');
-                },
+                'balasan' => fn($q) => $q->orderBy('created_at', 'asc'),
                 'balasan.pengirim'
             ])->findOrFail($id);
 
-            $isAuthorized = false;
-            if ($guard === 'mahasiswa') {
-                $isAuthorized = $pesan->mahasiswa_nim === $user->nim;
-                $redirectRoute = 'pesan.dashboardkonsultasi';
-            } else {
-                $isAuthorized = $pesan->dosen_nip === $user->nip;
-                $redirectRoute = 'pesan.dashboardpesan';
-            }
+            $isAuthorized = $auth['guard'] === 'mahasiswa' ? 
+                $pesan->mahasiswa_nim === $auth['user']->nim : 
+                $pesan->dosen_nip === $auth['user']->nip;
 
             if (!$isAuthorized) {
                 return redirect()
-                    ->route($redirectRoute)
+                    ->route('pesan.dashboardkonsultasi')
                     ->with('error', 'Anda tidak memiliki akses ke pesan ini');
             }
 
-            $view = $guard === 'mahasiswa' ? 
-                'pesan.mahasiswa.isipesan' : 
-                'pesan.mahasiswa.isipesan';
-
-            return view($view, compact('pesan'));
-
+            return view('pesan.mahasiswa.isipesan', compact('pesan'));
         } catch (\Exception $e) {
             Log::error('Error showing pesan: ' . $e->getMessage());
-            
-            $redirectRoute = Auth::getDefaultDriver() === 'mahasiswa' ? 
-                'pesan.dashboardkonsultasi' : 
-                'pesan.dashboardkonsultasi';
-                
             return redirect()
-                ->route($redirectRoute)
+                ->route('pesan.dashboardkonsultasi')
                 ->with('error', 'Terjadi kesalahan saat menampilkan pesan');
         }
-    }
-
-    public function updateStatus(Request $request, $id)
-    {
-        $pesan = Pesan::findOrFail($id);
-        
-        // Validasi akses
-        if (auth()->user()->role === 'mahasiswa' && $pesan->mahasiswa_nim !== auth()->user()->nim) {
-            return back()->with('error', 'Unauthorized access');
-        }
-        
-        if (auth()->user()->role === 'dosen' && $pesan->dosen_nip !== auth()->user()->nip) {
-            return back()->with('error', 'Unauthorized access');
-        }
-
-        $request->validate([
-            'status' => 'required|in:aktif,selesai'
-        ]);
-
-        $pesan->update([
-            'status' => $request->status
-        ]);
-
-        return back()->with('success', 'Status pesan berhasil diubah');
-    }
-
-    public function getDosen(Request $request)
-    {
-        try {
-            $search = $request->input('search');
-            
-            $dosen = Dosen::where('nama', 'LIKE', "%{$search}%")
-                        ->orWhere('nip', 'LIKE', "%{$search}%")
-                        ->select('nip', 'nama')
-                        ->limit(10)
-                        ->get();
-            
-            return response()->json($dosen);
-        } catch (\Exception $e) {
-            return response()->json([], 500);
-        }
-    }
-
-    public function filterAktif()
-    {
-        $user = auth()->user();
-        $pesanList = [];
-
-        if ($user->role === 'mahasiswa') {
-            $pesanList = Pesan::aktif()
-                ->where('mahasiswa_nim', $user->nim)
-                ->with(['dosen', 'balasan'])
-                ->orderBy('created_at', 'desc')
-                ->get();
-        } elseif ($user->role === 'dosen') {
-            $pesanList = Pesan::aktif()
-                ->where('dosen_nip', $user->nip)
-                ->with(['mahasiswa', 'balasan'])
-                ->orderBy('created_at', 'desc')
-                ->get();
-        }
-
-        return view('pesan.index', [
-            'pesanAktif' => $pesanList,
-            'pesanSelesai' => collect(),
-            'filter' => 'aktif'
-        ]);
-    }
-
-    public function filterSelesai()
-    {
-        $user = auth()->user();
-        $pesanList = [];
-
-        if ($user->role === 'mahasiswa') {
-            $pesanList = Pesan::selesai()
-                ->where('mahasiswa_nim', $user->nim)
-                ->with(['dosen', 'balasan'])
-                ->orderBy('created_at', 'desc')
-                ->get();
-        } elseif ($user->role === 'dosen') {
-            $pesanList = Pesan::selesai()
-                ->where('dosen_nip', $user->nip)
-                ->with(['mahasiswa', 'balasan'])
-                ->orderBy('created_at', 'desc')
-                ->get();
-        }
-
-        return view('pesan.index', [
-            'pesanAktif' => collect(),
-            'pesanSelesai' => $pesanList,
-            'filter' => 'selesai'
-        ]);
     }
 
     public function storeReply(Request $request, $id)
@@ -340,35 +201,18 @@ class PesanController extends Controller
             
             $request->validate([
                 'pesan' => 'required|string',
-                'attachment' => ['nullable', 'string', 'url']
-            ], [
-                'attachment.url' => 'Format link tidak valid',
-                'attachment.regex' => 'Link harus dari Google Drive'
+                'attachment' => 'nullable|string|url'
             ]);
 
             $pesan = Pesan::findOrFail($id);
-            
             if ($pesan->status !== 'aktif') {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Pesan sudah tidak aktif'
-                ], 403);
+                return response()->json(['success' => false, 'message' => 'Pesan sudah tidak aktif'], 403);
             }
 
-            if (Auth::guard('mahasiswa')->check()) {
-                $user = Auth::guard('mahasiswa')->user();
-                $isAuthorized = $pesan->mahasiswa_nim === $user->nim;
-                $pengirim_id = $user->nim;
-            } else if (Auth::guard('dosen')->check()) {
-                $user = Auth::guard('dosen')->user();
-                $isAuthorized = $pesan->dosen_nip === $user->nip;
-                $pengirim_id = $user->nip;
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User tidak terautentikasi'
-                ], 401);
-            }
+            $auth = $this->getAuthenticatedUser();
+            $isAuthorized = $auth['guard'] === 'mahasiswa' ? 
+                $pesan->mahasiswa_nim === $auth['user']->nim : 
+                $pesan->dosen_nip === $auth['user']->nip;
 
             if (!$isAuthorized) {
                 return response()->json([
@@ -377,116 +221,33 @@ class PesanController extends Controller
                 ], 403);
             }
 
-            if (!$user->role) {
-                throw new \Exception('Role tidak ditemukan');
-            }
-
             $balasan = PesanBalasan::create([
                 'pesan_id' => $id,
-                'role_id' => $user->role_id,
-                'pengirim_id' => $pengirim_id,
+                'role_id' => $auth['user']->role_id,
+                'pengirim_id' => $auth['guard'] === 'mahasiswa' ? $auth['user']->nim : $auth['user']->nip,
                 'pesan' => $request->pesan,
                 'attachment' => $request->attachment,
                 'is_read' => false
             ]);
 
-            $pesan->update([
-                'last_reply_at' => Carbon::now()
-            ]);
-
+            $pesan->update(['last_reply_at' => now()]);
             DB::commit();
-
-            $response_data = $balasan->load(['role', 'pengirim']);
 
             return response()->json([
                 'success' => true,
-                'data' => $response_data
+                'data' => $balasan->load(['role', 'pengirim'])
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error storing reply: ' . $e->getMessage());
-            
-            return response()->json([
-                'success' => false,
-                \Log::error('Error storing reply: ' . $e->getMessage()),
-            ], 500);
-        }
-    }
-
-    public function endChat($id)
-    {
-        try {
-            $pesan = Pesan::findOrFail($id);
-            
-            // Cek guard yang aktif
-            if (Auth::guard('mahasiswa')->check()) {
-                $user = Auth::guard('mahasiswa')->user();
-                $isAuthorized = $pesan->mahasiswa_nim === $user->nim;
-            } elseif (Auth::guard('dosen')->check()) {
-                $user = Auth::guard('dosen')->user();
-                $isAuthorized = $pesan->dosen_nip === $user->nip;
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized access'
-                ], 403);
-            }
-
-            if (!$isAuthorized) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized access'
-                ], 403);
-            }
-
-            $pesan->update([
-                'status' => 'selesai'
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Pesan telah diakhiri'
-            ]);
-
-        } catch (\Exception $e) {
-            Log::error('Error ending chat: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat mengakhiri pesan'
-            ], 500);
-        }
-    }
-
-    public function downloadAttachment($id)
-    {
-        try {
-            $balasan = PesanBalasan::findOrFail($id);
-            
-            if (!$balasan->attachment) {
-                return back()->with('error', 'Tidak ada file attachment');
-            }
-
-            if (!Storage::disk('public')->exists($balasan->attachment)) {
-                return back()->with('error', 'File tidak ditemukan');
-            }
-
-            return Storage::disk('public')->download($balasan->attachment);
-
-        } catch (\Exception $e) {
-            Log::error('Error downloading attachment: ' . $e->getMessage());
-            return back()->with('error', 'Terjadi kesalahan saat mengunduh file');
+            return response()->json(['success' => false], 500);
         }
     }
 
     public function getMahasiswaByAngkatan(Request $request)
     {
         try {
-
-            Log::info('Received request for angkatan:', [
-                'angkatan' => $request->query('angkatan')
-            ]);
-
             $angkatanString = $request->query('angkatan');
             if (!$angkatanString) {
                 return response()->json([
@@ -495,34 +256,24 @@ class PesanController extends Controller
                 ], 400);
             }
 
-            $angkatan = explode(',', $angkatanString);
-
-            $mahasiswa = Mahasiswa::whereIn('angkatan', $angkatan)
+            $mahasiswa = Mahasiswa::whereIn('angkatan', explode(',', $angkatanString))
                 ->select('nim', 'nama', 'angkatan')
                 ->orderBy('nama')
                 ->get()
-                ->map(function ($m) {
-                    return [
-                        'id' => $m->nim,
-                        'name' => $m->nama . ' - Angkatan ' . $m->angkatan,
-                        'nim' => $m->nim
-                    ];
-                });
-
-            if ($mahasiswa->isEmpty()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Tidak ada mahasiswa untuk angkatan yang dipilih'
+                ->map(fn($m) => [
+                    'id' => $m->nim,
+                    'name' => $m->nama . ' - Angkatan ' . $m->angkatan,
+                    'nim' => $m->nim
                 ]);
-            }
 
             return response()->json([
-                'success' => true,
-                'data' => $mahasiswa
+                'success' => !$mahasiswa->isEmpty(),
+                'data' => $mahasiswa,
+                'message' => $mahasiswa->isEmpty() ? 'Tidak ada mahasiswa untuk angkatan yang dipilih' : null
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('Error in getMahasiswaByAngkatan: ' . $e->getMessage());
+            Log::error('Error in getMahasiswaByAngkatan: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengambil data mahasiswa: ' . $e->getMessage()
